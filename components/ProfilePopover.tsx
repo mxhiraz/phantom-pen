@@ -222,7 +222,7 @@ function SettingsDialog({
               </div>
 
               {isEditing ? (
-                <div className="space-y-4 px-1">
+                <div className="space-y-4">
                   <div className="space-y-3">
                     <div className="space-y-2">
                       <Label
