@@ -5,7 +5,7 @@
   "short_name": "Phantom Pen",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
-  "description": "Convert your thoughts into text by voice with Phantom Pen",
+  "description": "Capture your thoughts by voice with Phantom Pen",
   "start_url": "/phantom-pen",
   "icons": [
     {

@@ -14,8 +14,8 @@ const raleway = Raleway({
 });
 
 export const metadata: Metadata = {
-  title: "Phantom Pen - Capture Your Thoughts By Voice",
-  description: "Convert your thoughts into text by voice with Phantom Pen.",
+  title: "Phantom Pen - AI Voice Notes",
+  description: "Capture your thoughts by voice with Phantom Pen.",
   openGraph: {
     images:
       "https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/WhatsApp_Image_2025-08-15_at_01.46.49.jpeg",
