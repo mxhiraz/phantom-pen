@@ -178,3 +178,7 @@
     font-family: var(--font-raleway), system-ui, sans-serif;
   }
 }
+
+.bn-font-family {
+  font-family: var(--font-raleway), system-ui, sans-serif;
+}

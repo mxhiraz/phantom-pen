@@ -10,6 +10,9 @@
     "convex:deploy": "convex deploy"
   },
   "dependencies": {
+    "@blocknote/core": "^0.35.0",
+    "@blocknote/mantine": "^0.35.0",
+    "@blocknote/react": "^0.35.0",
     "@clerk/backend": "^2.9.1",
     "@clerk/nextjs": "^6.28.0",
     "@radix-ui/react-avatar": "^1.1.10",
