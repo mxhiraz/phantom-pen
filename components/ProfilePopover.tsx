@@ -142,8 +142,8 @@ function SettingsDialog({
     setIsSaving(true);
     try {
       await user.update({
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
       });
 
       setIsEditing(false);
