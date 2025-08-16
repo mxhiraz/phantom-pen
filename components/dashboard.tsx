@@ -271,7 +271,6 @@ export function Dashboard({ transcriptions }: DashboardProps) {
           <div className="w-full flex gap-3">
             <Button
               size="lg"
-              variant="outline"
               onClick={() => setShowRecordingModal(true)}
               className="flex-1"
               disabled={isCreatingNote}
@@ -281,6 +280,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
             </Button>
             <Button
               size="lg"
+              variant="outline"
               onClick={handleNewNote}
               className="flex-1"
               disabled={isCreatingNote}
