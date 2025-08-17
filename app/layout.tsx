@@ -42,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${raleway.variable} antialiased`}>
-        <ClerkProvider>
+        <ClerkProvider dynamic>
           <ConvexClientProvider>
             <div className="min-h-screen bg-white flex flex-col">
               <Header />

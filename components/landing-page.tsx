@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 export function LandingPage() {
@@ -47,7 +47,7 @@ export function LandingPage() {
               {CTAButton}
             </Link>
           ) : (
-            <Link href="/signin">{CTAButton}</Link>
+            <Link href="/sign-in">{CTAButton}</Link>
           )}
 
           <img
