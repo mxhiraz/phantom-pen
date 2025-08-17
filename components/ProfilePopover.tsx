@@ -42,14 +42,6 @@ export function ProfilePopover() {
       // Show success message
     } catch (error) {
       console.error("Failed to logout:", error);
-
-      // Try alternative logout method without redirect
-      try {
-        await signOut();
-      } catch (fallbackError) {
-        console.error("Fallback logout also failed:", fallbackError);
-        toast.error("Failed to logout. Please try again.");
-      }
     } finally {
       setIsLoggingOut(false);
     }
