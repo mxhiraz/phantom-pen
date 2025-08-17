@@ -19,3 +19,17 @@ export const LoadingSection = () => {
     </div>
   );
 };
+
+export function Spinner() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[80vh]">
+      <div className=" h-20 w-32">
+        <img
+          src="https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/04-unscreen.gif"
+          alt="Loading..."
+          className="w-full h-full"
+        />
+      </div>
+    </div>
+  );
+}

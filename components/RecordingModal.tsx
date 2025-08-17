@@ -196,11 +196,13 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
 
         {isProcessing !== "idle" ? (
           <div className="flex flex-col items-center justify-center h-full gap-4 p-4">
-            <img
-              src="/loading.svg"
-              alt="Loading"
-              className="w-8 h-8 animate-spin"
-            />
+            <div className=" h-20 w-32">
+              <img
+                src="https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/04-unscreen.gif"
+                alt="Loading..."
+                className="w-full h-full"
+              />
+            </div>
             <p className="text-gray-500">
               {isProcessing === "uploading"
                 ? "Uploading audio recording"

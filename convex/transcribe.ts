@@ -124,7 +124,7 @@ export const transcribeFromStorage = action({
                 messages: [
                   {
                     role: "user",
-                    content: `Generate a short, descriptive title (max 50 characters) for this transcription. IMPORTANT: Do NOT include any commas in the title. Use spaces, dashes, or colons instead. Examples: "Productive Day Self-Help Session" or "Morning Routine - Wellness Tips" or "Work Meeting: Project Updates": "${transcription.slice(
+                    content: `Generate a short, descriptive title (max 80 characters) for this transcription. IMPORTANT: Do NOT include any commas in the title. Use spaces, dashes, or colons instead. Examples: "Productive Day Self-Help Session" or "Morning Routine - Wellness Tips" or "Work Meeting: Project Updates": "${transcription.slice(
                       0,
                       500
                     )}..."`,
