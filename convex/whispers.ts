@@ -168,37 +168,6 @@ export const createBlankNote = mutation({
   },
 });
 
-export const addAudioTrack = mutation({
-  args: {
-    whisperId: v.id("whispers"),
-    audioUrl: v.string(),
-    partialTranscription: v.string(),
-    language: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    const whisper = await ctx.db.get(args.whisperId);
-    if (!whisper) throw new Error("Whisper not found");
-
-    await ctx.db.insert("audioTracks", {
-      fileUrl: args.audioUrl,
-      partialTranscription: args.partialTranscription,
-      whisperId: args.whisperId,
-      language: args.language,
-      createdAt: Date.now(),
-    });
-
-    const updatedTranscription =
-      whisper.fullTranscription + "\n" + args.partialTranscription;
-
-    await ctx.db.patch(args.whisperId, {
-      fullTranscription: updatedTranscription,
-      ...autoUpdate({}),
-    });
-
-    return { id: args.whisperId };
-  },
-});
-
 export const updateFullTranscription = mutation({
   args: {
     id: v.id("whispers"),
@@ -257,27 +226,6 @@ export const deleteWhisper = mutation({
     if (!whisper) throw new Error("Whisper not found");
     if (whisper.userId !== identity.subject) throw new Error("Unauthorized");
 
-    // Delete all related Transformations first
-    const transformations = await ctx.db
-      .query("transformations")
-      .withIndex("by_whisper", (q) => q.eq("whisperId", args.id))
-      .collect();
-
-    for (const transformation of transformations) {
-      await ctx.db.delete(transformation._id);
-    }
-
-    // Delete all related AudioTracks
-    const audioTracks = await ctx.db
-      .query("audioTracks")
-      .withIndex("by_whisper", (q) => q.eq("whisperId", args.id))
-      .collect();
-
-    for (const audioTrack of audioTracks) {
-      await ctx.db.delete(audioTrack._id);
-    }
-
-    // Now delete the Whisper
     await ctx.db.delete(args.id);
 
     return { id: args.id };
