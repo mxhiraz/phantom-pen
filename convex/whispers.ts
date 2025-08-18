@@ -24,9 +24,9 @@ export const listWhispers = query({
     return whispers.map((w) => ({
       id: w._id,
       title: w.title,
-      content: w.fullTranscription,
       preview: stripMarkdown(w.fullTranscription),
       timestamp: w.updatedAt ?? w.createdAt,
+      createdAt: w._creationTime,
     }));
   },
 });
@@ -48,9 +48,9 @@ export const searchWhispers = query({
       return whispers.map((w) => ({
         id: w._id,
         title: w.title,
-        content: w.fullTranscription,
         preview: stripMarkdown(w.fullTranscription),
         timestamp: w.updatedAt ?? w.createdAt,
+        createdAt: w.createdAt,
       }));
     }
 
@@ -82,9 +82,9 @@ export const searchWhispers = query({
     return uniqueResults.map((w) => ({
       id: w._id,
       title: w.title,
-      content: w.fullTranscription,
       preview: stripMarkdown(w.fullTranscription),
       timestamp: w.updatedAt ?? w.createdAt,
+      createdAt: w.createdAt,
     }));
   },
 });

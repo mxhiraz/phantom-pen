@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Mic, Search } from "lucide-react";
 import { RecordingModal } from "@/components/RecordingModal";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
-import type { Transcription } from "@/app/page";
 
 import { formatNoteTimestamp } from "@/lib/utils";
 import Link from "next/link";
@@ -16,12 +15,14 @@ import { useRouter } from "next/navigation";
 import { useMutation as useConvexMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
+import { Transcription } from "@/app/whispers/page";
 
 interface DashboardProps {
   transcriptions: Transcription[];
 }
 
 export function Dashboard({ transcriptions }: DashboardProps) {
+  console.log(transcriptions);
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -181,6 +182,14 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                           {transcription.preview}
                         </p>
                         <p className="text-xs text-left text-[#99a1af] mt-auto">
+                          {/* {new Date(transcription.createdAt).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )}{" "} */}
                           {formatNoteTimestamp(transcription.timestamp)}
                         </p>
                       </Link>
@@ -212,7 +221,16 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                         <p className="text-sm text-left text-[#4a5565] mb-3 line-clamp-3">
                           {transcription.preview}
                         </p>
-                        <p className="text-xs text-left text-[#99a1af] mt-auto">
+                        <p className="text-xs flex items-center gap-1 text-left text-[#99a1af] mt-auto">
+                          {new Date(transcription.createdAt).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )}
+
                           {formatNoteTimestamp(transcription.timestamp)}
                         </p>
                       </Link>

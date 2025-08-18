@@ -11,10 +11,10 @@ import { Spinner } from "@/components/whisper-page/LoadingSection";
 export interface Transcription {
   id: string;
   title: string;
-  content: string;
   preview: string;
-  timestamp: string;
+  timestamp: number;
   duration?: string;
+  createdAt: number;
 }
 
 // Separate component for the authenticated content
@@ -49,7 +49,7 @@ function AuthenticatedContent() {
 
 export default function WhispersPage() {
   const router = useRouter();
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [authReady, setAuthReady] = useState(false);
 
