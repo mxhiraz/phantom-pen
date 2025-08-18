@@ -113,7 +113,6 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
       const result = await transcribeFromStorage({
         storageId: storageId as any,
         whisperId: whisperId as any,
-        durationSeconds: 0, // We don't know duration for uploaded files
       });
 
       if (whisperId) {
@@ -161,7 +160,6 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
       const result = await transcribeFromStorage({
         storageId: storageId as any,
         whisperId: whisperId as any,
-        durationSeconds: duration,
       });
 
       if (whisperId) {
