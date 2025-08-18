@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Edit3, Save, Trash2, Plus, Mic } from "lucide-react";
 import { RecordingModal } from "@/components/RecordingModal";
-import type { Transcription } from "@/app/page";
+import type { Transcription } from "@/app/whispers/page";
 import { useRouter } from "next/navigation";
 
 interface TranscriptionViewProps {
@@ -24,7 +24,7 @@ export function TranscriptionView({
 }: TranscriptionViewProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(transcription.title);
-  const [editedContent, setEditedContent] = useState(transcription.content);
+  const [editedContent, setEditedContent] = useState(transcription.preview);
   const [showAddModal, setShowAddModal] = useState(false);
   const router = useRouter();
 
@@ -37,15 +37,14 @@ export function TranscriptionView({
     onUpdate({
       ...transcription,
       title: editedTitle,
-      content: editedContent,
-      preview,
+      preview: editedContent,
     });
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     setEditedTitle(transcription.title);
-    setEditedContent(transcription.content);
+    setEditedContent(transcription.preview);
     setIsEditing(false);
   };
 
@@ -142,7 +141,7 @@ export function TranscriptionView({
               />
             ) : (
               <div className="text-base leading-relaxed whitespace-pre-wrap">
-                {transcription.content}
+                {transcription.preview}
               </div>
             )}
           </div>
