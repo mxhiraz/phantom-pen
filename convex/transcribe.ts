@@ -73,11 +73,11 @@ export const transcribeFromStorage = action({
       );
 
       const transcription = {
-        text: transcriptionResponse.text,
+        text: transcriptionResponse.text.trim(),
         rawTranscription: [
           {
             type: "paragraph",
-            content: transcriptionResponse.text,
+            content: transcriptionResponse.text.trim(),
           },
         ],
       };
