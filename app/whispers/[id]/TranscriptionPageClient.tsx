@@ -17,14 +17,8 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
   const whisper = useQuery(api.whispers.getWhisper, {
     id: id,
   });
-  const isLoading = whisper === undefined; // Check if query is still loading
-  const isNotFound = whisper === null; // Check if whisper was not found
-
-  const [title, setTitle] = useState(whisper?.title);
-
-  useEffect(() => {
-    setTitle(whisper?.title);
-  }, [whisper?.updatedAt]);
+  const isLoading = whisper === undefined;
+  const isNotFound = whisper === null;
 
   const editorRef = useRef<BlockNoteEditor>(null);
   const [showRecordingModal, setShowRecordingModal] = useState(false);
@@ -85,10 +79,9 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
           <div className="w-full">
             <input
               className="text-xl w-full font-semibold bg-transparent border-none outline-none flex-1"
-              value={title || ""}
+              defaultValue={whisper?.title || ""}
               onChange={(e) => {
                 const value = e.target.value;
-                setTitle(value);
                 if (titleDebounceTimeout.current) {
                   clearTimeout(titleDebounceTimeout.current);
                 }
