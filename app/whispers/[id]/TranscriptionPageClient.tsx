@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Spinner } from "@/components/whisper-page/LoadingSection";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
   const editorRef = useRef<BlockNoteEditor>(null);
   const [showRecordingModal, setShowRecordingModal] = useState(false);
 
+  const [editorRefreshKey, setEditorRefreshKey] = useState(0);
   const titleDebounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const updateTitleMutation = useMutation(api.whispers.updateTitle);
 
@@ -109,6 +110,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
       <main className="py-4 pb-10 mx-auto w-full">
         <div className="mb-6 md:max-w-[800px] mx-auto">
           <Editor
+            key={`${id}-${editorRefreshKey}`}
             initialContent={whisper?.rawTranscription || ""}
             id={id}
             editorRef={editorRef}
@@ -155,6 +157,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
         <RecordingModal
           onClose={() => {
             setShowRecordingModal(false);
+            setEditorRefreshKey((prev) => prev + 1);
           }}
           whisperId={id}
         />
