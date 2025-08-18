@@ -8,7 +8,7 @@ import { RecordingModal } from "@/components/RecordingModal";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 import type { Transcription } from "@/app/page";
 
-import { formatNoteTimestamp } from "@/lib/utils";
+import { formatNoteTimestamp, stripMarkdown } from "@/lib/utils";
 import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -183,7 +183,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                           {transcription.title}
                         </p>
                         <p className="text-sm text-left text-[#4a5565] mb-4 line-clamp-2">
-                          {transcription.preview}
+                          {stripMarkdown(transcription.preview)}
                         </p>
                         <p className="text-xs text-left text-[#99a1af] mt-auto">
                           {formatNoteTimestamp(transcription.timestamp)}
@@ -215,7 +215,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                           {transcription.title}
                         </p>
                         <p className="text-sm text-left text-[#4a5565] mb-4 line-clamp-2">
-                          {transcription.preview}
+                          {stripMarkdown(transcription.preview)}
                         </p>
                         <p className="text-xs text-left text-[#99a1af] mt-auto">
                           {formatNoteTimestamp(transcription.timestamp)}

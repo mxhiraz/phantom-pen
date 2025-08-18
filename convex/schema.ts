@@ -20,9 +20,18 @@ export default defineSchema({
     createdAt: v.number(),
     updatedAt: v.optional(v.float64()),
     fullTranscription: v.string(),
+    rawTranscription: v.optional(v.any()),
   })
     .index("by_user", ["userId"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_created_at", ["createdAt"])
+    .searchIndex("search_content", {
+      searchField: "fullTranscription",
+      filterFields: ["userId"],
+    })
+    .searchIndex("search_title", {
+      searchField: "title",
+      filterFields: ["userId"],
+    }),
 
   transformations: defineTable({
     whisperId: v.id("whispers"),

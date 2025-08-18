@@ -182,3 +182,9 @@
 .bn-font-family {
   font-family: var(--font-raleway), system-ui, sans-serif;
 }
+
+@media (max-width: 768px) {
+  .bn-editor {
+    padding-inline: calc(var(--spacing) * 3) !important;
+  }
+}

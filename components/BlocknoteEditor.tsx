@@ -1,12 +1,38 @@
 "use client";
-import "@blocknote/mantine/style.css";
-import { BlockNoteView } from "@blocknote/mantine";
-import { useCreateBlockNote } from "@blocknote/react";
-import { BlockNoteSchema, defaultBlockSpecs } from "@blocknote/core";
 
-export default function BlocknoteEditor() {
+import "@blocknote/shadcn/style.css";
+import { BlockNoteView } from "@blocknote/shadcn";
+import { useCreateBlockNote } from "@blocknote/react";
+import {
+  BlockNoteSchema,
+  defaultBlockSpecs,
+  defaultStyleSpecs,
+} from "@blocknote/core";
+import { useEffect, useRef } from "react";
+
+import { api } from "@/convex/_generated/api";
+import { useMutation } from "convex/react";
+
+export default function BlocknoteEditor({
+  initialContent,
+  id,
+  setIsSaving,
+  editorRef,
+}: {
+  initialContent: any;
+  id: string;
+  setIsSaving: (isSaving: boolean) => void;
+  editorRef: React.RefObject<any>;
+}) {
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const updateTranscriptionMutation = useMutation(
+    api.whispers.updateFullTranscription
+  );
+
   const { audio, image, table, video, file, ...remainingBlockSpecs } =
     defaultBlockSpecs;
+  defaultStyleSpecs;
   const schema = BlockNoteSchema.create({
     blockSpecs: {
       ...remainingBlockSpecs,
@@ -15,11 +41,40 @@ export default function BlocknoteEditor() {
 
   const editor = useCreateBlockNote({
     schema,
-  });
-  editor.onChange(async (editor) => {
-    const markdown = await editor.blocksToMarkdownLossy(editor.document);
-    console.log("Markdown:", markdown);
+    ...(typeof initialContent !== "string"
+      ? { initialContent: initialContent }
+      : {}),
   });
 
-  return <BlockNoteView editor={editor} theme="light" />;
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor]);
+
+  editor.onChange(async (editor) => {
+    const markdown = await editor.blocksToMarkdownLossy(editor.document);
+
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+    debounceTimeout.current = setTimeout(() => {
+      setIsSaving(true);
+      updateTranscriptionMutation({
+        id: id as any,
+        fullTranscription: markdown,
+        rawTranscription: editor.document,
+      }).finally(() => {
+        setIsSaving(false);
+      });
+    }, 300);
+  });
+
+  return (
+    <BlockNoteView
+      shadCNComponents={{}}
+      className="md:max-w-[800px]"
+      editor={editor}
+      theme="light"
+      sideMenu={false}
+    />
+  );
 }

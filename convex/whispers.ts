@@ -19,7 +19,6 @@ export const listWhispers = query({
       .order("desc")
       .collect();
 
-    console.log("whispers", whispers);
     return whispers.map((w) => ({
       id: w._id,
       title: w.title,
@@ -28,7 +27,7 @@ export const listWhispers = query({
         w.fullTranscription.length > 80
           ? w.fullTranscription.slice(0, 80) + "..."
           : w.fullTranscription,
-      timestamp: new Date(w.createdAt).toISOString(),
+      timestamp: w.updatedAt ?? w.createdAt,
     }));
   },
 });
@@ -55,24 +54,36 @@ export const searchWhispers = query({
           w.fullTranscription.length > 80
             ? w.fullTranscription.slice(0, 80) + "..."
             : w.fullTranscription,
-        timestamp: new Date(w.createdAt).toISOString(),
+        timestamp: w.updatedAt ?? w.createdAt,
       }));
     }
 
-    // Search in title and content
-    const allWhispers = await ctx.db
+    // Use search indexes for server-side search
+    const searchResults = await ctx.db
       .query("whispers")
-      .withIndex("by_user", (q) => q.eq("userId", identity.subject))
+      .withSearchIndex("search_content", (q) =>
+        q
+          .search("fullTranscription", args.searchQuery)
+          .eq("userId", identity.subject)
+      )
       .collect();
 
-    const searchLower = args.searchQuery.toLowerCase();
-    const filteredWhispers = allWhispers.filter(
-      (w) =>
-        w.title.toLowerCase().includes(searchLower) ||
-        w.fullTranscription.toLowerCase().includes(searchLower)
+    // Also search in titles
+    const titleSearchResults = await ctx.db
+      .query("whispers")
+      .withSearchIndex("search_title", (q) =>
+        q.search("title", args.searchQuery).eq("userId", identity.subject)
+      )
+      .collect();
+
+    // Combine and deduplicate results
+    const allResults = [...searchResults, ...titleSearchResults];
+    const uniqueResults = allResults.filter(
+      (whisper, index, self) =>
+        index === self.findIndex((w) => w._id === whisper._id)
     );
 
-    return filteredWhispers.map((w) => ({
+    return uniqueResults.map((w) => ({
       id: w._id,
       title: w.title,
       content: w.fullTranscription,
@@ -80,34 +91,44 @@ export const searchWhispers = query({
         w.fullTranscription.length > 80
           ? w.fullTranscription.slice(0, 80) + "..."
           : w.fullTranscription,
-      timestamp: new Date(w.createdAt).toISOString(),
+      timestamp: w.updatedAt ?? w.createdAt,
     }));
   },
 });
 
-export const getWhisperWithTracks = query({
-  args: { id: v.id("whispers") },
+export const getWhisper = query({
+  args: { id: v.string() },
   handler: async (ctx, args) => {
-    const whisper = await ctx.db.get(args.id);
-    if (!whisper) throw new Error("Whisper not found");
+    console.log(`[getWhisper] Starting query for whisper ID: ${args.id}`);
 
-    const audioTracks = await ctx.db
-      .query("audioTracks")
-      .withIndex("by_whisper", (q) => q.eq("whisperId", args.id))
-      .order("asc")
-      .collect();
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      console.log(
+        `[getWhisper] Authentication failed for whisper ID: ${args.id}`
+      );
+      throw new Error("Not authenticated");
+    }
 
-    const transformations = await ctx.db
-      .query("transformations")
-      .withIndex("by_whisper", (q) => q.eq("whisperId", args.id))
-      .order("asc")
-      .collect();
+    console.log(`[getWhisper] User authenticated: ${identity.subject}`);
 
-    return {
-      ...whisper,
-      audioTracks,
-      transformations,
-    };
+    const whisper = await ctx.db
+      .query("whispers")
+      .withIndex("by_id", (q) => q.eq("_id", args.id as any))
+      .first();
+
+    if (!whisper) {
+      console.log(`[getWhisper] Whisper not found for ID: ${args.id}`);
+      return null;
+    }
+
+    if (whisper.userId !== identity.subject) {
+      console.log(
+        `[getWhisper] Unauthorized access attempt - User: ${identity.subject}, Whisper owner: ${whisper.userId}`
+      );
+      throw new Error("Unauthorized");
+    }
+
+    return whisper;
   },
 });
 
@@ -115,8 +136,7 @@ export const createWhisper = mutation({
   args: {
     title: v.string(),
     fullTranscription: v.string(),
-    audioUrl: v.string(),
-    language: v.optional(v.string()),
+    rawTranscription: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -128,14 +148,7 @@ export const createWhisper = mutation({
       createdAt: Date.now(),
       ...autoUpdate({}),
       fullTranscription: args.fullTranscription,
-    });
-
-    await ctx.db.insert("audioTracks", {
-      fileUrl: args.audioUrl,
-      partialTranscription: args.fullTranscription,
-      whisperId,
-      language: args.language,
-      createdAt: Date.now(),
+      rawTranscription: args.rawTranscription,
     });
 
     return { id: whisperId };
@@ -197,6 +210,7 @@ export const updateFullTranscription = mutation({
   args: {
     id: v.id("whispers"),
     fullTranscription: v.string(),
+    rawTranscription: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -208,6 +222,7 @@ export const updateFullTranscription = mutation({
 
     await ctx.db.patch(args.id, {
       fullTranscription: args.fullTranscription,
+      rawTranscription: args.rawTranscription,
       ...autoUpdate({}),
     });
 

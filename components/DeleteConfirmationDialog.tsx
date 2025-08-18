@@ -30,8 +30,8 @@ export function DeleteConfirmationDialog({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]" showCloseButton={false}>
-        <DialogHeader className="!p-0">
-          <div className="flex items-center gap-3 mb-2 !px-0">
+        <DialogHeader className="!p-0 text-start">
+          <div className="flex  gap-3 mb-2 !px-0">
             <DialogTitle className="text-lg font-semibold text-gray-900">
               {title}
             </DialogTitle>

@@ -169,6 +169,7 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
         router.push(`/whispers/${result.id}`);
       }
     } catch (err) {
+      console.log("err", err);
       toast.error("Failed to transcribe audio. Please try again.");
       setIsProcessing("idle");
     }
@@ -183,7 +184,7 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
   }, [pendingSave, audioBlob]);
 
   return (
-    <Dialog open onOpenChange={onClose}>
+    <Dialog open={true} onOpenChange={onClose}>
       <DialogContent
         showCloseButton={false}
         className="!max-w-[352px] !p-0 border border-gray-200 rounded-tl-xl rounded-tr-xl  overflow-hidden gap-0"
@@ -311,7 +312,7 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
                   variant="outline"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full h-10 border-dashed border-2 border-gray-300 hover:border-gray-400 bg-gray-50 hover:bg-gray-100"
+                  className=" h-10  w-[300px] border-dashed border-2 border-gray-300 hover:border-gray-400 bg-gray-50 hover:bg-gray-100"
                 >
                   <img src="/upload.svg" className="w-4 h-4 mr-2" />
                   Choose Audio File

@@ -58,7 +58,25 @@ export const MAIN_LANGUAGES = [
  * @param timestamp ISO string or Date
  * @returns formatted string
  */
-export function formatNoteTimestamp(timestamp: string | Date): string {
+export function formatNoteTimestamp(timestamp: string | Date | number): string {
+  if (typeof timestamp === "number") {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInMinutes = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60)
+    );
+
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60)
+      return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
+    if (diffInMinutes < 1440)
+      return `${Math.floor(diffInMinutes / 60)} hour${
+        Math.floor(diffInMinutes / 60) > 1 ? "s" : ""
+      } ago`;
+    return `${Math.floor(diffInMinutes / 1440)} day${
+      Math.floor(diffInMinutes / 1440) > 1 ? "s" : ""
+    } ago`;
+  }
   let date: Date;
   if (typeof timestamp === "string") {
     date = parseISO(timestamp);
@@ -112,3 +130,40 @@ export const RECORDING_TYPES: {
   //   value: "custom-prompt",
   // },
 ];
+
+/**
+ * Strips markdown formatting from text
+ * @param markdown - The markdown text to strip
+ * @returns Plain text without markdown formatting
+ */
+export function stripMarkdown(markdown: string): string {
+  if (!markdown) return "";
+
+  return (
+    markdown
+      // Remove headers
+      .replace(/^#{1,6}\s+/gm, "")
+      // Remove bold/italic
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/\*(.*?)\*/g, "$1")
+      .replace(/__(.*?)__/g, "$1")
+      .replace(/_(.*?)_/g, "$1")
+      // Remove code blocks
+      .replace(/```[\s\S]*?```/g, "")
+      .replace(/`([^`]+)`/g, "$1")
+      // Remove links but keep text
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      // Remove images
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+      // Remove blockquotes
+      .replace(/^>\s+/gm, "")
+      // Remove lists
+      .replace(/^[\s]*[-*+]\s+/gm, "")
+      .replace(/^[\s]*\d+\.\s+/gm, "")
+      // Remove horizontal rules
+      .replace(/^[\s]*[-*_]{3,}[\s]*$/gm, "")
+      // Clean up extra whitespace
+      .replace(/\n\s*\n/g, "\n")
+      .trim()
+  );
+}
