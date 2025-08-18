@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-
+import { stripMarkdown } from "../lib/utils";
 const autoUpdate = (data: any) => ({
   ...data,
   updatedAt: Date.now(),
@@ -25,10 +25,7 @@ export const listWhispers = query({
       id: w._id,
       title: w.title,
       content: w.fullTranscription,
-      preview:
-        w.fullTranscription.length > 80
-          ? w.fullTranscription.slice(0, 80) + "..."
-          : w.fullTranscription,
+      preview: stripMarkdown(w.fullTranscription),
       timestamp: w.updatedAt ?? w.createdAt,
     }));
   },
@@ -52,10 +49,7 @@ export const searchWhispers = query({
         id: w._id,
         title: w.title,
         content: w.fullTranscription,
-        preview:
-          w.fullTranscription.length > 80
-            ? w.fullTranscription.slice(0, 80) + "..."
-            : w.fullTranscription,
+        preview: stripMarkdown(w.fullTranscription),
         timestamp: w.updatedAt ?? w.createdAt,
       }));
     }
@@ -89,10 +83,7 @@ export const searchWhispers = query({
       id: w._id,
       title: w.title,
       content: w.fullTranscription,
-      preview:
-        w.fullTranscription.length > 80
-          ? w.fullTranscription.slice(0, 80) + "..."
-          : w.fullTranscription,
+      preview: stripMarkdown(w.fullTranscription),
       timestamp: w.updatedAt ?? w.createdAt,
     }));
   },

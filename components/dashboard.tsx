@@ -8,7 +8,7 @@ import { RecordingModal } from "@/components/RecordingModal";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 import type { Transcription } from "@/app/page";
 
-import { formatNoteTimestamp, stripMarkdown } from "@/lib/utils";
+import { formatNoteTimestamp } from "@/lib/utils";
 import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -101,11 +101,6 @@ export function Dashboard({ transcriptions }: DashboardProps) {
       router.push(`/whispers/${result.id}`);
     } catch (error) {
       console.error("Failed to create note:", error);
-      // If Convex fails, create a note with random ID and redirect
-      const randomId = `note-${Date.now()}-${Math.random()
-        .toString(36)
-        .substr(2, 9)}`;
-      router.push(`/whispers/${randomId}`);
     } finally {
       setIsCreatingNote(false);
     }
@@ -176,14 +171,14 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                       <Link
                         prefetch
                         href={`/whispers/${transcription.id}`}
-                        className="self-stretch flex-grow-0 flex-shrink-0 h-[121px] overflow-hidden group border-t-0 border-r-0 border-b-[0.7px] border-l-0 border-gray-200 md:border-[0.7px] md:border-transparent md:rounded-xl focus-within:bg-gray-50 focus-within:border-[#d1d5dc] hover:bg-gray-50 hover:border-[#d1d5dc] transition-all flex flex-col justify-between px-6 py-4 pr-14"
+                        className="self-stretch flex-grow-0 flex-shrink-0 h-[150px] overflow-hidden group border-t-0 border-r-0 border-b-[0.7px] border-l-0 border-gray-200 md:border-[0.7px] md:border-transparent md:rounded-xl focus-within:bg-gray-50 focus-within:border-[#d1d5dc] hover:bg-gray-50 hover:border-[#d1d5dc] transition-all flex flex-col justify-between px-6 py-4 pr-14"
                         tabIndex={0}
                       >
                         <p className="text-base font-medium text-left text-[#101828] mb-2">
                           {transcription.title}
                         </p>
-                        <p className="text-sm text-left text-[#4a5565] mb-4 line-clamp-2">
-                          {stripMarkdown(transcription.preview)}
+                        <p className="text-sm text-left text-[#4a5565]  line-clamp-3">
+                          {transcription.preview}
                         </p>
                         <p className="text-xs text-left text-[#99a1af] mt-auto">
                           {formatNoteTimestamp(transcription.timestamp)}
@@ -208,14 +203,14 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                     <div key={transcription.id} className="relative w-full">
                       <Link
                         href={`/whispers/${transcription.id}`}
-                        className="self-stretch flex-grow-0 flex-shrink-0 h-[121px] overflow-hidden group border-t-0 border-r-0 border-b-[0.7px] border-l-0 border-gray-200 md:border-[0.7px] md:border-transparent md:rounded-xl focus-within:bg-gray-50 focus-within:border-[#d1d5dc] hover:bg-gray-50 hover:border-[#d1d5dc] transition-all flex flex-col justify-between px-6 py-4 pr-14"
+                        className="self-stretch flex-grow-0 flex-shrink-0 h-[150px] overflow-hidden group border-t-0 border-r-0 border-b-[0.7px] border-l-0 border-gray-200 md:border-[0.7px] md:border-transparent md:rounded-xl focus-within:bg-gray-50 focus-within:border-[#d1d5dc] hover:bg-gray-50 hover:border-[#d1d5dc] transition-all flex flex-col justify-between px-6 py-4 pr-14"
                         tabIndex={0}
                       >
                         <p className="text-base font-medium text-left text-[#101828] mb-2">
                           {transcription.title}
                         </p>
-                        <p className="text-sm text-left text-[#4a5565] mb-4 line-clamp-2">
-                          {stripMarkdown(transcription.preview)}
+                        <p className="text-sm text-left text-[#4a5565]  line-clamp-3">
+                          {transcription.preview}
                         </p>
                         <p className="text-xs text-left text-[#99a1af] mt-auto">
                           {formatNoteTimestamp(transcription.timestamp)}
