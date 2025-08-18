@@ -16,12 +16,10 @@ import { useMutation } from "convex/react";
 export default function BlocknoteEditor({
   initialContent,
   id,
-  setIsSaving,
   editorRef,
 }: {
   initialContent: any;
   id: string;
-  setIsSaving: (isSaving: boolean) => void;
   editorRef: React.RefObject<any>;
 }) {
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -57,13 +55,12 @@ export default function BlocknoteEditor({
       clearTimeout(debounceTimeout.current);
     }
     debounceTimeout.current = setTimeout(() => {
-      setIsSaving(true);
       updateTranscriptionMutation({
         id: id as any,
         fullTranscription: markdown,
         rawTranscription: editor.document,
-      }).finally(() => {
-        setIsSaving(false);
+      }).catch((e) => {
+        console.error(e);
       });
     }, 300);
   });

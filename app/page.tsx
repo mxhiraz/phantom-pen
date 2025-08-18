@@ -7,7 +7,7 @@ export interface Transcription {
   title: string;
   content: string;
   preview: string;
-  timestamp: string;
+  timestamp: number;
   duration?: string;
 }
 

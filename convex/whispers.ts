@@ -7,8 +7,10 @@ const autoUpdate = (data: any) => ({
 });
 
 export const listWhispers = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
 
@@ -17,7 +19,7 @@ export const listWhispers = query({
       .query("whispers")
       .withIndex("by_user", (q) => q.eq("userId", identity.subject))
       .order("desc")
-      .collect();
+      .take(args.limit ?? 100);
 
     return whispers.map((w) => ({
       id: w._id,

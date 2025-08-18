@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { RecordingModal } from "../../../components/RecordingModal";
 import { Editor } from "@/components/DynamicEditor";
 import { BlockNoteEditor } from "@blocknote/core";
+import { stripMarkdown } from "@/lib/utils";
 
 export default function TranscriptionPageClient({ id }: { id: string }) {
   const router = useRouter();
@@ -19,18 +20,16 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
   const isLoading = whisper === undefined; // Check if query is still loading
   const isNotFound = whisper === null; // Check if whisper was not found
 
-  const [whipserData, setWhipserData] = useState(whisper);
+  const [title, setTitle] = useState(whisper?.title);
 
   useEffect(() => {
-    setWhipserData(whisper);
-  }, [whisper]);
+    setTitle(whisper?.title);
+  }, [whisper?.updatedAt]);
 
   const editorRef = useRef<BlockNoteEditor>(null);
   const [showRecordingModal, setShowRecordingModal] = useState(false);
-  const [isSavingTitle, setIsSavingTitle] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+
   const titleDebounceTimeout = useRef<NodeJS.Timeout | null>(null);
-  const titleAbortController = useRef<AbortController | null>(null);
   const updateTitleMutation = useMutation(api.whispers.updateTitle);
 
   const formatLastUpdated = (timestamp: number) => {
@@ -86,45 +85,31 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
           <div className="w-full">
             <input
               className="text-xl w-full font-semibold bg-transparent border-none outline-none flex-1"
-              value={whipserData?.title || ""}
+              value={title || ""}
               onChange={(e) => {
                 const value = e.target.value;
-                setWhipserData({ ...whipserData, title: value } as any);
+                setTitle(value);
                 if (titleDebounceTimeout.current) {
                   clearTimeout(titleDebounceTimeout.current);
                 }
-                // Cancel previous request if any
-                if (titleAbortController.current) {
-                  titleAbortController.current.abort();
-                }
-                titleAbortController.current = new AbortController();
+
                 titleDebounceTimeout.current = setTimeout(() => {
-                  setIsSavingTitle(true);
-                  updateTitleMutation({ id: id as any, title: value })
-                    .then(() => {
-                      setIsSavingTitle(false);
-                    })
-                    .catch(() => {
-                      toast.error("Failed to save title");
-                      setIsSavingTitle(false);
-                    });
-                }, 1000); // 1 second debounce
+                  updateTitleMutation({ id: id as any, title: value }).catch(
+                    (e) => {
+                      console.error(e);
+                    }
+                  );
+                }, 300);
               }}
               placeholder="Untitled Note"
             />
-            {whipserData?.updatedAt && (
+            {whisper?.updatedAt && (
               <p className="text-xs text-gray-500">
-                Last updated {formatLastUpdated(whipserData.updatedAt)}
+                Last updated {formatLastUpdated(whisper.updatedAt)}
               </p>
             )}
           </div>
-          <div className="flex items-start justify-between">
-            {(isSavingTitle || isSaving) && (
-              <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                <div className="size-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            )}
-          </div>
+          <div className="flex items-start justify-between"></div>
         </div>
       </header>
 
@@ -133,7 +118,6 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
           <Editor
             initialContent={whisper?.rawTranscription || ""}
             id={id}
-            setIsSaving={setIsSaving}
             editorRef={editorRef}
           />
         </div>
@@ -153,7 +137,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
             size="sm"
             onClick={async () => {
               await navigator.clipboard.writeText(
-                String(whipserData?.fullTranscription || "")
+                stripMarkdown(whisper?.fullTranscription || "")
               );
               toast.success("Copied to clipboard!");
             }}

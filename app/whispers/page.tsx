@@ -19,7 +19,7 @@ export interface Transcription {
 
 // Separate component for the authenticated content
 function AuthenticatedContent() {
-  const transcriptions = useQuery(api.whispers.listWhispers);
+  const transcriptions = useQuery(api.whispers.listWhispers, {});
 
   if (transcriptions === undefined) {
     return <Spinner />;
