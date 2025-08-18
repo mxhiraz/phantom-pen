@@ -12,6 +12,7 @@ import { useEffect, useRef } from "react";
 
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
+import { LoadingSection } from "./whisper-page/LoadingSection";
 
 export default function BlocknoteEditor({
   initialContent,
@@ -64,7 +65,7 @@ export default function BlocknoteEditor({
       });
     }, 300);
   });
-
+  if (!editor) return <LoadingSection />;
   return (
     <BlockNoteView
       shadCNComponents={{}}
