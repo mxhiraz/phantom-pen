@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: true,
   },
+  images: {
+   
+  },
 };
 
 export default nextConfig;

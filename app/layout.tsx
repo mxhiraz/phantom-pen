@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Raleway } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/Header";
+
 import { Toaster } from "@/components/ui/sonner";
-import { Footer } from "@/components/Footer";
+
 
 import { ConvexClientProvider } from "@/lib/convex";
 
@@ -45,10 +45,10 @@ export default function RootLayout({
         <ClerkProvider dynamic>
           <ConvexClientProvider>
             <div className="min-h-screen bg-white flex flex-col">
-              <Header />
+              
               {children}
               <Toaster position="top-center" />
-              <Footer />
+
             </div>
           </ConvexClientProvider>
         </ClerkProvider>

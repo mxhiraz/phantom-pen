@@ -188,3 +188,25 @@
     padding-inline: calc(var(--spacing) * 3) !important;
   }
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+@keyframes blob {
+  0% {
+    border-radius: 50% 40% 60% 50% / 50% 60% 40% 50%;
+  }
+  50% {
+    border-radius: 60% 50% 40% 70% / 50% 40% 60% 50%;
+  }
+  100% {
+    border-radius: 50% 40% 60% 50% / 50% 60% 40% 50%;
+  }
+}
