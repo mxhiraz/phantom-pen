@@ -5,7 +5,6 @@ import "./globals.css";
 
 import { Toaster } from "@/components/ui/sonner";
 
-
 import { ConvexClientProvider } from "@/lib/convex";
 
 const raleway = Raleway({
@@ -18,7 +17,13 @@ export const metadata: Metadata = {
   description: "Capture your thoughts by voice with Phantom Pen.",
   openGraph: {
     images:
-      "https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/WhatsApp_Image_2025-08-15_at_01.46.49.jpeg",
+      "https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/Screenshot_2025-08-19_at_3.41.57%E2%80%AFAM.png",
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [
+      "https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/Screenshot_2025-08-19_at_3.41.57%E2%80%AFAM.png",
+    ],
   },
   manifest: "/site.webmanifest",
   icons: {
@@ -45,10 +50,8 @@ export default function RootLayout({
         <ClerkProvider dynamic>
           <ConvexClientProvider>
             <div className="min-h-screen bg-white flex flex-col">
-              
               {children}
               <Toaster position="top-center" />
-
             </div>
           </ConvexClientProvider>
         </ClerkProvider>
