@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     removeConsole: true,
   },
   images: {
-   
+    unoptimized: true,
   },
 };
 

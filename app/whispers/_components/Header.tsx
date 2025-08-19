@@ -6,6 +6,7 @@ import { Button } from "@/components//ui/button";
 import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { ProfilePopover } from "@/components/ProfilePopover";
+import { Logo } from "@/components/logo";
 
 export function Header() {
   const pathname = usePathname();
@@ -44,16 +45,7 @@ export function Header() {
           <span className="text-base font-medium text-[#4A5565]">My Notes</span>
         </Link>
       ) : (
-        <Link
-          href={user?.id ? "/whispers/" : "/"}
-          className="flex items-center gap-2"
-        >
-          <img
-            src="https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/WhatsApp_Image_2025-08-15_at_01.46.49.jpeg"
-            className="min-w-5 min-h-5 size-9 mix-blend-multiply"
-          />
-          <span className="-ml-2 font-bold italic text-lg">Phantom Pen</span>
-        </Link>
+        <Logo />
       )}
       <div className="flex items-center gap-2">
         <SignedOut>
