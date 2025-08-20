@@ -63,36 +63,11 @@ export default function LoginPage() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get("mode");
-    const error = urlParams.get("error");
 
     if (mode === "signup") {
       setIsSignUpMode(true);
     } else if (mode === "signin") {
       setIsSignUpMode(false);
-    }
-
-    // Handle error messages from URL parameters
-    if (error) {
-      switch (error) {
-        case "account_not_found":
-          setError("Account not found. Please sign up instead.");
-
-          break;
-        case "account_already_exists":
-          setError("Account already exists. Please sign in instead.");
-
-          break;
-        case "true":
-          setError("Authentication failed. Please try again.");
-          break;
-        default:
-          setError("An error occurred. Please try again.");
-      }
-
-      // Clear the error from URL
-      const url = new URL(window.location.href);
-      url.searchParams.delete("error");
-      window.history.replaceState({}, "", url.toString());
     }
   }, []);
 
