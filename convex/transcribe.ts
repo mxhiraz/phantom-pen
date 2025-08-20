@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { action, mutation } from "./_generated/server";
+import { action } from "./_generated/server";
 import { api } from "./_generated/api";
 import { Groq } from "groq-sdk";
 
@@ -166,6 +166,8 @@ export const transcribeFromStorage = action({
 `,
               },
             ],
+            temperature: 0,
+            max_completion_tokens: 50,
             model: "openai/gpt-oss-120b",
             response_format: {
               type: "json_object",
@@ -236,30 +238,5 @@ export const transcribeFromStorage = action({
 
       throw new Error("Failed to transcribe audio");
     }
-  },
-});
-
-export const updateTranscription = mutation({
-  args: {
-    whisperId: v.id("whispers"),
-    transcription: v.string(),
-    title: v.string(),
-  },
-  handler: async (ctx, args) => {
-    console.log(
-      `[UPDATE] Updating transcription for whisper: ${args.whisperId}`
-    );
-    console.log(`[UPDATE] New title: "${args.title}"`);
-    console.log(
-      `[UPDATE] New transcription length: ${args.transcription.length} characters`
-    );
-
-    await ctx.db.patch(args.whisperId, {
-      fullTranscription: args.transcription.trim(),
-      title: args.title,
-    });
-
-    console.log(`[UPDATE] Whisper updated successfully: ${args.whisperId}`);
-    return { success: true };
   },
 });
