@@ -53,8 +53,16 @@ export default function LoginPage() {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { signIn, isLoaded: isSignInLoaded } = useSignIn();
-  const { signUp, isLoaded: isSignUpLoaded } = useSignUp();
+  const {
+    signIn,
+    isLoaded: isSignInLoaded,
+    setActive: setActiveSignIn,
+  } = useSignIn();
+  const {
+    signUp,
+    isLoaded: isSignUpLoaded,
+    setActive: setActiveSignUp,
+  } = useSignUp();
   const { isSignedIn } = useUser();
   const isLoaded = isSignInLoaded && isSignUpLoaded;
   const router = useRouter();
@@ -177,7 +185,8 @@ export default function LoginPage() {
             code: otp,
           });
           if (result.status === "complete") {
-            window.location.href = "/whispers";
+            await setActiveSignUp({ session: result.createdSessionId });
+            router.push("/whispers");
           }
         } else {
           // Verify OTP for sign in
@@ -186,7 +195,8 @@ export default function LoginPage() {
             code: otp,
           });
           if (result.status === "complete") {
-            window.location.href = "/whispers";
+            await setActiveSignIn({ session: result.createdSessionId });
+            router.push("/whispers");
           }
         }
       } catch (error: any) {
