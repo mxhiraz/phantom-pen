@@ -76,11 +76,11 @@ export default function LoginPage() {
       switch (error) {
         case "account_not_found":
           setError("Account not found. Please sign up instead.");
-          setIsSignUpMode(true); // Switch to sign-up mode
+
           break;
         case "account_already_exists":
           setError("Account already exists. Please sign in instead.");
-          setIsSignUpMode(false); // Switch to sign-in mode
+
           break;
         case "true":
           setError("Authentication failed. Please try again.");
