@@ -90,8 +90,8 @@ export default function LoginPage() {
     try {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/auth",
-        redirectUrlComplete: "/auth",
+        redirectUrl: "/whispers",
+        redirectUrlComplete: "/whispers",
       });
     } catch (error: any) {
       console.error("Google sign in error:", error);
@@ -111,8 +111,8 @@ export default function LoginPage() {
     try {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/auth",
-        redirectUrlComplete: "/auth",
+        redirectUrl: "/whispers",
+        redirectUrlComplete: "/whispers",
       });
     } catch (error: any) {
       console.error("Google sign up error:", error);
