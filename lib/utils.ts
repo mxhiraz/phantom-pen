@@ -7,49 +7,13 @@ import {
   parseISO,
   isValid,
 } from "date-fns";
+import Groq from "groq-sdk";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const MAIN_LANGUAGES = [
-  {
-    value: "en",
-    name: "English",
-  },
-  {
-    value: "fr",
-    name: "French",
-  },
-  {
-    value: "es",
-    name: "Spanish",
-  },
-  {
-    value: "de",
-    name: "German",
-  },
-  {
-    value: "it",
-    name: "Italian",
-  },
-  {
-    value: "pt",
-    name: "Portuguese",
-  },
-  {
-    value: "ja",
-    name: "Japanese",
-  },
-  {
-    value: "ko",
-    name: "Korean",
-  },
-  {
-    value: "zh",
-    name: "Chinese",
-  },
-];
+export const groq = new Groq();
 
 /**
  * Formats a timestamp string according to the following rules:

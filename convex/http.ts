@@ -1,10 +1,8 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 
-// HTTP router for all API endpoints
-export const http = httpRouter();
+const http = httpRouter();
 
-// Health check endpoint
 http.route({
   path: "/health",
   method: "GET",
@@ -19,5 +17,4 @@ http.route({
   }),
 });
 
-// Default export
 export default http;
