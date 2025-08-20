@@ -129,9 +129,14 @@ export function Dashboard({ transcriptions }: DashboardProps) {
       <div className="flex-1 h-full mx-auto w-full">
         <div className="mb-8">
           <div className="mx-auto max-w-[729px] w-full md:rounded-xl px-6 py-5 flex flex-col gap-3 md:my-4 ">
-            <h1 className="text-xl font-semibold text-left text-[#101828]">
-              Your Notes
-            </h1>
+            <div className="flex justify-between items-center">
+              <h1 className="text-xl font-semibold text-left text-[#101828]">
+                Your Notes
+              </h1>
+              <Button variant="outline" size="sm">
+                Memor
+              </Button>
+            </div>
 
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
