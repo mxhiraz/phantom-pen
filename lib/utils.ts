@@ -7,13 +7,10 @@ import {
   parseISO,
   isValid,
 } from "date-fns";
-import Groq from "groq-sdk";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-export const groq = new Groq();
 
 /**
  * Formats a timestamp string according to the following rules:

@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { action } from "./_generated/server";
 import { api } from "./_generated/api";
-import { groq } from "../lib/utils";
+import { groq } from "../lib/llm";
 
 export const transcribeFromStorage = action({
   args: {
