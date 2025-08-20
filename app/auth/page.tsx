@@ -116,7 +116,7 @@ export default function LoginPage() {
     try {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/auth?error=account_not_found",
+        redirectUrl: "/auth/sso-callback",
         redirectUrlComplete: "/auth",
       });
     } catch (error: any) {
@@ -137,7 +137,7 @@ export default function LoginPage() {
     try {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/auth?error=account_already_exists",
+        redirectUrl: "/auth/sso-callback",
         redirectUrlComplete: "/auth",
       });
     } catch (error: any) {
