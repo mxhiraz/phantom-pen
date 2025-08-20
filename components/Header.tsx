@@ -36,12 +36,12 @@ export default function HeroHeader() {
             <div className="flex items-center gap-3">
               <SignedOut>
                 <Button asChild variant="outline" size="sm">
-                  <Link href="/sign-in">
+                  <Link href="/auth?mode=signin">
                     <span>Login</span>
                   </Link>
                 </Button>
                 <Button asChild size="sm">
-                  <Link href="/sign-in">
+                  <Link href="/auth?mode=signup">
                     <span>Sign Up</span>
                   </Link>
                 </Button>

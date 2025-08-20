@@ -17,7 +17,7 @@ export function Header() {
     setMounted(true);
   }, []);
 
-  const isSignInPage = pathname.startsWith("/sign-in");
+  const isSignInPage = pathname.startsWith("/auth");
 
   // /whispers/1234567890
   const isSingleWhisperPage =
@@ -49,12 +49,12 @@ export function Header() {
       )}
       <div className="flex items-center gap-2">
         <SignedOut>
-          <Link href="/sign-in">
+          <Link href="/auth?mode=signin">
             <Button variant="ghost" size="sm">
               Login
             </Button>
           </Link>
-          <Link href="/sign-in">
+          <Link href="/auth?mode=signup">
             <Button size="sm" className="font-medium">
               Sign up
             </Button>

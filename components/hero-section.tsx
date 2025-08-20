@@ -143,7 +143,9 @@ export default function HeroSection() {
                       size="lg"
                       className="rounded-xl px-5 text-base"
                     >
-                      <Link href={isSignedIn ? "/whispers" : "/sign-in"}>
+                      <Link
+                        href={isSignedIn ? "/whispers" : "/auth?mode=signin"}
+                      >
                         <span className="text-nowrap">Make Memories</span>
                       </Link>
                     </Button>

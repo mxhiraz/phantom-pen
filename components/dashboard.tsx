@@ -153,7 +153,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
           {filteredTranscriptions.length === 0 && searchQuery === "" ? (
             <div className="text-center py-16 flex flex-col items-center">
               <h2 className="text-xl font-medium text-left text-black mb-2">
-                Welcome, note-taker!
+                Welcome, Phantom Pen!
               </h2>
               <p className="max-w-[264px] text-base text-center text-[#364153] mb-8">
                 Start by creating a new Note or
