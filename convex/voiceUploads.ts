@@ -4,6 +4,7 @@ import { mutation, query } from "./_generated/server";
 export const createVoiceUpload = mutation({
   args: {
     fileUrl: v.string(),
+    whisperId: v.id("whispers"),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -11,27 +12,22 @@ export const createVoiceUpload = mutation({
 
     const voiceUploadId = await ctx.db.insert("voiceUploads", {
       userId: identity.subject,
-      status: "pending",
+      status: "completed",
       fileUrl: args.fileUrl,
       createdAt: Date.now(),
+      whisperId: args.whisperId,
     });
     return voiceUploadId;
   },
 });
 
-export const updateVoiceUploadStatus = mutation({
+export const updateVoiceUploadFailed = mutation({
   args: {
     id: v.id("voiceUploads"),
-    status: v.union(
-      v.literal("pending"),
-      v.literal("processing"),
-      v.literal("completed"),
-      v.literal("failed")
-    ),
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
-      status: args.status,
+      status: "failed",
       updatedAt: Date.now(),
     });
   },
@@ -39,14 +35,7 @@ export const updateVoiceUploadStatus = mutation({
 
 export const getVoiceUploads = query({
   args: {
-    status: v.optional(
-      v.union(
-        v.literal("pending"),
-        v.literal("processing"),
-        v.literal("completed"),
-        v.literal("failed")
-      )
-    ),
+    status: v.optional(v.union(v.literal("completed"), v.literal("failed"))),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();

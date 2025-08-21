@@ -19,6 +19,8 @@ export const transcribeFromStorage = action({
     }
     const userId = identity.subject;
 
+    let voiceUploadId = null;
+
     const fileUrl = await ctx.storage.getUrl(args.storageId);
     if (!fileUrl) {
       console.error(
@@ -26,20 +28,6 @@ export const transcribeFromStorage = action({
       );
       throw new Error("Failed to get file URL from storage");
     }
-
-    // Create voice upload record
-    const voiceUploadId = await ctx.runMutation(
-      api.voiceUploads.createVoiceUpload,
-      {
-        fileUrl,
-      }
-    );
-
-    // Update status to processing
-    await ctx.runMutation(api.voiceUploads.updateVoiceUploadStatus, {
-      id: voiceUploadId,
-      status: "processing",
-    });
 
     try {
       const apiKey = process.env.GROQ_API_KEY;
@@ -149,11 +137,13 @@ export const transcribeFromStorage = action({
           rawTranscription: updatedRawTranscription,
         });
 
-        // Update voice upload status to completed
-        await ctx.runMutation(api.voiceUploads.updateVoiceUploadStatus, {
-          id: voiceUploadId,
-          status: "completed",
-        });
+        voiceUploadId = await ctx.runMutation(
+          api.voiceUploads.createVoiceUpload,
+          {
+            fileUrl,
+            whisperId: args.whisperId,
+          }
+        );
 
         return { id: args.whisperId, storageId: args.storageId, voiceUploadId };
       } else {
@@ -212,11 +202,13 @@ export const transcribeFromStorage = action({
           }
         );
 
-        // Update voice upload status to completed
-        await ctx.runMutation(api.voiceUploads.updateVoiceUploadStatus, {
-          id: voiceUploadId,
-          status: "completed",
-        });
+        voiceUploadId = await ctx.runMutation(
+          api.voiceUploads.createVoiceUpload,
+          {
+            fileUrl,
+            whisperId: whisperResult.id,
+          }
+        );
 
         return {
           id: whisperResult.id,
@@ -231,10 +223,11 @@ export const transcribeFromStorage = action({
       );
 
       // Update voice upload status to failed
-      await ctx.runMutation(api.voiceUploads.updateVoiceUploadStatus, {
-        id: voiceUploadId,
-        status: "failed",
-      });
+      if (voiceUploadId) {
+        await ctx.runMutation(api.voiceUploads.updateVoiceUploadFailed, {
+          id: voiceUploadId,
+        });
+      }
 
       throw new Error("Failed to transcribe audio");
     }

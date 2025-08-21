@@ -23,14 +23,10 @@ export default defineSchema({
 
   voiceUploads: defineTable({
     userId: v.string(),
-    status: v.union(
-      v.literal("pending"),
-      v.literal("processing"),
-      v.literal("completed"),
-      v.literal("failed")
-    ),
+    status: v.union(v.literal("completed"), v.literal("failed")),
     fileUrl: v.string(),
     createdAt: v.number(),
+    whisperId: v.id("whispers"),
     updatedAt: v.optional(v.number()),
   })
     .index("by_user", ["userId"])
