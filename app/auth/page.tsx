@@ -210,13 +210,13 @@ export default function LoginPage() {
     }
   };
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row relative">
+    <div className="min-h-screen flex flex-col lg:flex-row relative md:p-0 px-6">
       {/* Left Column - Login Form */}
       <div className="flex-1 bg-white flex items-center justify-center p-4 sm:p-6 lg:p-8 ">
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="mb-6 sm:mb-8">
-            <div className="absolute top-3 left-4 sm:top-5 sm:left-8 opacity-30 z-10">
+            <div className="absolute top-5 md:left-4 left-7  opacity-30 z-10">
               <Logo />
             </div>
             <img
