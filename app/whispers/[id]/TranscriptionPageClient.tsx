@@ -107,7 +107,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
       </header>
 
       <main className="py-4 pb-10 mx-auto w-full">
-        <div className="mb-6 md:max-w-[800px] mx-auto">
+        <div className="mb-11 md:max-w-[800px] mx-auto">
           <Editor
             key={`${id}-${editorRefreshKey}`}
             initialContent={whisper?.rawTranscription || ""}

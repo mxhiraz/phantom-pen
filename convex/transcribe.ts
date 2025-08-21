@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { action } from "./_generated/server";
 import { api } from "./_generated/api";
 import { groq } from "../lib/llm";
+import { parseMarkdownToBlocks } from "../lib/utils";
 
 export const transcribeFromStorage = action({
   args: {
@@ -49,14 +50,56 @@ export const transcribeFromStorage = action({
         response_format: "verbose_json",
       });
 
+      let markdown = null;
+      try {
+        const markdownResponse = await groq.chat.completions.create({
+          messages: [
+            {
+              role: "user",
+              content: `<prompt>
+  <instruction>
+    You are a markdown generator. Your responsibility is to convert raw text to markdown without modifying content.
+  </instruction>
+  <task>
+   You have Convert raw transcription to markdown format
+  </task>
+  <examples>
+    <example>{ "markdown": "#Productive Day" }</example>
+  </examples>
+   <format>
+    Return ONLY a JSON object like: { "markdown": "# Your generated title" }
+  </format>
+  <transcription><![CDATA[${transcriptionResponse.text.trim()})}...]]></transcription>
+</prompt>
+`,
+            },
+          ],
+          temperature: 0,
+          model: "openai/gpt-oss-120b",
+          response_format: {
+            type: "json_object",
+          },
+        });
+
+        const result = markdownResponse.choices[0].message?.content;
+        const data = JSON.parse(result || "{}");
+
+        console.log(data);
+
+        markdown = parseMarkdownToBlocks(data.markdown);
+      } catch (error) {
+        console.error(["groq error"], "can't get markdown", error);
+      }
       const transcription = {
         text: transcriptionResponse.text.trim(),
-        rawTranscription: [
-          {
-            type: "paragraph",
-            content: transcriptionResponse.text.trim(),
-          },
-        ],
+        rawTranscription: markdown
+          ? [...markdown]
+          : [
+              {
+                type: "paragraph",
+                content: transcriptionResponse.text.trim(),
+              },
+            ],
       };
 
       if (args.whisperId) {
@@ -89,16 +132,12 @@ export const transcribeFromStorage = action({
         });
 
         await ctx.storage.delete(args.storageId);
-        console.log(
-          `[TRANSCRIBE] File deleted successfully: ${args.storageId}`
-        );
 
         return { id: args.whisperId, storageId: args.storageId };
       } else {
         let title = "Untitled";
 
         try {
-          console.log("[TRANSCRIBE] Generating title for new whisper...");
           const titleResponse = await groq.chat.completions.create({
             messages: [
               {
@@ -131,9 +170,6 @@ export const transcribeFromStorage = action({
             },
           });
 
-          console.log(
-            `[TRANSCRIBE] Title generation response: ${titleResponse.choices[0].message?.content}`
-          );
           const titleResult = titleResponse.choices[0].message?.content;
           const parsedTitle = JSON.parse(titleResult || "{}");
 
@@ -153,10 +189,6 @@ export const transcribeFromStorage = action({
             rawTranscription: transcription.rawTranscription,
           }
         );
-        console.log(
-          `[TRANSCRIBE] New whisper created successfully: ${whisperResult.id}`
-        );
-
         await ctx.storage.delete(args.storageId);
 
         return { id: whisperResult.id, storageId: args.storageId };
@@ -168,9 +200,6 @@ export const transcribeFromStorage = action({
       );
       try {
         await ctx.storage.delete(args.storageId);
-        console.log(
-          `[TRANSCRIBE] File deleted successfully after error: ${args.storageId}`
-        );
       } catch (deleteError) {
         console.error(
           `[TRANSCRIBE] Failed to delete file after error: ${args.storageId}`,

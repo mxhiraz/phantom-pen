@@ -128,3 +128,37 @@ export function stripMarkdown(markdown: string): string {
       .trim()
   );
 }
+
+// Define PartialBlock type
+type PartialBlock = {
+  type: string; // "heading", "paragraph", etc.
+  content: string; // text content
+  props?: { level?: number };
+};
+
+// Function to parse markdown into PartialBlocks (no list support)
+export function parseMarkdownToBlocks(markdown: string): PartialBlock[] {
+  const lines = markdown.split("\n");
+  const blocks: PartialBlock[] = [];
+
+  for (let line of lines) {
+    line = line.trim();
+    if (!line) continue; // skip empty lines
+
+    // Heading
+    if (line.startsWith("#")) {
+      // Count number of leading # symbols
+      const match = line.match(/^#+/);
+      let level = match ? match[0].length + 1 : 1;
+
+      const content = stripMarkdown(line);
+      blocks.push({ type: "heading", content, props: { level } });
+      continue;
+    }
+
+    // Paragraph
+    blocks.push({ type: "paragraph", content: stripMarkdown(line) });
+  }
+
+  return blocks;
+}

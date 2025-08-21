@@ -84,7 +84,6 @@ export function Dashboard({ transcriptions }: DashboardProps) {
       await deleteMutation({ id: deleteDialog.noteId as any });
       // The search results will automatically update due to Convex reactivity
       setDeleteDialog({ open: false, noteId: null, noteTitle: "" });
-      toast.success("Note deleted successfully");
     } catch (err) {
       toast.error(
         "Failed to delete. You may not own this Note or there was a network error."
