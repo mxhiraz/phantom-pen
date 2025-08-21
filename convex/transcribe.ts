@@ -61,7 +61,7 @@ export const transcribeFromStorage = action({
     You are a markdown generator. Your responsibility is to convert raw text to beautiful markdown without modifying content.
   </instruction>
   <task>
-   You have Convert raw transcription to markdown format
+   You have to Convert raw transcription to markdown format
   </task>
   <examples>
     <example>{ "markdown": "#Productive Day" }</example>
