@@ -116,7 +116,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
         </div>
       </main>
 
-      <footer className="fixed bottom-0 left-0 w-full md:left-1/2 md:-translate-x-1/2 border-t md:border md:rounded-xl border-slate-200 px-4 py-3 z-50 max-w-[730px] md:mb-4">
+      <footer className="fixed bottom-0 backdrop-blur-3xl bg-white/30 left-0 w-full md:left-1/2 md:-translate-x-1/2 border-t md:border md:rounded-xl border-slate-200 px-4 py-3 z-50 max-w-[730px] md:mb-4">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 w-full max-w-md md:max-w-none mx-auto">
           <Button
             size="sm"
