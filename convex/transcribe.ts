@@ -64,6 +64,7 @@ export const transcribeFromStorage = action({
    You have to Convert raw transcription to markdown format
   </task>
   <examples>
+   <rawTranscription>Productive Day</rawTranscription>
     <example>{ "markdown": "#Productive Day" }</example>
   </examples>
    <format>
