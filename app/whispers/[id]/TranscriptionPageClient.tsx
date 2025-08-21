@@ -20,7 +20,6 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
   const isLoading = whisper === undefined;
   const isNotFound = whisper === null;
 
-  const editorRef = useRef<BlockNoteEditor>(null);
   const [showRecordingModal, setShowRecordingModal] = useState(false);
 
   const [editorRefreshKey, setEditorRefreshKey] = useState(0);
@@ -113,7 +112,6 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
             key={`${id}-${editorRefreshKey}`}
             initialContent={whisper?.rawTranscription || ""}
             id={id}
-            editorRef={editorRef}
           />
         </div>
       </main>

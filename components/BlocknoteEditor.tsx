@@ -17,11 +17,9 @@ import { LoadingSection } from "./whisper-page/LoadingSection";
 export default function BlocknoteEditor({
   initialContent,
   id,
-  editorRef,
 }: {
   initialContent: any;
   id: string;
-  editorRef: React.RefObject<any>;
 }) {
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -45,10 +43,6 @@ export default function BlocknoteEditor({
       : {}),
   });
 
-  useEffect(() => {
-    editorRef.current = editor;
-  }, [editor]);
-
   editor.onChange(async (editor) => {
     const markdown = await editor.blocksToMarkdownLossy(editor.document);
 
@@ -65,6 +59,7 @@ export default function BlocknoteEditor({
       });
     }, 300);
   });
+
   if (!editor) return <LoadingSection />;
   return (
     <BlockNoteView

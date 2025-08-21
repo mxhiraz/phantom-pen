@@ -6,9 +6,6 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  compiler: {
-    removeConsole: true,
-  },
   images: {
     unoptimized: true,
   },
