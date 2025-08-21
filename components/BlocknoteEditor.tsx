@@ -8,7 +8,7 @@ import {
   defaultBlockSpecs,
   defaultStyleSpecs,
 } from "@blocknote/core";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
@@ -38,7 +38,7 @@ export default function BlocknoteEditor({
 
   const editor = useCreateBlockNote({
     schema,
-    ...(typeof initialContent !== "string"
+    ...(typeof initialContent !== "string" && initialContent.length > 0
       ? { initialContent: initialContent }
       : {}),
   });

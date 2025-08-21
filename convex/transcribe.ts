@@ -92,14 +92,15 @@ export const transcribeFromStorage = action({
       }
       const transcription = {
         text: transcriptionResponse.text.trim(),
-        rawTranscription: markdown
-          ? [...markdown]
-          : [
-              {
-                type: "paragraph",
-                content: transcriptionResponse.text.trim(),
-              },
-            ],
+        rawTranscription:
+          markdown && markdown.length > 0
+            ? [...markdown]
+            : [
+                {
+                  type: "paragraph",
+                  content: transcriptionResponse.text.trim(),
+                },
+              ],
       };
 
       if (args.whisperId) {
