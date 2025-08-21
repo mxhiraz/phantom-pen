@@ -186,14 +186,14 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                           {transcription.preview}
                         </p>
                         <p className="text-xs text-left text-[#99a1af] mt-auto">
-                          {/* {new Date(transcription.createdAt).toLocaleDateString(
+                          {new Date(transcription.createdAt).toLocaleDateString(
                             "en-GB",
                             {
                               day: "numeric",
                               month: "short",
                               year: "numeric",
                             }
-                          )}{" "} */}
+                          )}{" "}
                           {formatNoteTimestamp(transcription.timestamp)}
                         </p>
                       </Link>
@@ -233,8 +233,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                               month: "short",
                               year: "numeric",
                             }
-                          )}
-
+                          )}{" "}
                           {formatNoteTimestamp(transcription.timestamp)}
                         </p>
                       </Link>
