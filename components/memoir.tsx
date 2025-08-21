@@ -40,9 +40,6 @@ export default function Memoir({ id }: { id?: string }) {
   return (
     <section className="mx-auto max-w-[727px] md:pl-36 px-6 pb-1">
       <div className="container">
-        {/* <h1 className="text-foreground mb-10 text-center text-3xl font-bold tracking-tighter sm:text-6xl">
-          The History of Artificial Intelligence
-        </h1> */}
         <div className="relative mx-auto max-w-full">
           <Separator
             orientation="vertical"

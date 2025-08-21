@@ -1,4 +1,5 @@
 import Memoir from "@/components/memoir";
+import ProfileHeader from "@/components/ProfileHeader";
 
 export default async function MemoirPage({
   params,
@@ -7,5 +8,10 @@ export default async function MemoirPage({
 }) {
   const { id } = await params;
 
-  return <Memoir id={id} />;
+  return (
+    <div className="w-full md:space-y-3 max-w-[727px] mx-auto">
+      <ProfileHeader />
+      <Memoir id={id} />
+    </div>
+  );
 }
