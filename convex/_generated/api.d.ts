@@ -16,6 +16,7 @@ import type {
 import type * as files from "../files.js";
 import type * as http from "../http.js";
 import type * as transcribe from "../transcribe.js";
+import type * as voiceUploads from "../voiceUploads.js";
 import type * as whispers from "../whispers.js";
 
 /**
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   files: typeof files;
   http: typeof http;
   transcribe: typeof transcribe;
+  voiceUploads: typeof voiceUploads;
   whispers: typeof whispers;
 }>;
 export declare const api: FilterApi<

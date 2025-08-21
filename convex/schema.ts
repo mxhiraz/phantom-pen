@@ -20,4 +20,20 @@ export default defineSchema({
       searchField: "title",
       filterFields: ["userId"],
     }),
+
+  voiceUploads: defineTable({
+    userId: v.string(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("processing"),
+      v.literal("completed"),
+      v.literal("failed")
+    ),
+    fileUrl: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_status", ["status"])
+    .index("by_created_at", ["createdAt"]),
 });

@@ -16,6 +16,7 @@ import { useMutation as useConvexMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { Transcription } from "@/app/whispers/page";
+import Memoir from "./memoir";
 
 interface DashboardProps {
   transcriptions: Transcription[];
@@ -24,6 +25,7 @@ interface DashboardProps {
 export function Dashboard({ transcriptions }: DashboardProps) {
   console.log(transcriptions);
   const router = useRouter();
+  const [showMemoir, setMemoir] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [showRecordingModal, setShowRecordingModal] = useState(false);
@@ -42,6 +44,19 @@ export function Dashboard({ transcriptions }: DashboardProps) {
   const createBlankNoteMutation = useConvexMutation(
     api.whispers.createBlankNote
   );
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get("memoir");
+
+    console.log(mode);
+
+    if (mode === "true") {
+      setMemoir(true);
+    } else {
+      setMemoir(false);
+    }
+  }, []);
 
   // Debounce search query to avoid too many API calls
   useEffect(() => {
@@ -123,18 +138,31 @@ export function Dashboard({ transcriptions }: DashboardProps) {
     };
   }, [handleNewNote]);
 
+  const toggleMode = () => {
+    setMemoir((prev) => !prev);
+    const url = new URL(window.location.href);
+    const mode = url.searchParams.get("memoir");
+    if (mode === "true") {
+      url.searchParams.delete("memoir");
+    } else {
+      url.searchParams.set("memoir", "true");
+    }
+
+    window.history.replaceState({}, "", url.toString());
+  };
+
   return (
     <>
       <div className="flex-1 h-full mx-auto w-full">
         <div className="mb-14">
           <div className="mx-auto max-w-[729px] w-full md:rounded-xl px-6 py-5 flex flex-col gap-3 md:my-4 ">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-start">
               <h1 className="text-xl font-semibold text-left text-[#101828]">
-                Your Notes
+                Your {!showMemoir ? "Notes" : "Memoir"}
               </h1>
-              <Button variant="outline" size="sm">
-                Memor
-              </Button>
+              {/* <Button onClick={toggleMode} variant="outline" size="sm">
+                {showMemoir ? "View Notes" : "View Memoir"}
+              </Button> */}
             </div>
 
             <div className="relative">
@@ -153,132 +181,144 @@ export function Dashboard({ transcriptions }: DashboardProps) {
             </div>
           </div>
 
-          {/* Empty State or Transcriptions List */}
-          {filteredTranscriptions.length === 0 && searchQuery === "" ? (
-            <div className="text-center py-16 flex flex-col items-center">
-              <h2 className="text-xl font-medium text-left text-black mb-2">
-                Welcome, Phantom Pen!
-              </h2>
-              <p className="max-w-[264px] text-base text-center text-[#364153] mb-8">
-                Start by creating a new Note or
-                <br />
-                creating a voice note for
-                <br />
-                transcription
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col justify-start items-start relative space-y-4 mx-auto max-w-[727px]">
-              {filteredTranscriptions && filteredTranscriptions.length > 0 ? (
-                filteredTranscriptions.map((transcription) =>
-                  isDesktop ? (
-                    <div key={transcription.id} className="relative w-full">
-                      <Link
-                        prefetch
-                        href={`/whispers/${transcription.id}`}
-                        className="self-stretch flex-grow-0 flex-shrink-0 min-h-[100px] max-h-[150px] overflow-hidden group border-t-0 border-r-0 border-b-[0.7px] border-l-0 border-gray-200 md:border-[0.7px] md:border-transparent md:rounded-xl focus-within:bg-gray-50 focus-within:border-[#d1d5dc] hover:bg-gray-50 hover:border-[#d1d5dc] transition-all flex flex-col justify-between px-6 py-4 pr-14"
-                        tabIndex={0}
-                      >
-                        <p className="text-base font-medium text-left text-[#101828] mb-2">
-                          {transcription.title}
-                        </p>
-                        <p className="text-sm text-left text-[#4a5565] mb-3 line-clamp-3">
-                          {transcription.preview}
-                        </p>
-                        <p className="text-xs text-left text-[#99a1af] mt-auto">
-                          {new Date(transcription.createdAt).toLocaleDateString(
-                            "en-GB",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            }
-                          )}{" "}
-                          {formatNoteTimestamp(transcription.timestamp)}
-                        </p>
-                      </Link>
-                      <div className="absolute top-4 right-6 z-10">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="p-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
-                          aria-label="Delete note"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(transcription.id, transcription.title);
-                          }}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div key={transcription.id} className="relative w-full">
-                      <Link
-                        href={`/whispers/${transcription.id}`}
-                        className="self-stretch flex-grow-0 flex-shrink-0 min-h-[100px] max-h-[150px] overflow-hidden group border-t-0 border-r-0 border-b-[0.7px] border-l-0 border-gray-200 md:border-[0.7px] md:border-transparent md:rounded-xl focus-within:bg-gray-50 focus-within:border-[#d1d5dc] hover:bg-gray-50 hover:border-[#d1d5dc] transition-all flex flex-col justify-between px-6 py-4 pr-14"
-                        tabIndex={0}
-                      >
-                        <p className="text-base font-medium text-left text-[#101828] mb-2">
-                          {transcription.title}
-                        </p>
-                        <p className="text-sm text-left text-[#4a5565] mb-3 line-clamp-3">
-                          {transcription.preview}
-                        </p>
-                        <p className="text-xs flex items-center gap-1 text-left text-[#99a1af] mt-auto">
-                          {new Date(transcription.createdAt).toLocaleDateString(
-                            "en-GB",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            }
-                          )}{" "}
-                          {formatNoteTimestamp(transcription.timestamp)}
-                        </p>
-                      </Link>
-                      <div className="absolute top-4 right-6 z-10">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="p-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
-                          aria-label="Delete note"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(transcription.id, transcription.title);
-                          }}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  )
-                )
+          {!showMemoir ? (
+            <>
+              {filteredTranscriptions.length === 0 && searchQuery === "" ? (
+                <div className="text-center py-16 flex flex-col items-center">
+                  <h2 className="text-xl font-medium text-left text-black mb-2">
+                    Welcome, Phantom Pen!
+                  </h2>
+                  <p className="max-w-[264px] text-base text-center text-[#364153] mb-8">
+                    Start by creating a new Note or
+                    <br />
+                    creating a voice note for
+                    <br />
+                    transcription
+                  </p>
+                </div>
               ) : (
-                // No notes found message
-                <div className="w-full text-center py-12">
-                  <div className="text-gray-500">
-                    {debouncedSearchQuery ? (
-                      <>
-                        <p className="text-lg font-medium mb-2">
-                          No notes found
-                        </p>
-                        <p className="text-sm">
-                          Try adjusting your search terms
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-lg font-medium mb-2">No notes yet</p>
-                        <p className="text-sm">
-                          Create your first note to get started
-                        </p>
-                      </>
-                    )}
-                  </div>
+                <div className="flex flex-col justify-start items-start relative space-y-4 mx-auto max-w-[727px]">
+                  {filteredTranscriptions &&
+                  filteredTranscriptions.length > 0 ? (
+                    filteredTranscriptions.map((transcription) =>
+                      isDesktop ? (
+                        <div key={transcription.id} className="relative w-full">
+                          <Link
+                            prefetch
+                            href={`/whispers/${transcription.id}`}
+                            className="self-stretch flex-grow-0 flex-shrink-0 min-h-[100px] max-h-[150px] overflow-hidden group border-t-0 border-r-0 border-b-[0.7px] border-l-0 border-gray-200 md:border-[0.7px] md:border-transparent md:rounded-xl focus-within:bg-gray-50 focus-within:border-[#d1d5dc] hover:bg-gray-50 hover:border-[#d1d5dc] transition-all flex flex-col justify-between px-6 py-4 pr-14"
+                            tabIndex={0}
+                          >
+                            <p className="text-base font-medium text-left text-[#101828] mb-2">
+                              {transcription.title}
+                            </p>
+                            <p className="text-sm text-left text-[#4a5565] mb-3 line-clamp-3">
+                              {transcription.preview}
+                            </p>
+                            <p className="text-xs text-left text-[#99a1af] mt-auto">
+                              {new Date(
+                                transcription.createdAt
+                              ).toLocaleDateString("en-GB", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}{" "}
+                              {formatNoteTimestamp(transcription.timestamp)}
+                            </p>
+                          </Link>
+                          <div className="absolute top-4 right-6 z-10">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="p-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
+                              aria-label="Delete note"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(
+                                  transcription.id,
+                                  transcription.title
+                                );
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div key={transcription.id} className="relative w-full">
+                          <Link
+                            href={`/whispers/${transcription.id}`}
+                            className="self-stretch flex-grow-0 flex-shrink-0 min-h-[100px] max-h-[150px] overflow-hidden group border-t-0 border-r-0 border-b-[0.7px] border-l-0 border-gray-200 md:border-[0.7px] md:border-transparent md:rounded-xl focus-within:bg-gray-50 focus-within:border-[#d1d5dc] hover:bg-gray-50 hover:border-[#d1d5dc] transition-all flex flex-col justify-between px-6 py-4 pr-14"
+                            tabIndex={0}
+                          >
+                            <p className="text-base font-medium text-left text-[#101828] mb-2">
+                              {transcription.title}
+                            </p>
+                            <p className="text-sm text-left text-[#4a5565] mb-3 line-clamp-3">
+                              {transcription.preview}
+                            </p>
+                            <p className="text-xs flex items-center gap-1 text-left text-[#99a1af] mt-auto">
+                              {new Date(
+                                transcription.createdAt
+                              ).toLocaleDateString("en-GB", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}{" "}
+                              {formatNoteTimestamp(transcription.timestamp)}
+                            </p>
+                          </Link>
+                          <div className="absolute top-4 right-6 z-10">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="p-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
+                              aria-label="Delete note"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(
+                                  transcription.id,
+                                  transcription.title
+                                );
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )
+                    )
+                  ) : (
+                    // No notes found message
+                    <div className="w-full text-center py-12">
+                      <div className="text-gray-500">
+                        {debouncedSearchQuery ? (
+                          <>
+                            <p className="text-lg font-medium mb-2">
+                              No notes found
+                            </p>
+                            <p className="text-sm">
+                              Try adjusting your search terms
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-lg font-medium mb-2">
+                              No notes yet
+                            </p>
+                            <p className="text-sm">
+                              Create your first note to get started
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
+            </>
+          ) : (
+            <Memoir />
           )}
         </div>
 

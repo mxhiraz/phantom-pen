@@ -3,11 +3,7 @@
 import "@blocknote/shadcn/style.css";
 import { BlockNoteView } from "@blocknote/shadcn";
 import { useCreateBlockNote } from "@blocknote/react";
-import {
-  BlockNoteSchema,
-  defaultBlockSpecs,
-  defaultStyleSpecs,
-} from "@blocknote/core";
+import { BlockNoteSchema, defaultBlockSpecs } from "@blocknote/core";
 import { useRef } from "react";
 
 import { api } from "@/convex/_generated/api";
@@ -29,7 +25,7 @@ export default function BlocknoteEditor({
 
   const { audio, image, table, video, file, ...remainingBlockSpecs } =
     defaultBlockSpecs;
-  defaultStyleSpecs;
+
   const schema = BlockNoteSchema.create({
     blockSpecs: {
       ...remainingBlockSpecs,

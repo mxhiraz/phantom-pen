@@ -9,7 +9,10 @@ export const transcribeFromStorage = action({
     storageId: v.id("_storage"),
     whisperId: v.optional(v.id("whispers")),
   },
-  handler: async (ctx, args): Promise<{ id: any; storageId: string }> => {
+  handler: async (
+    ctx,
+    args
+  ): Promise<{ id: any; storageId: string; voiceUploadId: any }> => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
@@ -23,6 +26,20 @@ export const transcribeFromStorage = action({
       );
       throw new Error("Failed to get file URL from storage");
     }
+
+    // Create voice upload record
+    const voiceUploadId = await ctx.runMutation(
+      api.voiceUploads.createVoiceUpload,
+      {
+        fileUrl,
+      }
+    );
+
+    // Update status to processing
+    await ctx.runMutation(api.voiceUploads.updateVoiceUploadStatus, {
+      id: voiceUploadId,
+      status: "processing",
+    });
 
     try {
       const apiKey = process.env.GROQ_API_KEY;
@@ -47,7 +64,6 @@ export const transcribeFromStorage = action({
       const transcriptionResponse = await groq.audio.transcriptions.create({
         file: audioFile,
         model: "whisper-large-v3-turbo",
-        response_format: "verbose_json",
       });
 
       let markdown = null;
@@ -133,9 +149,13 @@ export const transcribeFromStorage = action({
           rawTranscription: updatedRawTranscription,
         });
 
-        await ctx.storage.delete(args.storageId);
+        // Update voice upload status to completed
+        await ctx.runMutation(api.voiceUploads.updateVoiceUploadStatus, {
+          id: voiceUploadId,
+          status: "completed",
+        });
 
-        return { id: args.whisperId, storageId: args.storageId };
+        return { id: args.whisperId, storageId: args.storageId, voiceUploadId };
       } else {
         let title = "Untitled";
 
@@ -166,7 +186,7 @@ export const transcribeFromStorage = action({
               },
             ],
             temperature: 0,
-            model: "openai/gpt-oss-120b",
+            model: "openai/gpt-oss-20b",
             response_format: {
               type: "json_object",
             },
@@ -191,23 +211,31 @@ export const transcribeFromStorage = action({
             rawTranscription: transcription.rawTranscription,
           }
         );
-        await ctx.storage.delete(args.storageId);
 
-        return { id: whisperResult.id, storageId: args.storageId };
+        // Update voice upload status to completed
+        await ctx.runMutation(api.voiceUploads.updateVoiceUploadStatus, {
+          id: voiceUploadId,
+          status: "completed",
+        });
+
+        return {
+          id: whisperResult.id,
+          storageId: args.storageId,
+          voiceUploadId,
+        };
       }
     } catch (error) {
       console.error(
         `[TRANSCRIBE] Transcription error for storageId ${args.storageId}:`,
         error
       );
-      try {
-        await ctx.storage.delete(args.storageId);
-      } catch (deleteError) {
-        console.error(
-          `[TRANSCRIBE] Failed to delete file after error: ${args.storageId}`,
-          deleteError
-        );
-      }
+
+      // Update voice upload status to failed
+      await ctx.runMutation(api.voiceUploads.updateVoiceUploadStatus, {
+        id: voiceUploadId,
+        status: "failed",
+      });
+
       throw new Error("Failed to transcribe audio");
     }
   },

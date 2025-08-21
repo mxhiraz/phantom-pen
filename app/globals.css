@@ -179,6 +179,10 @@
   }
 }
 
+.bn-editor {
+  font-family: var(--font-raleway), system-ui, sans-serif !important;
+}
+
 .bn-font-family {
   font-family: var(--font-raleway), system-ui, sans-serif;
 }
@@ -197,7 +201,6 @@
     @apply bg-background text-foreground;
   }
 }
-
 
 @keyframes blob {
   0% {
