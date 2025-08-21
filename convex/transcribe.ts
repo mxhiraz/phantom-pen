@@ -58,7 +58,7 @@ export const transcribeFromStorage = action({
               role: "user",
               content: `<prompt>
   <instruction>
-    You are a markdown generator. Your responsibility is to convert raw text to markdown without modifying content.
+    You are a markdown generator. Your responsibility is to convert raw text to beautiful markdown without modifying content.
   </instruction>
   <task>
    You have Convert raw transcription to markdown format
