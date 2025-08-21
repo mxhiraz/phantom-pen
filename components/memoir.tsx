@@ -36,7 +36,7 @@ const timelineData: TimelineEntry[] = [
   },
 ];
 
-export default function Memoir() {
+export default function Memoir({ id }: { id?: string }) {
   return (
     <section className="mx-auto max-w-[727px] md:pl-36 px-6 pb-1">
       <div className="container">

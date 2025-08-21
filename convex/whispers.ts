@@ -90,7 +90,7 @@ export const searchWhispers = query({
 });
 
 export const getWhisper = query({
-  args: { id: v.string() },
+  args: { id: v.id("whispers") },
   handler: async (ctx, args) => {
     console.log(`[getWhisper] Starting query for whisper ID: ${args.id}`);
 
@@ -106,7 +106,7 @@ export const getWhisper = query({
 
     const whisper = await ctx.db
       .query("whispers")
-      .withIndex("by_id", (q) => q.eq("_id", args.id as any))
+      .withIndex("by_id", (q) => q.eq("_id", args.id))
       .first();
 
     if (!whisper) {
