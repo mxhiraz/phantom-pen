@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Raleway } from "next/font/google";
 import "./globals.css";
@@ -11,6 +11,11 @@ const raleway = Raleway({
   variable: "--font-raleway",
   subsets: ["latin"],
 });
+
+export const viewport: Viewport = {
+  initialScale: 1,
+  width: "device-width",
+};
 
 export const metadata: Metadata = {
   title: "Phantom Pen - AI Voice Notes",
