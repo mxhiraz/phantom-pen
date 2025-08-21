@@ -9,13 +9,12 @@ import { Spinner } from "@/components/whisper-page/LoadingSection";
 import { Button } from "@/components/ui/button";
 import { RecordingModal } from "../../../components/RecordingModal";
 import { Editor } from "@/components/DynamicEditor";
-import { BlockNoteEditor } from "@blocknote/core";
 import { stripMarkdown } from "@/lib/utils";
 
 export default function TranscriptionPageClient({ id }: { id: string }) {
   const router = useRouter();
   const whisper = useQuery(api.whispers.getWhisper, {
-    id: id,
+    id: id as any,
   });
   const isLoading = whisper === undefined;
   const isNotFound = whisper === null;
