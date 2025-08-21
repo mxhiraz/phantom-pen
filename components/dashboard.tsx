@@ -155,7 +155,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
     <>
       <div className="flex-1 h-full mx-auto w-full">
         <div className="mb-14">
-          <div className="mx-auto max-w-[729px] w-full md:rounded-xl px-6 py-5 flex flex-col gap-3 md:my-4 ">
+          <div className="mx-auto max-w-[729px] w-full md:rounded-xl px-6 py-5 pb-2 flex flex-col gap-3 md:my-4 ">
             <div className="flex justify-between items-start">
               <h1 className="text-xl font-semibold text-left text-[#101828]">
                 Your {!showMemoir ? "Notes" : "Memoir"}
