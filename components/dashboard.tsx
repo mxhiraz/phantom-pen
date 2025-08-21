@@ -284,7 +284,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[688px] flex justify-center items-center md:px-2 px-6 pb-4">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[688px] flex justify-center items-center md:px-1.5 px-6 pb-4">
           <div className="w-full flex gap-3">
             <Button
               size="lg"
