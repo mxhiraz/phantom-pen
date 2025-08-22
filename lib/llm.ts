@@ -51,7 +51,9 @@ Example response format:
 
 Requirements:
 - Max 200 words of content
-- Date in "DD MMM YYYY" format`;
+- Date in "DD MMM YYYY" format
+- Return array even if there is only one entry
+- if there is no date mentioned use current date ${Date.now()}`;
 
   console.log("[generateMemoirContent] 🔍 Prompt:", prompt);
 
