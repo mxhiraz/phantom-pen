@@ -18,8 +18,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Phantom Pen - AI Voice Notes",
-  description: "Capture your thoughts by voice with Phantom Pen.",
+  title: "Phantom Pen - AI Voice Memoirs",
+  description:
+    "Capture your thoughts by voice with Phantom Pen. Turn your journal entries, voice recordings, and ideas into beautifully structured memoirs that you'll never lose track of.",
   openGraph: {
     images:
       "https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/Screenshot_2025-08-19_at_3.41.57%E2%80%AFAM.png",

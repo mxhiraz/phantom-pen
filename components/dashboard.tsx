@@ -161,12 +161,12 @@ export function Dashboard({ transcriptions }: DashboardProps) {
               <h1 className="text-xl font-semibold text-left text-[#101828]">
                 Your {!showMemoir ? "Notes" : "Memoir"}
               </h1>
-              {/* <div className="flex gap-2">
+              <div className="flex gap-2">
                 {showMemoir && <PrivacyTogglePopover />}
                 <Button onClick={toggleMode} variant="outline" size="sm">
                   {showMemoir ? "View Notes" : "View Memoir"}
                 </Button>
-              </div> */}
+              </div>
             </div>
 
             <div className="relative">

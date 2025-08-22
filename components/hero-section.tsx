@@ -63,7 +63,7 @@ export default function HeroSection() {
                 <AnimatedGroup variants={transitionVariants}>
                   <Link
                     href="#link"
-                    className="hover:bg-background dark:hover:border-t-border bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4 shadow-md shadow-zinc-950/5 transition-colors duration-300 dark:border-t-white/5 dark:shadow-zinc-950"
+                    className="hover:bg-background dark:hover:border-t-border bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4  transition-colors duration-300 dark:border-t-white/5 "
                   >
                     <span className="text-foreground text-sm">
                       Introducing Version 1:0
@@ -90,7 +90,7 @@ export default function HeroSection() {
                   className="mt-8 text-balance text-5xl md:text-7xl lg:mt-16 xl:text-[5.25rem] font-bold italic
                                     "
                 >
-                  Phantom Pen AI-Powered Note-Taking
+                  Phantom Pen AI-Powered Memoir
                 </TextEffect>
                 <TextEffect
                   per="line"
@@ -100,8 +100,9 @@ export default function HeroSection() {
                   as="p"
                   className="mx-auto mt-8 max-w-3xl text-balance text-lg"
                 >
-                  Turn your thoughts, voice, and ideas into beautifully
-                  structured notes that you’ll never lose track of.
+                  Turn your journal entries, voice recordings, and ideas into
+                  beautifully structured memoirs that you'll never lose track
+                  of.
                 </TextEffect>
 
                 <AnimatedGroup
