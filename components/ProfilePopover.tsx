@@ -124,6 +124,7 @@ function SettingsDialog({
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [isSaving, setIsSaving] = useState(false);
+  const [isUpdatingImage, setIsUpdatingImage] = useState(false);
 
   const handleSave = async () => {
     if (!firstName.trim()) {
@@ -139,6 +140,7 @@ function SettingsDialog({
       });
 
       setIsEditing(false);
+      toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Failed to update profile:", error);
       toast.error("Failed to update profile");
@@ -151,6 +153,36 @@ function SettingsDialog({
     setFirstName(user.firstName || "");
     setLastName(user.lastName || "");
     setIsEditing(false);
+  };
+
+  const handleImageUpdate = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    setIsUpdatingImage(true);
+    try {
+      await user.setProfileImage({ file });
+      toast.success("Profile image updated successfully");
+    } catch (error) {
+      console.error("Failed to update profile image:", error);
+      toast.error("Failed to update profile image");
+    } finally {
+      setIsUpdatingImage(false);
+    }
   };
 
   const getInitials = () => {
@@ -176,15 +208,36 @@ function SettingsDialog({
           {/* Profile Information */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <Avatar className="w-14 h-14 border-2 border-primary/50">
-                <AvatarImage
-                  src={user.imageUrl}
-                  alt={user.fullName || "User"}
+              <div className="relative">
+                <label
+                  htmlFor="profile-image"
+                  className="cursor-pointer block"
+                  title="Click to change profile image"
+                >
+                  <Avatar className="w-14 h-14 border-2 border-primary/50 hover:border-primary/70 transition-colors">
+                    <AvatarImage
+                      src={user.imageUrl}
+                      alt={user.fullName || "User"}
+                    />
+                    <AvatarFallback className=" bg-blue-100 text-blue-600 text-xl font-medium">
+                      {getInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                </label>
+                {isUpdatingImage && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full">
+                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+                <input
+                  id="profile-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpdate}
+                  className="hidden"
+                  disabled={isUpdatingImage}
                 />
-                <AvatarFallback className=" bg-blue-100 text-blue-600 text-xl font-medium">
-                  {getInitials()}
-                </AvatarFallback>
-              </Avatar>
+              </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900">
                   {user.fullName || "User"}

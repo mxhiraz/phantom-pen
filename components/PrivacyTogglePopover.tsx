@@ -66,29 +66,29 @@ export function PrivacyTogglePopover() {
           aria-label="Toggle memoir privacy"
         >
           {isPublic ? (
-            <Globe className="h-4 w-4 text-blue-600" />
+            <Globe className="h-4 w-4 text-primary" />
           ) : (
-            <Lock className="h-4 w-4 text-gray-600" />
+            <Lock className="h-4 w-4 text-muted-foreground" />
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-4" align="end">
+      <PopoverContent sideOffset={6} className="w-64 p-4" align="center">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Memoir Privacy</span>
             <div className="flex items-center gap-2">
               {isPublic ? (
-                <Globe className="h-4 w-4 text-blue-600" />
+                <Globe className="h-4 w-4 text-primary" />
               ) : (
-                <Lock className="h-4 w-4 text-gray-600" />
+                <Lock className="h-4 w-4 text-muted-foreground" />
               )}
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-muted-foreground">
                 {isPublic ? "Public" : "Private"}
               </span>
             </div>
           </div>
 
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             {isPublic
               ? "Your memoir is visible to everyone. Others can view and share your memoir."
               : "Your memoir is private. Only you can see it."}
