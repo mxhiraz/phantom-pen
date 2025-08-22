@@ -27,7 +27,14 @@ export const generateMemoirContent = async (
   userPreferences: z.infer<typeof UserPreferencesSchema>
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
   const prompt = dedent`
-  
+<instruction>
+    You are a skilled personalized memoir writer.
+</instruction>
+
+<task>
+    You have to generate a memoir entry based on the user's preferences and style guide.
+</task>
+
 <styleGuide>
 ${buildStyleGuide(userPreferences)}
 </styleGuide>
@@ -45,40 +52,22 @@ User's memoir motivation: ${
 "${whisperContent}"
 </voiceNote>
 
-<examples>
+<example>
 <voiceNote>
 "I went to the park and played with my dog. I had a lot of fun."
 </voiceNote>
-<example>
-This is an example show when user voice have only one entry:
-[
-  {
+<response>
+[{
     "date": "20 May 2023",
     "title": "Long vacation",
     "content": "I went to the park and played with my dog. I had a lot of fun."
-  } 
-] 
+}] 
+</response>
 </example>
-</examples>
 
-<format>
-Return ONLY a array of objects like:
-[
-  {
-    "date": "20 May 2023",
-    "title": "Long vacation",
-    "content": "I went to the park and played with my dog. I had a lot of fun."
-  },
-  {
-    "date": "23 Aug 2025",
-    "title": "Productive Day",
-    "content": "I went to the park and played with my dog. I had a lot of fun."
-  }
-]
-</format>
 
-<requirements>
 <rules>
+<rule>Always Return an Array: Ensure the output is wrapped in [], even for one entry.</rule>
 <rule>Each content field must have maximum 200 words or less.</rule>
 <rule>Date in "DD MMM YYYY" format (e.g., 23 Aug 2025).</rule>
 <rule>If no date is provided, use current date in specified format ${new Date().toLocaleDateString(
@@ -90,7 +79,20 @@ Return ONLY a array of objects like:
     }
   )}.</rule>
 </rules>
-</requirements>
+
+<format>
+Return ONLY an array of objects like:
+[{
+    "date": "20 May 2023",
+    "title": "Long vacation",
+    "content": "I went to the park and played with my dog. I had a lot of fun."
+  },
+  {
+    "date": "23 Aug 2025",
+    "title": "Productive Day",
+    "content": "I went to the park and played with my dog. I had a lot of fun."
+  }]
+</format>
 `;
 
   console.log("[generateMemoirContent] 🔍 Prompt:", prompt);
@@ -99,24 +101,20 @@ Return ONLY a array of objects like:
     const response = await groq.chat.completions.create({
       messages: [
         {
-          role: "system",
-          content:
-            "You are a skilled personalized memoir writer who follows the style guide and  preferences provided by the user.",
-        },
-        {
           role: "user",
           content: prompt,
         },
       ],
       model: "openai/gpt-oss-120b",
       temperature: 0.1,
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "MemoirResponse",
-          schema: z.toJSONSchema(MemoirResponseSchema),
-        },
-      },
+      // this does't work for some reason
+      // response_format: {
+      //   type: "json_schema",
+      //   json_schema: {
+      //     name: "memoir_entries",
+      //     schema: z.toJSONSchema(MemoirResponseSchema),
+      //   },
+      // },
     });
 
     const content = response.choices[0]?.message?.content;
