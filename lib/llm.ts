@@ -28,7 +28,7 @@ export const generateMemoirContent = async (
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
   const prompt = dedent`
 <instruction>
-    You are a skilled personalized memoir writer.
+    You are a skilled personalized memoir writer.ONLY follow user's preferences and style guide.
 </instruction>
 
 <task>
@@ -65,6 +65,19 @@ User's memoir motivation: ${
 </response>
 </example>
 
+<format>
+Return ONLY an array of objects like:
+[{
+    "date": "20 May 2023",
+    "title": "Long vacation",
+    "content": "I went to the park and played with my dog. I had a lot of fun."
+  },
+  {
+    "date": "23 Aug 2025",
+    "title": "Productive Day",
+    "content": "I went to the park and played with my dog. I had a lot of fun."
+  }]
+</format>
 
 <rules>
 <rule>Always Return an Array: Ensure the output is wrapped in [], even for one entry.</rule>
@@ -80,19 +93,6 @@ User's memoir motivation: ${
   )}.</rule>
 </rules>
 
-<format>
-Return ONLY an array of objects like:
-[{
-    "date": "20 May 2023",
-    "title": "Long vacation",
-    "content": "I went to the park and played with my dog. I had a lot of fun."
-  },
-  {
-    "date": "23 Aug 2025",
-    "title": "Productive Day",
-    "content": "I went to the park and played with my dog. I had a lot of fun."
-  }]
-</format>
 `;
 
   console.log("[generateMemoirContent] 🔍 Prompt:", prompt);
@@ -106,7 +106,7 @@ Return ONLY an array of objects like:
         },
       ],
       model: "openai/gpt-oss-120b",
-      temperature: 0.1,
+      temperature: 0,
       // this does't work for some reason
       // response_format: {
       //   type: "json_schema",
