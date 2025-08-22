@@ -138,7 +138,6 @@ Return ONLY a array of objects like:
       return validatedResponse;
     } catch (parseError) {
       console.error("Failed to parse or validate LLM response:", parseError);
-      console.log("Raw response:", content);
       throw new Error("Invalid LLM response format");
     }
   } catch (error) {
