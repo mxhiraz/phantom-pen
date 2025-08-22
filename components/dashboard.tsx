@@ -162,7 +162,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                 Your {!showMemoir ? "Notes" : "Memoir"}
               </h1>
               <div className="flex gap-2">
-                {showMemoir && <PrivacyTogglePopover />}
+                <PrivacyTogglePopover />
                 <Button onClick={toggleMode} variant="outline" size="sm">
                   {showMemoir ? "View Notes" : "View Memoir"}
                 </Button>
