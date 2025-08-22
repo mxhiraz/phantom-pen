@@ -28,7 +28,7 @@ export const generateMemoirContent = async (
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
   const prompt = dedent`
 <instruction>
-    You are a skilled personalized memoir writer.ONLY follow user's preferences and style guide.
+   You are a skilled personalized memoir writer. Follow the user's preferences and style guide strictly. When you modify the user's original content, modify only the user's original content and keep all information exactly as provided in the original text.
 </instruction>
 
 <task>
@@ -40,10 +40,10 @@ ${buildStyleGuide(userPreferences)}
 </styleGuide>
 
 <userPreferences>
-User's intended feeling: ${
+User's want readers to feel or understand most: ${
     userPreferences.feelingIntent || "Create an engaging, meaningful story"
   }
-User's memoir motivation: ${
+User's memoir intended for readers: ${
     userPreferences.opener || "Share personal experiences and insights"
   }
 </userPreferences>
@@ -106,7 +106,7 @@ Return ONLY an array of objects like:
         },
       ],
       model: "openai/gpt-oss-120b",
-      temperature: 0,
+      temperature: 0.2,
       // this does't work for some reason
       // response_format: {
       //   type: "json_schema",
