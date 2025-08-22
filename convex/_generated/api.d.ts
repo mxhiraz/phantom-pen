@@ -15,7 +15,9 @@ import type {
 } from "convex/server";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
+import type * as memoirs from "../memoirs.js";
 import type * as transcribe from "../transcribe.js";
+import type * as users from "../users.js";
 import type * as voiceUploads from "../voiceUploads.js";
 import type * as whispers from "../whispers.js";
 
@@ -30,7 +32,9 @@ import type * as whispers from "../whispers.js";
 declare const fullApi: ApiFromModules<{
   files: typeof files;
   http: typeof http;
+  memoirs: typeof memoirs;
   transcribe: typeof transcribe;
+  users: typeof users;
   voiceUploads: typeof voiceUploads;
   whispers: typeof whispers;
 }>;

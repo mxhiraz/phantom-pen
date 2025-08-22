@@ -199,6 +199,7 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
               <img
                 src="https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/04-unscreen.gif"
                 alt="Loading..."
+                loading="eager"
                 className="w-full h-full"
               />
             </div>

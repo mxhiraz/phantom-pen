@@ -17,6 +17,7 @@ import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { Transcription } from "@/app/whispers/page";
 import Memoir from "./memoir";
+import { PrivacyTogglePopover } from "./PrivacyTogglePopover";
 
 interface DashboardProps {
   transcriptions: Transcription[];
@@ -160,9 +161,12 @@ export function Dashboard({ transcriptions }: DashboardProps) {
               <h1 className="text-xl font-semibold text-left text-[#101828]">
                 Your {!showMemoir ? "Notes" : "Memoir"}
               </h1>
-              {/* <Button onClick={toggleMode} variant="outline" size="sm">
-                {showMemoir ? "View Notes" : "View Memoir"}
-              </Button> */}
+              {/* <div className="flex gap-2">
+                {showMemoir && <PrivacyTogglePopover />}
+                <Button onClick={toggleMode} variant="outline" size="sm">
+                  {showMemoir ? "View Notes" : "View Memoir"}
+                </Button>
+              </div> */}
             </div>
 
             <div className="relative">
@@ -323,7 +327,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[688px] flex justify-center items-center md:px-1.5 px-6 pb-4">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[730px] flex justify-center items-center px-6 pb-4">
           <div className="w-full flex gap-3">
             <Button
               size="lg"

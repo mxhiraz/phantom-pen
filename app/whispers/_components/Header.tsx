@@ -3,14 +3,13 @@
 import { usePathname } from "next/navigation";
 import React from "react";
 import { Button } from "@/components//ui/button";
-import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 import { ProfilePopover } from "@/components/ProfilePopover";
 import { Logo } from "@/components/logo";
 
 export function Header() {
   const pathname = usePathname();
-  const { user } = useUser();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -40,6 +39,7 @@ export function Header() {
         <Link href="/whispers/" className="flex items-center gap-2">
           <img
             src="/back.svg"
+            loading="eager"
             className="min-w-[14px] min-h-[14px] size-[14px]"
           />
           <span className="text-base font-medium text-[#4A5565]">My Notes</span>

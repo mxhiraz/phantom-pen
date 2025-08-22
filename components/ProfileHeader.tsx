@@ -7,28 +7,24 @@ import { Share2 } from "lucide-react";
 interface ProfileHeaderProps {
   username?: string;
   avatarUrl?: string;
-  onShare?: () => void;
 }
 
 export default function ProfileHeader({
   username = "Mahira",
   avatarUrl = "https://github.com/mxhiraz.png",
-  onShare,
 }: ProfileHeaderProps) {
   const handleShare = () => {
-    if (onShare) {
-      onShare();
-    } else {
-      // Default share behavior
+    try {
       if (navigator.share) {
         navigator.share({
           title: `${username}'s Memoir`,
           url: window.location.href,
         });
       } else {
-        // Fallback: copy to clipboard
         navigator.clipboard.writeText(window.location.href);
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 

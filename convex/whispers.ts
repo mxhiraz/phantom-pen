@@ -1,6 +1,15 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
+import { internal } from "./_generated/api";
 import { stripMarkdown } from "../lib/utils";
+import { Id } from "./_generated/dataModel";
+import {
+  MEMOIR_GENERATION_DELAY,
+  TABLES,
+  INDEXES,
+  ERROR_MESSAGES,
+  STATUS,
+} from "../lib/constants";
 const autoUpdate = (data: any) => ({
   ...data,
   updatedAt: Date.now(),
@@ -12,12 +21,11 @@ export const listWhispers = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    if (!identity) throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
 
-    console.log("identity", identity);
     const whispers = await ctx.db
-      .query("whispers")
-      .withIndex("by_user", (q) => q.eq("userId", identity.subject))
+      .query(TABLES.WHISPERS)
+      .withIndex(INDEXES.BY_USER, (q) => q.eq("userId", identity.subject))
       .order("desc")
       .take(args.limit ?? 100);
 
@@ -35,13 +43,13 @@ export const searchWhispers = query({
   args: { searchQuery: v.string() },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    if (!identity) throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
 
     if (!args.searchQuery.trim()) {
       // If no search query, return all whispers
       const whispers = await ctx.db
-        .query("whispers")
-        .withIndex("by_user", (q) => q.eq("userId", identity.subject))
+        .query(TABLES.WHISPERS)
+        .withIndex(INDEXES.BY_USER, (q) => q.eq("userId", identity.subject))
         .order("desc")
         .collect();
 
@@ -56,7 +64,7 @@ export const searchWhispers = query({
 
     // Use search indexes for server-side search
     const searchResults = await ctx.db
-      .query("whispers")
+      .query(TABLES.WHISPERS)
       .withSearchIndex("search_content", (q) =>
         q
           .search("fullTranscription", args.searchQuery)
@@ -66,7 +74,7 @@ export const searchWhispers = query({
 
     // Also search in titles
     const titleSearchResults = await ctx.db
-      .query("whispers")
+      .query(TABLES.WHISPERS)
       .withSearchIndex("search_title", (q) =>
         q.search("title", args.searchQuery).eq("userId", identity.subject)
       )
@@ -92,33 +100,22 @@ export const searchWhispers = query({
 export const getWhisper = query({
   args: { id: v.id("whispers") },
   handler: async (ctx, args) => {
-    console.log(`[getWhisper] Starting query for whisper ID: ${args.id}`);
-
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      console.log(
-        `[getWhisper] Authentication failed for whisper ID: ${args.id}`
-      );
-      throw new Error("Not authenticated");
+      throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
     }
 
-    console.log(`[getWhisper] User authenticated: ${identity.subject}`);
-
     const whisper = await ctx.db
-      .query("whispers")
+      .query(TABLES.WHISPERS)
       .withIndex("by_id", (q) => q.eq("_id", args.id))
       .first();
 
     if (!whisper) {
-      console.log(`[getWhisper] Whisper not found for ID: ${args.id}`);
       return null;
     }
 
     if (whisper.userId !== identity.subject) {
-      console.log(
-        `[getWhisper] Unauthorized access attempt - User: ${identity.subject}, Whisper owner: ${whisper.userId}`
-      );
-      throw new Error("Unauthorized");
+      throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
     }
 
     return whisper;
@@ -133,9 +130,9 @@ export const createWhisper = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    if (!identity) throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
 
-    const whisperId = await ctx.db.insert("whispers", {
+    const whisperId = await ctx.db.insert(TABLES.WHISPERS, {
       title: args.title,
       userId: identity.subject,
       createdAt: Date.now(),
@@ -143,6 +140,18 @@ export const createWhisper = mutation({
       fullTranscription: args.fullTranscription,
       rawTranscription: args.rawTranscription,
     });
+
+    try {
+      await ctx.runMutation(
+        internal.whispers.scheduleMemoirGenerationInternal,
+        {
+          whisperId: whisperId,
+          userId: identity.subject,
+        }
+      );
+    } catch (error) {
+      console.error(ERROR_MESSAGES.FAILED_TO_SCHEDULE, error);
+    }
 
     return { id: whisperId };
   },
@@ -154,9 +163,9 @@ export const createBlankNote = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    if (!identity) throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
 
-    const whisperId = await ctx.db.insert("whispers", {
+    const whisperId = await ctx.db.insert(TABLES.WHISPERS, {
       title: args.title,
       userId: identity.subject,
       createdAt: Date.now(),
@@ -176,11 +185,12 @@ export const updateFullTranscription = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    if (!identity) throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
 
     const whisper = await ctx.db.get(args.id);
-    if (!whisper) throw new Error("Whisper not found");
-    if (whisper.userId !== identity.subject) throw new Error("Unauthorized");
+    if (!whisper) throw new Error(ERROR_MESSAGES.WHISPER_NOT_FOUND);
+    if (whisper.userId !== identity.subject)
+      throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
 
     await ctx.db.patch(args.id, {
       fullTranscription: args.fullTranscription,
@@ -188,7 +198,65 @@ export const updateFullTranscription = mutation({
       ...autoUpdate({}),
     });
 
+    try {
+      await ctx.runMutation(
+        internal.whispers.scheduleMemoirGenerationInternal,
+        {
+          whisperId: args.id,
+          userId: identity.subject,
+        }
+      );
+    } catch (error) {
+      console.error(ERROR_MESSAGES.FAILED_TO_SCHEDULE, error);
+    }
+
     return { id: args.id, fullTranscription: args.fullTranscription };
+  },
+});
+
+export const scheduleMemoirGenerationInternal = internalMutation({
+  args: {
+    whisperId: v.id("whispers"),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const existingSchedules = await ctx.db
+      .query(TABLES.SCHEDULED_MEMOIR_GENERATION)
+      .withIndex(INDEXES.BY_WHISPER, (q) => q.eq("whisperId", args.whisperId))
+      .collect();
+
+    for (const schedule of existingSchedules) {
+      if (schedule.scheduledFunctionId) {
+        await ctx.scheduler.cancel(schedule.scheduledFunctionId);
+      }
+      await ctx.db.delete(schedule._id);
+    }
+
+    // Schedule the memoir generation
+    const scheduledFunctionId: Id<"_scheduled_functions"> =
+      await ctx.scheduler.runAfter(
+        MEMOIR_GENERATION_DELAY,
+        internal.memoirs.generateMemoirContentAndUpdate,
+        {
+          userId: args.userId,
+          whisperId: args.whisperId,
+        }
+      );
+
+    await ctx.db.insert(TABLES.SCHEDULED_MEMOIR_GENERATION, {
+      userId: args.userId,
+      whisperId: args.whisperId,
+      scheduledAt: Date.now() + MEMOIR_GENERATION_DELAY,
+      status: STATUS.ACTIVE,
+      scheduledFunctionId,
+      createdAt: Date.now(),
+    });
+
+    console.log(
+      `[scheduleMemoirGenerationInternal] ✅ Scheduled memoir generation for whisper: ${
+        args.whisperId
+      } in ${MEMOIR_GENERATION_DELAY / 1000}s`
+    );
   },
 });
 
@@ -199,11 +267,12 @@ export const updateTitle = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    if (!identity) throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
 
     const whisper = await ctx.db.get(args.id);
-    if (!whisper) throw new Error("Whisper not found");
-    if (whisper.userId !== identity.subject) throw new Error("Unauthorized");
+    if (!whisper) throw new Error(ERROR_MESSAGES.WHISPER_NOT_FOUND);
+    if (whisper.userId !== identity.subject)
+      throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
 
     await ctx.db.patch(args.id, {
       title: args.title,
@@ -220,11 +289,30 @@ export const deleteWhisper = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+    if (!identity) throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
 
     const whisper = await ctx.db.get(args.id);
-    if (!whisper) throw new Error("Whisper not found");
-    if (whisper.userId !== identity.subject) throw new Error("Unauthorized");
+    if (!whisper) throw new Error(ERROR_MESSAGES.WHISPER_NOT_FOUND);
+    if (whisper.userId !== identity.subject)
+      throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+
+    const scheduledGenerations = await ctx.db
+      .query(TABLES.SCHEDULED_MEMOIR_GENERATION)
+      .withIndex(INDEXES.BY_WHISPER, (q) => q.eq("whisperId", args.id))
+      .collect();
+
+    for (const scheduled of scheduledGenerations) {
+      await ctx.db.delete(scheduled._id);
+    }
+
+    const relatedMemoirs = await ctx.db
+      .query(TABLES.MEMOIRS)
+      .withIndex(INDEXES.BY_WHISPER, (q) => q.eq("whisperId", args.id))
+      .collect();
+
+    for (const memoir of relatedMemoirs) {
+      await ctx.db.delete(memoir._id);
+    }
 
     await ctx.db.delete(args.id);
 

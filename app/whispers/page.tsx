@@ -7,6 +7,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/whisper-page/LoadingSection";
+import { OnboardingWrapper } from "@/components/OnboardingWrapper";
 
 export interface Transcription {
   id: string;
@@ -81,5 +82,9 @@ export default function WhispersPage() {
   }
 
   // Only render the authenticated content when auth is ready
-  return <AuthenticatedContent />;
+  return (
+    <OnboardingWrapper>
+      <AuthenticatedContent />
+    </OnboardingWrapper>
+  );
 }
