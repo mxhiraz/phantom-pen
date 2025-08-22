@@ -28,7 +28,6 @@ export function PrivacyTogglePopover() {
 
     try {
       await togglePrivacy({ clerkId: user.id });
-      toast.success("Privacy setting updated successfully!");
     } catch (error) {
       toast.error("Failed to update privacy setting");
     }
