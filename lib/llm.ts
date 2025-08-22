@@ -82,7 +82,7 @@ Return ONLY an array of objects like:
 <rules>
 <rule>Always Return an Array: Ensure the output is wrapped in [], even for one entry.</rule>
 <rule>Each content field must have maximum 200 words or less.</rule>
-<rule>Each title field must have maximum 30-40 words.</rule>
+<rule>Each title field must have maximum 50 words or less.</rule>
 <rule>Date in "DD MMM YYYY" format (e.g., 23 Aug 2025).</rule>
 <rule>If no date is provided, use current date in specified format ${new Date().toLocaleDateString(
     "en-US",
