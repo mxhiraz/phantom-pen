@@ -30,6 +30,7 @@
     "clsx": "^2.1.1",
     "convex": "^1.25.4",
     "date-fns": "^4.1.0",
+    "dedent": "^1.6.0",
     "groq-sdk": "^0.30.0",
     "input-otp": "^1.4.2",
     "lowlight": "^3.3.0",

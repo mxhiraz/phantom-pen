@@ -3,6 +3,7 @@ import { action } from "./_generated/server";
 import { api } from "./_generated/api";
 import { groq } from "../lib/llm";
 import { parseMarkdownToBlocks } from "../lib/utils";
+import dedent from "dedent";
 
 export const transcribeFromStorage = action({
   args: {
@@ -60,7 +61,7 @@ export const transcribeFromStorage = action({
           messages: [
             {
               role: "user",
-              content: `<prompt>
+              content: dedent`<prompt>
   <instruction>
     You are a markdown generator. Your responsibility is to convert raw text to beautiful markdown without modifying content.
   </instruction>
@@ -154,7 +155,7 @@ export const transcribeFromStorage = action({
             messages: [
               {
                 role: "user",
-                content: `<prompt>
+                content: dedent`<prompt>
   <instruction>
     You are a title generator. Respond ONLY with the title—no explanations, no quotes, no additional text.
   </instruction>

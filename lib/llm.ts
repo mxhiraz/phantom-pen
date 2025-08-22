@@ -1,6 +1,7 @@
 "server-only";
 import { Groq } from "groq-sdk";
 import { z } from "zod";
+import dedent from "dedent";
 
 export const groq = new Groq();
 
@@ -25,35 +26,72 @@ export const generateMemoirContent = async (
   whisperContent: string,
   userPreferences: z.infer<typeof UserPreferencesSchema>
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
-  const prompt = `
-Transform this voice note into a memoir entry:
-
+  const prompt = dedent`
+  
+<styleGuide>
 ${buildStyleGuide(userPreferences)}
+</styleGuide>
 
+<userPreferences>
 User's intended feeling: ${
     userPreferences.feelingIntent || "Create an engaging, meaningful story"
   }
 User's memoir motivation: ${
     userPreferences.opener || "Share personal experiences and insights"
   }
+</userPreferences>
 
-Voice Note Content:
+<voiceNote>
 "${whisperContent}"
+</voiceNote>
 
-Example response format:
+<examples>
+<voiceNote>
+"I went to the park and played with my dog. I had a lot of fun."
+</voiceNote>
+<example>
+This is an example show when user voice have only one entry:
 [
   {
-    "date": "19 May 1956",
-    "title": "Your compelling title here",
-    "content": "Your memoir content here, written in the specified style"
+    "date": "20 May 2023",
+    "title": "Long vacation",
+    "content": "I went to the park and played with my dog. I had a lot of fun."
+  } 
+] 
+</example>
+</examples>
+
+<format>
+Return ONLY a array of objects like:
+[
+  {
+    "date": "20 May 2023",
+    "title": "Long vacation",
+    "content": "I went to the park and played with my dog. I had a lot of fun."
+  },
+  {
+    "date": "23 Aug 2025",
+    "title": "Productive Day",
+    "content": "I went to the park and played with my dog. I had a lot of fun."
   }
 ]
+</format>
 
-Requirements:
-- Max 200 words of content
-- Date in "DD MMM YYYY" format
-- Return array even if there is only one entry
-- if there is no date mentioned use current date ${Date.now()}`;
+<requirements>
+<rules>
+<rule>Each content field must have maximum 200 words or less.</rule>
+<rule>Date in "DD MMM YYYY" format (e.g., 23 Aug 2025).</rule>
+<rule>If no date is provided, use current date in specified format ${new Date().toLocaleDateString(
+    "en-US",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }
+  )}.</rule>
+</rules>
+</requirements>
+`;
 
   console.log("[generateMemoirContent] 🔍 Prompt:", prompt);
 
@@ -63,7 +101,7 @@ Requirements:
         {
           role: "system",
           content:
-            "You are a skilled personalized memoir writer who follows the style guide provided by the user.",
+            "You are a skilled personalized memoir writer who follows the style guide and  preferences provided by the user.",
         },
         {
           role: "user",
@@ -71,7 +109,7 @@ Requirements:
         },
       ],
       model: "openai/gpt-oss-120b",
-      temperature: 0.2,
+      temperature: 0.1,
       response_format: {
         type: "json_schema",
         json_schema: {
