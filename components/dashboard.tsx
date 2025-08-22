@@ -179,7 +179,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
               />
               {debouncedSearchQuery && searchResults === undefined && (
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-primary border-t-muted-foreground rounded-full animate-spin"></div>
                 </div>
               )}
             </div>
