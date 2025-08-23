@@ -81,7 +81,8 @@ Return ONLY an array of objects like:
 
 <rules>
 <rule>Always Return an Array: Ensure the output is wrapped in [], even for one entry.</rule>
-<rule>Each content field must have maximum 200 words or less.</rule>
+<rule>If user's voice note is short, keep the same content as the voice note.</rule>
+<rule>Content field must not exceed 200 words.</rule>
 <rule>Use proper punctuation, capitalization and time as "12:00 PM", "12:00 AM" or "12:00".</rule>
 <rule>Each title field must have maximum 50 words or less.</rule>
 <rule>Date in "DD MMM YYYY" format (e.g., 23 Aug 2025).</rule>

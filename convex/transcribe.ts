@@ -54,7 +54,7 @@ export const transcribeFromStorage = action({
 
       const transcriptionResponse = await groq.audio.transcriptions.create({
         file: audioFile,
-        model: "whisper-large-v3-turbo",
+        model: "whisper-large-v3",
         ...(args.language && { language: args.language }),
       });
 
@@ -73,8 +73,8 @@ export const transcribeFromStorage = action({
    You have to Convert raw transcription to markdown format
   </task>
   <examples>
-   <rawTranscription>Productive Day</rawTranscription>
-    <example>{ "markdown": "#Productive Day" }</example>
+   <rawTranscription>Hello, my name is Arshia.</rawTranscription>
+    <example>{ "markdown": "Hello, my name is Arshia." }</example>
   </examples>
   <language>${LANGUAGES[args.language as keyof typeof LANGUAGES]}</language>
    <format>
