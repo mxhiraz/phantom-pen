@@ -238,7 +238,7 @@ export default function HeroSection() {
                   viewport={{ once: true, amount: 0.2 }}
                 >
                   <div className="bg-background/50 backdrop-blur-sm border rounded-2xl p-8 min-h-[100px]">
-                    <div className=" bg-primary/10 h-[200px]   md:aspect-video w-full flex items-center justify-center mx-auto mb-6">
+                    <div className=" bg-primary/10 h-[200px] md:aspect-video w-full flex items-center justify-center mx-auto mb-6">
                       <Image
                         src={point.image}
                         alt={point.title}
@@ -263,10 +263,10 @@ export default function HeroSection() {
               variants={transitionVariants}
               className="max-w-2xl mx-auto"
             >
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+              <h3 className="text-3xl md:text-4xl font-bold mb-4">
                 Ready to Start Your Memoir?
               </h3>
-              <p className="text-muted-foreground max-w-xs md:max-w-lg mx-auto mb-4">
+              <p className="text-muted-foreground max-w-lg text-lg mx-auto mb-4">
                 Join thousands of users who are already preserving their
                 memories with AI
               </p>
