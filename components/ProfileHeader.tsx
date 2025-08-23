@@ -35,6 +35,12 @@ export default function ProfileHeader({
             animate-[blob_8s_infinite_ease-in-out] 
             rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
       ></div>
+
+      <div
+        className=" absolute top-[-50] left-[-50]  blur-[50px] opacity-20 w-80 md:w-108 md:h-[300px] h-40 bg-gradient-to-r from-purple-700 to-purple-200 
+            animate-[blob_8s_infinite_ease-in-out] 
+            rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
+      ></div>
       <div className="flex items-center gap-2">
         <Avatar className="size-12">
           <AvatarImage src={avatarUrl} alt={username} />
