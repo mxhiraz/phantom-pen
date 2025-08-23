@@ -280,7 +280,7 @@ export default function HeroSection() {
                     className="rounded-xl px-5 text-base"
                   >
                     <Link href={isSignedIn ? "/whispers" : "/auth?mode=signup"}>
-                      <span className="text-nowrap">Get Started</span>
+                      <span className="text-nowrap">Start Writing</span>
                     </Link>
                   </Button>
                 </div>

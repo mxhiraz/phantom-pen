@@ -598,7 +598,7 @@ function SettingsDialog({
                         Saving...
                       </>
                     ) : (
-                      <>Save</>
+                      <>Save Changes</>
                     )}
                   </Button>
                   <Button
