@@ -390,7 +390,7 @@ export default function HeroSection() {
                 {
                   question: "Is my content private and secure?",
                   answer:
-                    "Yes! Your content is encrypted and stored securely. You have full control over who can see your memoirs, with options to keep them private or share with specific people.",
+                    "Yes! Your content is encrypted and stored securely. You have full control over who can see your memoirs, with options to keep them private.",
                 },
                 {
                   question: "Can I import existing content?",
