@@ -4,11 +4,13 @@ import { api } from "./_generated/api";
 import { groq } from "../lib/llm";
 import { parseMarkdownToBlocks } from "../lib/utils";
 import dedent from "dedent";
+import { LANGUAGES } from "../lib/constants";
 
 export const transcribeFromStorage = action({
   args: {
     storageId: v.id("_storage"),
     whisperId: v.optional(v.id("whispers")),
+    language: v.optional(v.string()),
   },
   handler: async (
     ctx,
@@ -53,8 +55,10 @@ export const transcribeFromStorage = action({
       const transcriptionResponse = await groq.audio.transcriptions.create({
         file: audioFile,
         model: "whisper-large-v3-turbo",
+        ...(args.language && { language: args.language }),
       });
 
+      console.log("[TRANSCRIBE] transcriptionResponse", transcriptionResponse);
       let markdown = null;
       try {
         const markdownResponse = await groq.chat.completions.create({
@@ -72,6 +76,7 @@ export const transcribeFromStorage = action({
    <rawTranscription>Productive Day</rawTranscription>
     <example>{ "markdown": "#Productive Day" }</example>
   </examples>
+  <language>${LANGUAGES[args.language as keyof typeof LANGUAGES]}</language>
    <format>
     Return ONLY a JSON object like: { "markdown": "# Your generated title" }
   </format>
@@ -162,6 +167,7 @@ export const transcribeFromStorage = action({
   <task>
     Generate a short, descriptive title (max 30 characters) for the transcription below. Do not include any special characters.
   </task>
+  <language>${LANGUAGES[args.language as keyof typeof LANGUAGES]}</language>
   <examples>
     <example>{ "title": "Productive Day" }</example>
   </examples>

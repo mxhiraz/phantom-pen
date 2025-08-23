@@ -8,6 +8,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 // import { RecordingBasics } from "./RecordingBasics"; // Commented out - no longer needed
 
@@ -15,6 +22,8 @@ import { AudioWaveform } from "./AudioWaveform";
 import { useAudioRecording } from "./hooks/useAudioRecording";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import useLocalStorage from "./hooks/useLocalStorage";
+import { LANGUAGES } from "@/lib/constants";
 
 import {
   useMutation as useConvexMutation,
@@ -37,7 +46,7 @@ declare global {
 }
 
 export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
-  // const [language, setLanguage] = useLocalStorage("language", "en"); // Commented out - language now auto-detected
+  const [language, setLanguage] = useLocalStorage("recording-language", "auto");
 
   const {
     recording,
@@ -109,11 +118,18 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
 
       setIsProcessing("transcribing");
 
-      // Use Convex backend for transcription
-      const result = await transcribeFromStorage({
+      // Use Convex backend for transcription with conditional language parameter
+      const transcriptionParams: any = {
         storageId: storageId as any,
         whisperId: whisperId as any,
-      });
+      };
+
+      // Only add language if not auto-detection
+      if (language !== "auto") {
+        transcriptionParams.language = language;
+      }
+
+      const result = await transcribeFromStorage(transcriptionParams);
 
       if (whisperId) {
         onClose();
@@ -156,11 +172,16 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
 
       setIsProcessing("transcribing");
 
-      // Use Convex backend for transcription
-      const result = await transcribeFromStorage({
+      const transcriptionParams: any = {
         storageId: storageId as any,
         whisperId: whisperId as any,
-      });
+      };
+
+      if (language !== "auto") {
+        transcriptionParams.language = language;
+      }
+
+      const result = await transcribeFromStorage(transcriptionParams);
 
       if (whisperId) {
         onClose();
@@ -175,7 +196,6 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
     }
   };
 
-  // Wait for audioBlob to be set after stopping before saving
   useEffect(() => {
     if (pendingSave && audioBlob) {
       setPendingSave(false);
@@ -203,22 +223,66 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
                 className="w-full h-full"
               />
             </div>
-            <p className="text-gray-500">
-              {isProcessing === "uploading"
-                ? "Uploading audio recording"
-                : "Transcribing audio..."}
-              <span className="animate-pulse">...</span>
-            </p>
+            <div className="text-gray-500 flex justify-center items-center gap-1">
+              <p>Analyzing audio</p>
+              <div className="flex animate-pulse mt-1.5">
+                <svg
+                  width="20"
+                  height="4"
+                  viewBox="0 0 20 4"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="4" height="4" rx="2" fill="#364153" />
+                  <g opacity="0.8">
+                    <rect x="8" width="4" height="4" rx="2" fill="#364153" />
+                  </g>
+                  <g opacity="0.6">
+                    <rect x="16" width="4" height="4" rx="2" fill="#364153" />
+                  </g>
+                </svg>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center w-full">
             {!recording ? (
               <>
-                {/* Language auto-detection message */}
-                <div className="w-full flex flex-col px-5 py-6 border-b border-gray-200">
+                {/* Language Selection */}
+                <div className="w-full flex flex-col px-5 py-4 border-b border-gray-200">
+                  <div className="text-center mb-3">
+                    <p className="text-sm text-gray-600 mb-2">
+                      Select Language
+                    </p>
+                    <Select value={language} onValueChange={setLanguage}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select language" />
+                      </SelectTrigger>
+                      <SelectContent className="h-72">
+                        <SelectItem value="auto">Auto-detect</SelectItem>
+                        {Object.entries(LANGUAGES).map(([key, lang]) => (
+                          <SelectItem key={key} value={lang.code}>
+                            {lang.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Language info message */}
                   <div className="text-center">
-                    <p className="text-base text-gray-600">
-                      Language will be automatically detected from your speech
+                    <p className="text-xs text-gray-500">
+                      {language === "auto"
+                        ? "Language will be automatically detected"
+                        : `Recording will be transcribed in ${
+                            LANGUAGES[
+                              Object.keys(LANGUAGES).find(
+                                (k) =>
+                                  LANGUAGES[k as keyof typeof LANGUAGES]
+                                    .code === language
+                              ) as keyof typeof LANGUAGES
+                            ]?.name || language
+                          }`}
                     </p>
                   </div>
                 </div>

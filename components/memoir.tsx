@@ -85,10 +85,9 @@ export default function Memoir({
                 </h5>
                 <Card className="my-5 border-none shadow-none">
                   <CardContent className="px-0 xl:px-2">
-                    <div
-                      className="prose dark:prose-invert text-foreground"
-                      dangerouslySetInnerHTML={{ __html: memoir.content }}
-                    />
+                    <p className="prose text- dark:prose-invert text-foreground">
+                      {memoir.content}
+                    </p>
                   </CardContent>
                 </Card>
               </div>

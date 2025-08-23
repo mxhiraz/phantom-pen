@@ -204,6 +204,11 @@ export const createMemoir = internalMutation({
     content: v.string(),
   },
   handler: async (ctx, args) => {
+    const whisper = await ctx.db.get(args.whisperId);
+    if (!whisper) {
+      throw new Error(`Whisper with ID ${args.whisperId} does not exist`);
+    }
+
     const memoirId = await ctx.db.insert(TABLES.MEMOIRS, {
       userId: args.userId,
       whisperId: args.whisperId,
