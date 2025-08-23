@@ -67,7 +67,7 @@ const valuePoints = [
   },
   {
     image: "/3.png",
-    title: "Share Your Memories",
+    title: "Share",
     description: "Share your memories with loved ones or keep them private",
   },
 ];
