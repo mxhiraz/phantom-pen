@@ -225,7 +225,7 @@ export default function HeroSection() {
 
         {/* Value Points Section */}
         <section className="py-24  bg-gradient-to-b from-transparent to-muted/20 pb-4">
-          <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-6xl px-6">
             <AnimatedGroup
               variants={delayedTransitionVariants}
               className="text-center mb-16"
