@@ -3,7 +3,10 @@ import { cn } from "../lib/utils";
 
 export const Logo = ({ className }: { className?: string }) => {
   return (
-    <Link href="/" className={cn("flex items-center gap-2", className)}>
+    <Link
+      href="/"
+      className={cn("flex items-center gap-2 whitespace-nowrap", className)}
+    >
       <img
         loading="eager"
         src="https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/WhatsApp_Image_2025-08-15_at_01.46.49.jpeg"

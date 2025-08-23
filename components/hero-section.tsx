@@ -256,6 +256,39 @@ export default function HeroSection() {
               ))}
             </div>
           </div>
+
+          {/* CTA Section */}
+          <div className="text-center  pb-16">
+            <AnimatedGroup
+              variants={transitionVariants}
+              className="max-w-2xl mx-auto"
+            >
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                Ready to Start Your Memoir?
+              </h3>
+              <p className="text-muted-foreground max-w-xs md:max-w-lg mx-auto mb-4">
+                Join thousands of users who are already preserving their
+                memories with AI
+              </p>
+              <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
+                <div
+                  key={3}
+                  className="bg-foreground/10 rounded-[calc(var(--radius-xl)+0.125rem)] border p-0.5"
+                >
+                  <Button
+                    asChild
+                    size="lg"
+                    className="rounded-xl px-5 text-base"
+                  >
+                    <Link href={isSignedIn ? "/whispers" : "/auth?mode=signup"}>
+                      <span className="text-nowrap">Get Started</span>
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </AnimatedGroup>
+          </div>
+
           <Footer />
         </section>
       </main>
