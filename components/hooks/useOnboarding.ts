@@ -75,6 +75,7 @@ export function useOnboarding() {
     userData,
     submitOnboarding,
     finishOnboarding,
+    updateOnboarding,
     isLoading: !isLoaded || isOnboardingComplete === null,
   };
 }

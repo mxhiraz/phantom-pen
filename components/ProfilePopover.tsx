@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,8 +20,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { VoiceTextarea } from "@/components/VoiceTextarea";
 import { LogOut, Settings, User, Edit3 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  useOnboarding,
+  OnboardingData,
+} from "@/components/hooks/useOnboarding";
 
 export function ProfilePopover() {
   const { user } = useUser();
@@ -126,6 +138,29 @@ function SettingsDialog({
   const [isSaving, setIsSaving] = useState(false);
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
 
+  // Questions editing state
+  const [isEditingQuestions, setIsEditingQuestions] = useState(false);
+  const [questionsData, setQuestionsData] = useState<Partial<OnboardingData>>(
+    {}
+  );
+  const [isSavingQuestions, setIsSavingQuestions] = useState(false);
+
+  const { userData, updateOnboarding } = useOnboarding();
+
+  // Initialize questions data when user data loads
+  useEffect(() => {
+    if (userData) {
+      setQuestionsData({
+        opener: userData.opener || "",
+        feelingIntent: userData.feelingIntent || "",
+        voiceStyle: userData.voiceStyle || "scene-focused",
+        writingStyle: userData.writingStyle || "clean-simple",
+        candorLevel: userData.candorLevel || "fully-candid",
+        humorStyle: userData.humorStyle || "natural-humor",
+      });
+    }
+  }, [userData]);
+
   const handleSave = async () => {
     if (!firstName.trim()) {
       toast.error("First name is required");
@@ -185,6 +220,44 @@ function SettingsDialog({
     }
   };
 
+  const handleSaveQuestions = async () => {
+    if (!questionsData.opener?.trim()) {
+      toast.error("Opening question is required");
+      return;
+    }
+
+    setIsSavingQuestions(true);
+    try {
+      await updateOnboarding({
+        clerkId: user.id,
+        ...questionsData,
+        onboardingCompleted: true, // Keep onboarding completed
+      });
+
+      setIsEditingQuestions(false);
+      toast.success("Questions updated successfully");
+    } catch (error) {
+      console.error("Failed to update questions:", error);
+      toast.error("Failed to update questions");
+    } finally {
+      setIsSavingQuestions(false);
+    }
+  };
+
+  const handleCancelQuestions = () => {
+    if (userData) {
+      setQuestionsData({
+        opener: userData.opener || "",
+        feelingIntent: userData.feelingIntent || "",
+        voiceStyle: userData.voiceStyle || "scene-focused",
+        writingStyle: userData.writingStyle || "clean-simple",
+        candorLevel: userData.candorLevel || "fully-candid",
+        humorStyle: userData.humorStyle || "natural-humor",
+      });
+    }
+    setIsEditingQuestions(false);
+  };
+
   const getInitials = () => {
     const first = user.firstName?.charAt(0) || "";
     const last = user.lastName?.charAt(0) || "";
@@ -197,7 +270,7 @@ function SettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-gray-900">
             Settings
@@ -345,6 +418,255 @@ function SettingsDialog({
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Questions Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                Your Story Questions
+              </h4>
+              {!isEditingQuestions && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditingQuestions(true)}
+                  className="h-8 -mr-3"
+                >
+                  <Edit3 className="w-3 h-3" />
+                  Edit
+                </Button>
+              )}
+            </div>
+
+            {isEditingQuestions ? (
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      What's your story about?
+                    </Label>
+                    <VoiceTextarea
+                      value={questionsData.opener || ""}
+                      onChange={(e) =>
+                        setQuestionsData((prev) => ({
+                          ...prev,
+                          opener: e.target.value,
+                        }))
+                      }
+                      placeholder="Tell us about your story..."
+                      rows={4}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      What feeling do you want readers to take away?
+                    </Label>
+                    <VoiceTextarea
+                      value={questionsData.feelingIntent || ""}
+                      onChange={(e) =>
+                        setQuestionsData((prev) => ({
+                          ...prev,
+                          feelingIntent: e.target.value,
+                        }))
+                      }
+                      placeholder="What impact do you want to have?"
+                      rows={4}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Voice Style
+                    </Label>
+                    <Select
+                      value={questionsData.voiceStyle}
+                      onValueChange={(value) =>
+                        setQuestionsData((prev) => ({
+                          ...prev,
+                          voiceStyle: value as any,
+                        }))
+                      }
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select voice style" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="scene-focused">
+                          Scene-focused
+                        </SelectItem>
+                        <SelectItem value="reflection-focused">
+                          Reflection-focused
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Writing Style
+                    </Label>
+                    <Select
+                      value={questionsData.writingStyle}
+                      onValueChange={(value) =>
+                        setQuestionsData((prev) => ({
+                          ...prev,
+                          writingStyle: value as any,
+                        }))
+                      }
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select writing style" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="clean-simple">
+                          Clean & Simple
+                        </SelectItem>
+                        <SelectItem value="musical-descriptive">
+                          Musical & Descriptive
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Candor Level
+                    </Label>
+                    <Select
+                      value={questionsData.candorLevel}
+                      onValueChange={(value) =>
+                        setQuestionsData((prev) => ({
+                          ...prev,
+                          candorLevel: value as any,
+                        }))
+                      }
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select candor level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fully-candid">
+                          Fully Candid
+                        </SelectItem>
+                        <SelectItem value="softened-details">
+                          Softened Details
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Humor Style
+                    </Label>
+                    <Select
+                      value={questionsData.humorStyle}
+                      onValueChange={(value) =>
+                        setQuestionsData((prev) => ({
+                          ...prev,
+                          humorStyle: value as any,
+                        }))
+                      }
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select humor style" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="natural-humor">
+                          Natural Humor
+                        </SelectItem>
+                        <SelectItem value="background-humor">
+                          Background Humor
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    size="sm"
+                    onClick={handleSaveQuestions}
+                    disabled={isSavingQuestions}
+                    className="flex-1"
+                  >
+                    {isSavingQuestions ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Saving...
+                      </>
+                    ) : (
+                      <>Save</>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCancelQuestions}
+                    className="px-4"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Story Focus:</span>
+                  <span className="text-gray-900 max-w-[200px] truncate font-medium">
+                    {userData?.opener || "Not set"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Reader Impact:</span>
+                  <span className="text-gray-900 max-w-[200px] truncate font-medium">
+                    {userData?.feelingIntent || "Not set"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Voice Style:</span>
+                  <span className="text-gray-900 max-w-[200px] truncate font-medium">
+                    {userData?.voiceStyle
+                      ? userData.voiceStyle
+                          .replace("-", " ")
+                          .replace(/\b\w/g, (l) => l.toUpperCase())
+                      : "Not set"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Writing Style:</span>
+                  <span className="text-gray-900 max-w-[200px] truncate font-medium">
+                    {userData?.writingStyle
+                      ? userData.writingStyle
+                          .replace("-", " ")
+                          .replace(/\b\w/g, (l) => l.toUpperCase())
+                      : "Not set"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Candor Level:</span>
+                  <span className="text-gray-900 max-w-[200px] truncate font-medium">
+                    {userData?.candorLevel
+                      ? userData.candorLevel
+                          .replace("-", " ")
+                          .replace(/\b\w/g, (l) => l.toUpperCase())
+                      : "Not set"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Humor Style:</span>
+                  <span className="text-gray-900 max-w-[200px] truncate font-medium">
+                    {userData?.humorStyle
+                      ? userData.humorStyle
+                          .replace("-", " ")
+                          .replace(/\b\w/g, (l) => l.toUpperCase())
+                      : "Not set"}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
