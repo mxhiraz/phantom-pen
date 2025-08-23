@@ -201,7 +201,7 @@ export default function HeroSection() {
         </section>
 
         {/* Value Points Section */}
-        <section className="py-24  bg-gradient-to-b from-transparent to-muted/20">
+        <section className="py-24  bg-gradient-to-b from-transparent to-muted/20 pb-4">
           <div className="mx-auto max-w-7xl px-6">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -221,7 +221,7 @@ export default function HeroSection() {
                   className="text-center group"
                 >
                   <div className="bg-background/50 backdrop-blur-sm border rounded-2xl p-8 min-h-[100px]">
-                    <div className=" bg-primary/10 h-[200px] aspect-video w-full  flex items-center justify-center mx-auto mb-6">
+                    <div className=" bg-primary/10 h-[200px]   md:aspect-video w-full flex items-center justify-center mx-auto mb-6">
                       <Image
                         src={point.image}
                         alt={point.title}
@@ -239,8 +239,8 @@ export default function HeroSection() {
               ))}
             </div>
           </div>
+          <Footer />
         </section>
-        <Footer />
       </main>
     </>
   );
