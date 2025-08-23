@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -77,6 +77,7 @@ export default function HeroSection() {
   const { isSignedIn } = useUser();
   const [isQRCodeVisible, setIsQRCodeVisible] = useState(true);
   const [isQRCodeCentered, setIsQRCodeCentered] = useState(false);
+  const [openFAQ, setOpenFAQ] = useState<number | null>(0); // First FAQ open by default
 
   const handleQRCodeClick = () => {
     setIsQRCodeCentered(true);
@@ -84,6 +85,10 @@ export default function HeroSection() {
 
   const handleCloseCentered = () => {
     setIsQRCodeCentered(false);
+  };
+
+  const toggleFAQ = (index: number) => {
+    setOpenFAQ(openFAQ === index ? null : index);
   };
 
   return (
@@ -224,7 +229,12 @@ export default function HeroSection() {
         </section>
 
         {/* Value Points Section */}
-        <section className="py-24  bg-gradient-to-b from-transparent to-muted/20 pb-4">
+        <section className="py-24  pb-0 relative">
+          <div
+            className=" absolute bottom-[-150] right-[-50]  blur-[50px] opacity-20 w-40 md:h-[400px] h-40 bg-gradient-to-r from-purple-700 to-purple-400 
+            animate-[blob_8s_infinite_ease-in-out] 
+            rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
+          ></div>
           <div className="mx-auto max-w-6xl px-6">
             <AnimatedGroup
               variants={delayedTransitionVariants}
@@ -267,9 +277,191 @@ export default function HeroSection() {
               ))}
             </div>
           </div>
+        </section>
 
-          {/* CTA Section */}
-          <div className="text-center  pb-16">
+        {/* Who is this for Section */}
+        <section className="py-16 relative">
+          <div className="mx-auto max-w-6xl px-6">
+            <AnimatedGroup
+              variants={delayedTransitionVariants}
+              className="text-center mb-16"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Who is Phantom Pen For?
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Whether you're a writer, a busy professional, or someone who
+                wants to preserve precious memories
+              </p>
+            </AnimatedGroup>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+              {[
+                {
+                  icon: "✍️",
+                  title: "Writers & Journalists",
+                  description:
+                    "Transform your daily musings into structured, publishable content with AI assistance.",
+                },
+                {
+                  icon: "👨‍💼",
+                  title: "Busy Professionals",
+                  description:
+                    "Capture fleeting thoughts and ideas during your busy day, then let AI organize them later.",
+                },
+                {
+                  icon: "👴👵",
+                  title: "Memory Keepers",
+                  description:
+                    "Preserve family stories and personal history for future generations to cherish.",
+                },
+                {
+                  icon: "🎓",
+                  title: "Students & Researchers",
+                  description:
+                    "Organize your notes, research, and insights into coherent, shareable documents.",
+                },
+                {
+                  icon: "💭",
+                  title: "Creative Thinkers",
+                  description:
+                    "Turn scattered ideas and voice recordings into polished creative works.",
+                },
+                {
+                  icon: "📱",
+                  title: "Digital Nomads",
+                  description:
+                    "Capture thoughts on-the-go and transform them into structured content anywhere.",
+                },
+              ].map((persona, index) => (
+                <AnimatedGroup
+                  key={index}
+                  variants={transitionVariants}
+                  className="group"
+                  whileInView={true}
+                  viewport={{ once: true, amount: 0.2 }}
+                >
+                  <div className="bg-background/50 backdrop-blur-sm border rounded-2xl p-6 h-full">
+                    <div className="text-4xl mb-4">{persona.icon}</div>
+                    <h3 className="text-xl font-semibold mb-3">
+                      {persona.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {persona.description}
+                    </p>
+                  </div>
+                </AnimatedGroup>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Q&A Section */}
+        <section className="pb-16 relative">
+          <div
+            className=" absolute top-[-150] left-[-50]  blur-[50px] opacity-20 w-40 md:h-[400px] h-40 bg-gradient-to-r from-purple-700 to-purple-400 
+            animate-[blob_8s_infinite_ease-in-out] 
+            rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
+          ></div>
+          <div
+            className=" absolute bottom-[150] right-[-50]  blur-[50px] opacity-20 w-40 md:h-[500px] h-40 bg-gradient-to-r from-purple-700 to-purple-400 
+            animate-[blob_8s_infinite_ease-in-out] 
+            rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
+          ></div>
+          <div className="mx-auto max-w-4xl px-6">
+            <AnimatedGroup
+              variants={delayedTransitionVariants}
+              className="text-center mb-16"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Everything you need to know about Phantom Pen
+              </p>
+            </AnimatedGroup>
+
+            <div className="space-y-4">
+              {[
+                {
+                  question: "How does Phantom Pen work?",
+                  answer:
+                    "Simply write your notes or record your voice, and our AI will automatically transform them into beautifully structured memoirs. You can then edit, organize, and share them as needed.",
+                },
+                {
+                  question: "Is my content private and secure?",
+                  answer:
+                    "Yes! Your content is encrypted and stored securely. You have full control over who can see your memoirs, with options to keep them private or share with specific people.",
+                },
+                {
+                  question: "Can I import existing content?",
+                  answer:
+                    "Absolutely! You can import text files, copy-paste content, or even transcribe voice recordings. Our AI will help organize and structure everything for you.",
+                },
+                {
+                  question:
+                    "What makes Phantom Pen different from other note-taking apps?",
+                  answer:
+                    "Unlike traditional note-taking apps, Phantom Pen uses AI to automatically structure your content into coherent memoirs. It's like having a personal editor who understands your writing style and helps organize your thoughts.",
+                },
+                {
+                  question: "Do I need to be tech-savvy to use it?",
+                  answer:
+                    "Not at all! Phantom Pen is designed to be intuitive and user-friendly. If you can type or speak, you can create beautiful memoirs with our AI assistance.",
+                },
+                {
+                  question: "Can I export my memoirs?",
+                  answer:
+                    "Yes! You can export your memoirs in plain text format. In the future, we'll add support for PDF, Word documents, and other popular formats.",
+                },
+              ].map((faq, index) => (
+                <AnimatedGroup
+                  key={index}
+                  variants={transitionVariants}
+                  whileInView={true}
+                  viewport={{ once: true, amount: 0.2 }}
+                >
+                  <div className="bg-background/50 backdrop-blur-sm border rounded-2xl overflow-hidden">
+                    <button
+                      onClick={() => toggleFAQ(index)}
+                      className="w-full p-6 text-left flex items-center justify-between hover:bg-muted/20 transition-colors duration-200"
+                    >
+                      <h3 className="text-lg font-semibold text-primary pr-4">
+                        {faq.question}
+                      </h3>
+                      <motion.div
+                        animate={{ rotate: openFAQ === index ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                      </motion.div>
+                    </button>
+                    <AnimatePresence>
+                      {openFAQ === index && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-6 pb-6">
+                            <p className="text-muted-foreground">
+                              {faq.answer}
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </AnimatedGroup>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="text-center py-16">
+          <div className="mx-auto max-w-2xl px-6">
             <AnimatedGroup
               variants={transitionVariants}
               className="max-w-sm md:max-w-2xl mx-auto"
@@ -299,9 +491,9 @@ export default function HeroSection() {
               </div>
             </AnimatedGroup>
           </div>
-
-          <Footer />
         </section>
+
+        <Footer />
 
         {/* QR Code - Bottom Right */}
         <AnimatePresence>
