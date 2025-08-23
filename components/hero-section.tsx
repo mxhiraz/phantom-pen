@@ -75,9 +75,9 @@ const valuePoints = [
 
 export default function HeroSection() {
   const { isSignedIn } = useUser();
-  const [isQRCodeVisible, setIsQRCodeVisible] = useState(true);
+  const [isQRCodeVisible] = useState(true);
   const [isQRCodeCentered, setIsQRCodeCentered] = useState(false);
-  const [openFAQ, setOpenFAQ] = useState<number | null>(0); // First FAQ open by default
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
   const handleQRCodeClick = () => {
     setIsQRCodeCentered(true);
