@@ -57,19 +57,18 @@ const valuePoints = [
     image: "/2.png",
     title: "Write",
     description:
-      "Capture your thoughts, memories, and experiences with our intuitive writing tools",
+      "Write notes, and our ai will automatically make memoir for you",
   },
   {
     image: "/1.png",
     title: "Publish",
     description:
-      "Transform your raw content into beautifully structured memoirs automatically",
+      "Transform your raw content into beautifully structured memoirs",
   },
   {
     image: "/3.png",
     title: "Share Your Memories",
-    description:
-      "Share your stories with loved ones or keep them private - you choose",
+    description: "Share your memories with loved ones or keep them private",
   },
 ];
 
@@ -264,7 +263,7 @@ export default function HeroSection() {
               className="max-w-2xl mx-auto"
             >
               <h3 className="text-3xl md:text-4xl font-bold mb-4">
-                Ready to Start Your Memoir?
+                Ready to Start Writing Your Note?
               </h3>
               <p className="text-muted-foreground max-w-lg text-lg mx-auto mb-4">
                 Join thousands of users who are already preserving their
