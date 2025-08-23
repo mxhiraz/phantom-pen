@@ -307,6 +307,15 @@ export default function HeroSection() {
         <AnimatePresence>
           {isQRCodeVisible && (
             <motion.div
+              initial={{ opacity: 0, filter: "blur(12px)", scale: 0.5 }}
+              animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+              transition={{
+                duration: 0.4,
+                delay: 1.7,
+                ease: "easeInOut",
+                type: "spring" as const,
+                bounce: 0.3,
+              }}
               layoutId="qr-code"
               className="fixed hidden md:block bottom-8 right-8 z-50 cursor-pointer"
               onClick={handleQRCodeClick}
@@ -350,6 +359,7 @@ export default function HeroSection() {
                       alt="QR Code"
                       width={500}
                       height={500}
+                      loading="eager"
                       className="w-full h-full"
                     />
                   </div>
