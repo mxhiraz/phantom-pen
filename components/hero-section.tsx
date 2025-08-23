@@ -1,9 +1,10 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "motion/react";
 
 import { TextEffect } from "@/components/ui/text-effect";
 import { AnimatedGroup } from "@/components/ui/animated-group";
@@ -74,6 +75,17 @@ const valuePoints = [
 
 export default function HeroSection() {
   const { isSignedIn } = useUser();
+  const [isQRCodeVisible, setIsQRCodeVisible] = useState(true);
+  const [isQRCodeCentered, setIsQRCodeCentered] = useState(false);
+
+  const handleQRCodeClick = () => {
+    setIsQRCodeCentered(true);
+  };
+
+  const handleCloseCentered = () => {
+    setIsQRCodeCentered(false);
+  };
+
   return (
     <>
       <HeroHeader />
@@ -260,7 +272,7 @@ export default function HeroSection() {
           <div className="text-center  pb-16">
             <AnimatedGroup
               variants={transitionVariants}
-              className="max-w-2xl mx-auto"
+              className="max-w-sm md:max-w-2xl mx-auto"
             >
               <h3 className="text-3xl md:text-4xl font-bold mb-4">
                 Ready to Start Writing Your Note?
@@ -290,6 +302,73 @@ export default function HeroSection() {
 
           <Footer />
         </section>
+
+        {/* QR Code - Bottom Right */}
+        <AnimatePresence>
+          {isQRCodeVisible && (
+            <motion.div
+              layoutId="qr-code"
+              className="fixed hidden md:block bottom-8 right-8 z-50 cursor-pointer"
+              onClick={handleQRCodeClick}
+            >
+              <motion.div
+                layoutId="qr-code-content"
+                className="bg-white rounded-lg p-3  border"
+              >
+                <Image
+                  src="https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/qrcode_241727744_c88f1747bbb12a1111e2dcfd4509f907_(1).png"
+                  alt="QR Code"
+                  width={80}
+                  height={80}
+                  className="size-32"
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Centered QR Code Modal */}
+        <AnimatePresence>
+          {isQRCodeCentered && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+              onClick={handleCloseCentered}
+            >
+              <motion.div
+                layoutId="qr-code-content"
+                className="bg-white rounded-2xl p-8  border max-w-sm mx-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="text-center">
+                  <div className="border p-3 rounded-2xl aspect-square  mb-4">
+                    <Image
+                      src="https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/qrcode_241727744_c88f1747bbb12a1111e2dcfd4509f907_(1).png"
+                      alt="QR Code"
+                      width={500}
+                      height={500}
+                      className="w-full h-full"
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">Scan QR Code</h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Scan this QR code to download the app
+                  </p>
+                  <Button
+                    onClick={handleCloseCentered}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Close
+                  </Button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </>
   );
