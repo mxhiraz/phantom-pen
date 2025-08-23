@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as files from "../files.js";
+import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as memoirs from "../memoirs.js";
 import type * as transcribe from "../transcribe.js";
@@ -31,6 +32,7 @@ import type * as whispers from "../whispers.js";
  */
 declare const fullApi: ApiFromModules<{
   files: typeof files;
+  functions: typeof functions;
   http: typeof http;
   memoirs: typeof memoirs;
   transcribe: typeof transcribe;

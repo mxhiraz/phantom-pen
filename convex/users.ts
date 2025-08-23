@@ -1,5 +1,6 @@
 import { v, Validator } from "convex/values";
-import { internalMutation, mutation, query } from "./_generated/server";
+import { internalMutation, mutation } from "./functions";
+import { query } from "./_generated/server";
 import { TABLES, INDEXES, ERROR_MESSAGES } from "../lib/constants";
 import { UserJSON } from "@clerk/backend";
 

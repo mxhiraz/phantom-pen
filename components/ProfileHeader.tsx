@@ -7,17 +7,19 @@ import { Share2 } from "lucide-react";
 interface ProfileHeaderProps {
   username?: string;
   avatarUrl?: string;
+  defaultTitle?: string;
 }
 
 export default function ProfileHeader({
   username = "Mahira",
   avatarUrl = "https://github.com/mxhiraz.png",
+  defaultTitle = "Memoir",
 }: ProfileHeaderProps) {
   const handleShare = () => {
     try {
       if (navigator.share) {
         navigator.share({
-          title: `${username}'s Memoir`,
+          title: `${username}'s ${defaultTitle}`,
           url: window.location.href,
         });
       } else {
@@ -42,7 +44,9 @@ export default function ProfileHeader({
         </Avatar>
         <div>
           <h2 className="font-semibold text-lg">{username}</h2>
-          <p className="text-xs text-muted-foreground">Memoir</p>
+          <p className="text-xs text-muted-foreground max-w-[200px] truncate">
+            {defaultTitle}
+          </p>
         </div>
       </div>
       <Button

@@ -9,13 +9,18 @@ import { useRef } from "react";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { LoadingSection } from "./whisper-page/LoadingSection";
+import { cn } from "@/lib/utils";
 
 export default function BlocknoteEditor({
   initialContent,
   id,
+  editable = true,
+  className,
 }: {
   initialContent: any;
   id: string;
+  editable?: boolean;
+  className?: string;
 }) {
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -60,10 +65,11 @@ export default function BlocknoteEditor({
   return (
     <BlockNoteView
       shadCNComponents={{}}
-      className="md:max-w-[800px]"
+      className={cn("md:max-w-[800px] md:px-12", className)}
       editor={editor}
       theme="light"
       sideMenu={false}
+      editable={editable}
     />
   );
 }

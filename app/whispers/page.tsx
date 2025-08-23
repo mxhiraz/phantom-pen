@@ -16,6 +16,7 @@ export interface Transcription {
   timestamp: number;
   duration?: string;
   createdAt: number;
+  public: boolean;
 }
 
 // Separate component for the authenticated content

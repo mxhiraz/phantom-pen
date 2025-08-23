@@ -31,19 +31,42 @@ export default defineSchema({
     .index("by_email", ["email"])
     .index("by_memoir_public", ["isMemoirPublic"]),
 
+  whispers: defineTable({
+    title: v.string(),
+    userId: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.optional(v.float64()),
+    fullTranscription: v.string(),
+    rawTranscription: v.optional(v.any()),
+    public: v.optional(v.boolean()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_created_at", ["createdAt"])
+    .index("by_public", ["public"])
+    .searchIndex("search_content", {
+      searchField: "fullTranscription",
+      filterFields: ["userId"],
+    })
+    .searchIndex("search_title", {
+      searchField: "title",
+      filterFields: ["userId"],
+    }),
+
   memoirs: defineTable({
     userId: v.string(),
     whisperId: v.id("whispers"),
     date: v.string(),
     title: v.string(),
     content: v.string(),
+    public: v.optional(v.boolean()),
     llmGeneratedAt: v.number(),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_user", ["userId"])
     .index("by_whisper", ["whisperId"])
-    .index("by_date", ["date"]),
+    .index("by_date", ["date"])
+    .index("by_public", ["public"]),
 
   scheduledMemoirGeneration: defineTable({
     userId: v.string(),
@@ -61,25 +84,6 @@ export default defineSchema({
     .index("by_whisper", ["whisperId"])
     .index("by_status", ["status"])
     .index("by_user", ["userId"]),
-
-  whispers: defineTable({
-    title: v.string(),
-    userId: v.string(),
-    createdAt: v.number(),
-    updatedAt: v.optional(v.float64()),
-    fullTranscription: v.string(),
-    rawTranscription: v.optional(v.any()),
-  })
-    .index("by_user", ["userId"])
-    .index("by_created_at", ["createdAt"])
-    .searchIndex("search_content", {
-      searchField: "fullTranscription",
-      filterFields: ["userId"],
-    })
-    .searchIndex("search_title", {
-      searchField: "title",
-      filterFields: ["userId"],
-    }),
 
   voiceUploads: defineTable({
     userId: v.string(),

@@ -3,18 +3,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mic, Search } from "lucide-react";
+import { Mic, Search, Globe, Lock } from "lucide-react";
 import { RecordingModal } from "@/components/RecordingModal";
-import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
+import { ActionMenu } from "@/components/ActionMenu";
 
 import { formatNoteTimestamp } from "@/lib/utils";
 import Link from "next/link";
-import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { useMutation as useConvexMutation, useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { toast } from "sonner";
 import { Transcription } from "@/app/whispers/page";
 import Memoir from "./memoir";
 import { PrivacyTogglePopover } from "./PrivacyTogglePopover";
@@ -31,20 +29,8 @@ export function Dashboard({ transcriptions }: DashboardProps) {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [showRecordingModal, setShowRecordingModal] = useState(false);
   const [isCreatingNote, setIsCreatingNote] = useState(false);
-  const [deleteDialog, setDeleteDialog] = useState<{
-    open: boolean;
-    noteId: string | null;
-    noteTitle: string;
-  }>({
-    open: false,
-    noteId: null,
-    noteTitle: "",
-  });
 
-  const deleteMutation = useConvexMutation(api.whispers.deleteWhisper);
-  const createBlankNoteMutation = useConvexMutation(
-    api.whispers.createBlankNote
-  );
+  const createBlankNoteMutation = useMutation(api.whispers.createBlankNote);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -84,28 +70,6 @@ export function Dashboard({ transcriptions }: DashboardProps) {
 
   // Use search results if available, otherwise fall back to local transcriptions
   const filteredTranscriptions = searchResults || transcriptions;
-
-  const handleDelete = async (id: string, title: string) => {
-    setDeleteDialog({
-      open: true,
-      noteId: id,
-      noteTitle: title,
-    });
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteDialog.noteId) return;
-
-    try {
-      await deleteMutation({ id: deleteDialog.noteId as any });
-      // The search results will automatically update due to Convex reactivity
-      setDeleteDialog({ open: false, noteId: null, noteTitle: "" });
-    } catch (err) {
-      toast.error(
-        "Failed to delete. You may not own this Note or there was a network error."
-      );
-    }
-  };
 
   const handleNewNote = useCallback(async () => {
     try {
@@ -215,6 +179,17 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                           >
                             <p className="text-base font-medium text-left text-[#101828] mb-2">
                               {transcription.title}
+                              {transcription.public ? (
+                                <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  <Globe className="w-3 h-3 mr-1" />
+                                  Public
+                                </span>
+                              ) : (
+                                <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                  <Lock className="w-3 h-3 mr-1" />
+                                  Private
+                                </span>
+                              )}
                             </p>
                             <p className="text-sm text-left text-[#4a5565] mb-3 line-clamp-3">
                               {transcription.preview}
@@ -231,21 +206,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                             </p>
                           </Link>
                           <div className="absolute top-4 right-6 z-10">
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="p-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
-                              aria-label="Delete note"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(
-                                  transcription.id,
-                                  transcription.title
-                                );
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            <ActionMenu itemId={transcription.id} />
                           </div>
                         </div>
                       ) : (
@@ -257,6 +218,17 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                           >
                             <p className="text-base font-medium text-left text-[#101828] mb-2">
                               {transcription.title}
+                              {transcription.public ? (
+                                <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  <Globe className="w-3 h-3 mr-1" />
+                                  Public
+                                </span>
+                              ) : (
+                                <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                  <Lock className="w-3 h-3 mr-1" />
+                                  Private
+                                </span>
+                              )}
                             </p>
                             <p className="text-sm text-left text-[#4a5565] mb-3 line-clamp-3">
                               {transcription.preview}
@@ -273,21 +245,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                             </p>
                           </Link>
                           <div className="absolute top-4 right-6 z-10">
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="p-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
-                              aria-label="Delete note"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(
-                                  transcription.id,
-                                  transcription.title
-                                );
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            <ActionMenu itemId={transcription.id} />
                           </div>
                         </div>
                       )
@@ -355,17 +313,6 @@ export function Dashboard({ transcriptions }: DashboardProps) {
       {showRecordingModal && (
         <RecordingModal onClose={() => setShowRecordingModal(false)} />
       )}
-
-      {/* Delete Confirmation Dialog */}
-      <DeleteConfirmationDialog
-        open={deleteDialog.open}
-        onClose={() =>
-          setDeleteDialog({ open: false, noteId: null, noteTitle: "" })
-        }
-        onConfirm={confirmDelete}
-        title={`Delete "${deleteDialog.noteTitle}"?`}
-        description="This action cannot be undone. This will permanently delete the note and all its associated data."
-      />
     </>
   );
 }

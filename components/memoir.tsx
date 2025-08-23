@@ -49,6 +49,21 @@ export default function Memoir({
     );
   }
 
+  if ((!memoirs || memoirs.length === 0) && isPublic) {
+    return (
+      <section className="mx-auto max-w-[727px] px-6 pb-1">
+        <div className="text-center py-16 flex flex-col items-center">
+          <h2 className="text-xl font-medium text-left text-black mb-2">
+            No memoirs for this user
+          </h2>
+          <p className="max-w-[264px] text-base text-center text-[#364152] mb-8">
+            User has no memoirs.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   if (!memoirs || memoirs.length === 0) {
     return (
       <section className="mx-auto max-w-[727px] px-6 pb-1">

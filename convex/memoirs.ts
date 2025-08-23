@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { query, internalAction, internalMutation } from "./_generated/server";
+import { internalMutation } from "./functions";
+import { query, internalAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import { TABLES, INDEXES, ERROR_MESSAGES, STATUS } from "../lib/constants";
 import { generateMemoirContent } from "../lib/llm";
@@ -49,6 +50,7 @@ export const getPublicMemoirs = query({
         q.and(
           q.neq(q.field("date"), "Error"),
           q.neq(q.field("title"), "Error"),
+          q.eq(q.field("public"), true),
           q.neq(
             q.field("content"),
             "Failed to generate memoir content. Please try again."

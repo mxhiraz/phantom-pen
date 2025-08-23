@@ -174,6 +174,8 @@
 
 .bn-editor {
   font-family: var(--font-raleway), system-ui, sans-serif !important;
+  background-color: transparent !important;
+  padding-inline: 0 !important;
 }
 
 .bn-font-family {

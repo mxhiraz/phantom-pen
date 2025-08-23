@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query, internalMutation } from "./_generated/server";
+import { mutation, internalMutation } from "./functions";
 import { internal } from "./_generated/api";
 import { stripMarkdown } from "../lib/utils";
 import { Id } from "./_generated/dataModel";
@@ -10,6 +10,7 @@ import {
   ERROR_MESSAGES,
   STATUS,
 } from "../lib/constants";
+import { query } from "./_generated/server";
 const autoUpdate = (data: any) => ({
   ...data,
   updatedAt: Date.now(),
@@ -35,6 +36,7 @@ export const listWhispers = query({
       preview: stripMarkdown(w.fullTranscription),
       timestamp: w.updatedAt ?? w.createdAt,
       createdAt: w._creationTime,
+      public: w.public ?? false,
     }));
   },
 });
@@ -59,6 +61,7 @@ export const searchWhispers = query({
         preview: stripMarkdown(w.fullTranscription),
         timestamp: w.updatedAt ?? w.createdAt,
         createdAt: w.createdAt,
+        public: w.public ?? false,
       }));
     }
 
@@ -93,6 +96,7 @@ export const searchWhispers = query({
       preview: stripMarkdown(w.fullTranscription),
       timestamp: w.updatedAt ?? w.createdAt,
       createdAt: w.createdAt,
+      public: w.public ?? false,
     }));
   },
 });
@@ -122,6 +126,27 @@ export const getWhisper = query({
   },
 });
 
+export const getPublicWhisper = query({
+  args: { id: v.id("whispers") },
+  handler: async (ctx, args) => {
+    const whisper = await ctx.db
+      .query(TABLES.WHISPERS)
+      .withIndex("by_id", (q) => q.eq("_id", args.id))
+      .first();
+
+    if (!whisper) {
+      return null;
+    }
+
+    // Only return if the whisper is public
+    if (!whisper.public) {
+      return null;
+    }
+
+    return whisper;
+  },
+});
+
 export const createWhisper = mutation({
   args: {
     title: v.string(),
@@ -139,6 +164,7 @@ export const createWhisper = mutation({
       ...autoUpdate({}),
       fullTranscription: args.fullTranscription,
       rawTranscription: args.rawTranscription,
+      public: false,
     });
 
     try {
@@ -171,6 +197,7 @@ export const createBlankNote = mutation({
       createdAt: Date.now(),
       ...autoUpdate({}),
       fullTranscription: "Click to start writing...",
+      public: false,
     });
 
     return { id: whisperId };
@@ -296,26 +323,33 @@ export const deleteWhisper = mutation({
     if (whisper.userId !== identity.subject)
       throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
 
-    const scheduledGenerations = await ctx.db
-      .query(TABLES.SCHEDULED_MEMOIR_GENERATION)
-      .withIndex(INDEXES.BY_WHISPER, (q) => q.eq("whisperId", args.id))
-      .collect();
-
-    for (const scheduled of scheduledGenerations) {
-      await ctx.db.delete(scheduled._id);
-    }
-
-    const relatedMemoirs = await ctx.db
-      .query(TABLES.MEMOIRS)
-      .withIndex(INDEXES.BY_WHISPER, (q) => q.eq("whisperId", args.id))
-      .collect();
-
-    for (const memoir of relatedMemoirs) {
-      await ctx.db.delete(memoir._id);
-    }
-
     await ctx.db.delete(args.id);
 
     return { id: args.id };
+  },
+});
+
+export const togglePrivacy = mutation({
+  args: {
+    id: v.id("whispers"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
+
+    const whisper = await ctx.db.get(args.id);
+    if (!whisper) throw new Error(ERROR_MESSAGES.WHISPER_NOT_FOUND);
+    if (whisper.userId !== identity.subject)
+      throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+
+    const currentPublic = whisper.public ?? false;
+    const newPublic = !currentPublic;
+
+    await ctx.db.patch(args.id, {
+      public: newPublic,
+      ...autoUpdate({}),
+    });
+
+    return { id: args.id, public: newPublic };
   },
 });

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { RecordingModal } from "../../../components/RecordingModal";
 import { Editor } from "@/components/DynamicEditor";
 import { stripMarkdown } from "@/lib/utils";
+import { ActionMenu } from "@/components/ActionMenu";
 
 export default function TranscriptionPageClient({ id }: { id: string }) {
   const router = useRouter();
@@ -101,7 +102,9 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
               </p>
             )}
           </div>
-          <div className="flex items-start justify-between"></div>
+          <div className="flex items-start justify-between">
+            <ActionMenu itemId={id} />
+          </div>
         </div>
       </header>
 
@@ -115,7 +118,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
         </div>
       </main>
 
-      <footer className="fixed bottom-0 left-0 w-full md:left-1/2 md:-translate-x-1/2 border-t md:border-none md:rounded-xl border-slate-200 px-4 md:px-5 py-3 z-50 max-w-[730px] md:mb-4">
+      <footer className="fixed bottom-0 left-0 w-full md:left-1/2 md:-translate-x-1/2 border-t md:border-none md:rounded-md border-slate-50 backdrop-blur-2xl px-4 bg-white py-3 z-50 max-w-[730px] md:mb-4">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 w-full max-w-md md:max-w-none mx-auto">
           <Button
             size="sm"
