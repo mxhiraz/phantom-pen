@@ -76,7 +76,7 @@ export function ActionMenu({
 
   const handleCopyShareUrl = async () => {
     const shareUrl = `${window.location.origin}/memoir/${user.user?.id.replace(
-      "_user",
+      "user_",
       ""
     )}/${itemId}`;
 
