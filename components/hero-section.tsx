@@ -290,47 +290,47 @@ export default function HeroSection() {
                 Who is Phantom Pen For?
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Whether you're a writer, a busy professional, or someone who
-                wants to preserve precious memories
+                Anyone who wants to store memories and let AI automatically
+                convert them into a beautiful memoir timeline
               </p>
             </AnimatedGroup>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
               {[
                 {
-                  icon: "✍️",
-                  title: "Writers & Journalists",
+                  icon: "🎙️",
+                  title: "Voice Note Lovers",
                   description:
-                    "Transform your daily musings into structured, publishable content with AI assistance.",
+                    "Record your thoughts by voice and let AI automatically transcribe and structure them into memoirs.",
                 },
                 {
-                  icon: "👨‍💼",
-                  title: "Busy Professionals",
+                  icon: "📝",
+                  title: "Note Takers",
                   description:
-                    "Capture fleeting thoughts and ideas during your busy day, then let AI organize them later.",
+                    "Write quick notes throughout your day and watch AI transform them into organized memoir entries.",
                 },
                 {
                   icon: "👴👵",
-                  title: "Memory Keepers",
+                  title: "Memory Collectors",
                   description:
-                    "Preserve family stories and personal history for future generations to cherish.",
+                    "Store precious moments and family stories that AI will weave into a chronological memoir timeline.",
                 },
                 {
                   icon: "🎓",
                   title: "Students & Researchers",
                   description:
-                    "Organize your notes, research, and insights into coherent, shareable documents.",
+                    "Capture insights and research notes that AI will organize into structured, shareable memoirs.",
                 },
                 {
                   icon: "💭",
-                  title: "Creative Thinkers",
+                  title: "Creative Minds",
                   description:
-                    "Turn scattered ideas and voice recordings into polished creative works.",
+                    "Store scattered ideas and inspirations that AI will craft into coherent creative memoirs.",
                 },
                 {
                   icon: "📱",
-                  title: "Digital Nomads",
+                  title: "On-the-Go Users",
                   description:
-                    "Capture thoughts on-the-go and transform them into structured content anywhere.",
+                    "Capture memories anywhere, anytime, and let AI build your memoir timeline automatically.",
                 },
               ].map((persona, index) => (
                 <AnimatedGroup
@@ -385,7 +385,7 @@ export default function HeroSection() {
                 {
                   question: "How does Phantom Pen work?",
                   answer:
-                    "Simply write your notes or record your voice, and our AI will automatically transform them into beautifully structured memoirs. You can then edit, organize, and share them as needed.",
+                    "Store your memories by writing notes or recording voice messages. Our AI automatically converts them into beautifully structured memoirs and organizes them into a chronological timeline. You can then view, edit, and share your memoir timeline.",
                 },
                 {
                   question: "Is my content private and secure?",
@@ -395,18 +395,18 @@ export default function HeroSection() {
                 {
                   question: "Can I import existing content?",
                   answer:
-                    "Absolutely! You can import text files, copy-paste content, or even transcribe voice recordings. Our AI will help organize and structure everything for you.",
+                    "Absolutely! You can import text files, copy-paste content, or even transcribe voice recordings. Our AI will automatically convert them into memoir entries and add them to your timeline.",
                 },
                 {
                   question:
                     "What makes Phantom Pen different from other note-taking apps?",
                   answer:
-                    "Unlike traditional note-taking apps, Phantom Pen uses AI to automatically structure your content into coherent memoirs. It's like having a personal editor who understands your writing style and helps organize your thoughts.",
+                    "Unlike traditional note-taking apps, Phantom Pen is a memory storage app that uses AI to automatically convert your notes and voice recordings into coherent memoirs and organize them into a beautiful chronological timeline. It's like having a personal editor who builds your life story automatically.",
                 },
                 {
                   question: "Do I need to be tech-savvy to use it?",
                   answer:
-                    "Not at all! Phantom Pen is designed to be intuitive and user-friendly. If you can type or speak, you can create beautiful memoirs with our AI assistance.",
+                    "Not at all! Phantom Pen is designed to be intuitive and user-friendly. If you can type or speak, you can store memories that our AI will automatically convert into beautiful memoirs and organize into a timeline.",
                 },
                 {
                   question: "Can I export my memoirs?",
