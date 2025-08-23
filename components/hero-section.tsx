@@ -67,13 +67,13 @@ export default function HeroSection() {
           <div className="h-320 -translate-y-87.5 absolute left-0 top-0 w-60 -rotate-45 bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.04)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)]" />
 
           <div
-            className=" absolute bottom-[-50] left-[-50]  blur-[50px] opacity-20 w-108 md:h-[400px] h-40 bg-gradient-to-r from-purple-700 to-purple-900 
+            className=" absolute bottom-[-50] left-[-50]  blur-[50px] opacity-20 w-108 md:h-[100px] h-40 bg-gradient-to-r from-purple-700 to-purple-900 
             animate-[blob_8s_infinite_ease-in-out] 
             rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
           ></div>
 
           <div
-            className=" absolute bottom-[-50] right-[-50]  blur-[50px] opacity-20 w-108 md:h-[400px] bg-gradient-to-r from-purple-700 to-purple-900 
+            className=" absolute bottom-[-50] right-[-50]  blur-[50px] opacity-20 w-108 md:h-[150px] bg-gradient-to-r from-purple-700 to-purple-900 
             animate-[blob_8s_infinite_ease-in-out] 
             rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
           ></div>
@@ -178,7 +178,13 @@ export default function HeroSection() {
             </div>
 
             <div
-              className=" absolute top-[-50] right-[-50]  blur-[50px] opacity-20 w-80 md:w-108 md:h-[300px] h-40 bg-gradient-to-r from-purple-700 to-purple-900 
+              className=" absolute bottom-[-150] left-[-50]  blur-[50px] opacity-20 w-30 md:h-[400px] h-40 bg-gradient-to-r from-purple-700 to-purple-400 
+            animate-[blob_8s_infinite_ease-in-out] 
+            rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
+            ></div>
+
+            <div
+              className=" absolute top-[-50] right-[-50]  blur-[50px] opacity-20 w-80 md:w-108 md:h-[300px] h-40 bg-gradient-to-r from-purple-700 to-purple-200 
             animate-[blob_8s_infinite_ease-in-out] 
             rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
             ></div>
