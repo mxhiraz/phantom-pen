@@ -338,7 +338,7 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
             <Button
               size="sm"
               className={cn(
-                recording ? "bg-[#5d146d]" : "",
+                recording ? "bg-[#b235ce]" : "",
                 "w-[300px] h-[70px] rounded-xl flex flex-row gap-3 items-center justify-center my-5"
               )}
               onClick={async () => {

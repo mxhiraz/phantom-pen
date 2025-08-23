@@ -70,7 +70,7 @@ export const transcribeFromStorage = action({
     You are a markdown generator. Your responsibility is to convert raw text to beautiful markdown without modifying content.
   </instruction>
   <task>
-   You have to Convert large raw transcription to markdown format. If the transcription is short, keep the same content as the transcription.
+   You have to Convert raw transcription to markdown format if required else return the same content as the transcription.
   </task>
   <examples>
    <rawTranscription>Hello, my name is Arshia.</rawTranscription>

@@ -51,7 +51,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">Note not found</h1>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 mb-4 max-w-md mx-auto">
             The note you're looking for doesn't exist or has been deleted.
           </p>
           <Button size="sm" onClick={() => router.push("/whispers")}>
