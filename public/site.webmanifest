@@ -6,7 +6,7 @@
   "theme_color": "#f9fafb",
   "background_color": "#f9fafb",
   "description": "Capture your thoughts by voice with Phantom Pen",
-  "start_url": "/auth?utm_source=web_app_manifest",
+  "start_url": "/whispers?utm_source=web_app_manifest",
   "icons": [
     {
       "src": "/icons/512.png",
