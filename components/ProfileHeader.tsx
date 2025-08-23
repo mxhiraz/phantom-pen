@@ -30,6 +30,11 @@ export default function ProfileHeader({
 
   return (
     <div className="flex items-center justify-between p-4 px-6">
+      <div
+        className=" absolute bottom-[-50] right-[-50]  blur-[50px] opacity-20 w-108 md:h-[150px] bg-gradient-to-r from-purple-700 to-purple-900 
+            animate-[blob_8s_infinite_ease-in-out] 
+            rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
+      ></div>
       <div className="flex items-center gap-2">
         <Avatar className="size-12">
           <AvatarImage src={avatarUrl} alt={username} />
