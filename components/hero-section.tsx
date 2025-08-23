@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -8,6 +9,7 @@ import { TextEffect } from "@/components/ui/text-effect";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import HeroHeader from "./Header";
 import { useUser } from "@clerk/nextjs";
+import { Footer } from "./Footer";
 
 const transitionVariants = {
   item: {
@@ -29,12 +31,33 @@ const transitionVariants = {
   },
 };
 
+const valuePoints = [
+  {
+    image: "/2.png",
+    title: "Write",
+    description:
+      "Capture your thoughts, memories, and experiences with our intuitive writing tools",
+  },
+  {
+    image: "/1.png",
+    title: "Publish",
+    description:
+      "Transform your raw content into beautifully structured memoirs automatically",
+  },
+  {
+    image: "/3.png",
+    title: "Share Your Memories",
+    description:
+      "Share your stories with loved ones or keep them private - you choose",
+  },
+];
+
 export default function HeroSection() {
   const { isSignedIn } = useUser();
   return (
     <>
       <HeroHeader />
-      <main className="overflow-hidden">
+      <main className="overflow-hidden relative">
         <div
           aria-hidden
           className="absolute inset-0 isolate hidden opacity-65 contain-strict lg:block"
@@ -44,20 +67,19 @@ export default function HeroSection() {
           <div className="h-320 -translate-y-87.5 absolute left-0 top-0 w-60 -rotate-45 bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.04)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)]" />
 
           <div
-            className=" absolute bottom-[-50] left-[-50]  blur-[50px] opacity-20 w-108 h-72 bg-gradient-to-r from-purple-700 to-purple-900 
+            className=" absolute bottom-[-50] left-[-50]  blur-[50px] opacity-20 w-108 h-[400px] bg-gradient-to-r from-purple-700 to-purple-900 
             animate-[blob_8s_infinite_ease-in-out] 
             rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
           ></div>
 
           <div
-            className=" absolute bottom-[-50] right-[-50]  blur-[50px] opacity-20 w-108 h-72 bg-gradient-to-r from-purple-700 to-purple-900 
+            className=" absolute bottom-[-50] right-[-50]  blur-[50px] opacity-20 w-108 h-[400px] bg-gradient-to-r from-purple-700 to-purple-900 
             animate-[blob_8s_infinite_ease-in-out] 
             rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
           ></div>
         </div>
         <section>
           <div className="relative pt-32 md:pt-36">
-            <div className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--color-background)_75%)]"></div>
             <div className="mx-auto max-w-7xl px-6">
               <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                 <AnimatedGroup variants={transitionVariants}>
@@ -154,8 +176,71 @@ export default function HeroSection() {
                 </AnimatedGroup>
               </div>
             </div>
+
+            <div
+              aria-hidden
+              className="absolute inset-0 isolate hidden opacity-65 contain-strict lg:block"
+            >
+              <div className="w-140 h-320 -translate-y-87.5 absolute left-0 top-0 -rotate-45 rounded-full bg-[radial-gradient(68.54%_68.72%_at_55.02%_31.46%,hsla(0,0%,85%,.08)_0,hsla(0,0%,55%,.02)_50%,hsla(0,0%,45%,0)_80%)]" />
+              <div className="h-320 absolute left-0 top-0 w-60 -rotate-45 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.06)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)] [translate:5%_-50%]" />
+              <div className="h-320 -translate-y-87.5 absolute left-0 top-0 w-60 -rotate-45 bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.04)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)]" />
+
+              {/* <div
+                className=" absolute bottom-[-50] left-[-50]  blur-[50px] opacity-20 w-108 h-[300px] bg-gradient-to-r from-purple-700 to-purple-900 
+            animate-[blob_8s_infinite_ease-in-out] 
+            rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
+              ></div> */}
+
+              <div
+                className=" absolute top-[-50] right-[-50]  blur-[50px] opacity-20 w-108 h-[300px] bg-gradient-to-r from-purple-700 to-purple-900 
+            animate-[blob_8s_infinite_ease-in-out] 
+            rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
+              ></div>
+            </div>
           </div>
         </section>
+
+        {/* Value Points Section */}
+        <section className="py-24  bg-gradient-to-b from-transparent to-muted/20">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Write • Publish • Share Your Memories
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                A complete workflow to transform your thoughts into lasting
+                memories
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 mb-20">
+              {valuePoints.map((point, index) => (
+                <AnimatedGroup
+                  key={index}
+                  variants={transitionVariants}
+                  className="text-center group"
+                >
+                  <div className="bg-background/50 backdrop-blur-sm border rounded-2xl p-8 min-h-[100px]">
+                    <div className=" bg-primary/10 h-[200px] aspect-video w-full  flex items-center justify-center mx-auto mb-6">
+                      <Image
+                        src={point.image}
+                        alt={point.title}
+                        width={500}
+                        height={500}
+                        className=" h-full w-full object-cover"
+                      />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-3">
+                      {point.title}
+                    </h3>
+                    <p className="text-muted-foreground">{point.description}</p>
+                  </div>
+                </AnimatedGroup>
+              ))}
+            </div>
+          </div>
+        </section>
+        <Footer />
       </main>
     </>
   );
