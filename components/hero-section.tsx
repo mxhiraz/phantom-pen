@@ -31,6 +31,27 @@ const transitionVariants = {
   },
 };
 
+const delayedTransitionVariants = {
+  item: {
+    hidden: {
+      opacity: 0,
+      filter: "blur(12px)",
+      y: 12,
+    },
+    visible: {
+      opacity: 1,
+      filter: "blur(0px)",
+      y: 0,
+      transition: {
+        type: "spring" as const,
+        bounce: 0.3,
+        duration: 1.5,
+        delay: 1,
+      },
+    },
+  },
+};
+
 const valuePoints = [
   {
     image: "/2.png",
@@ -194,7 +215,10 @@ export default function HeroSection() {
         {/* Value Points Section */}
         <section className="py-24  bg-gradient-to-b from-transparent to-muted/20 pb-4">
           <div className="mx-auto max-w-7xl px-6">
-            <div className="text-center mb-16">
+            <AnimatedGroup
+              variants={delayedTransitionVariants}
+              className="text-center mb-16"
+            >
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Write • Publish • Share Your Memories
               </h2>
@@ -202,7 +226,7 @@ export default function HeroSection() {
                 A complete workflow to transform your thoughts into lasting
                 memories
               </p>
-            </div>
+            </AnimatedGroup>
 
             <div className="grid md:grid-cols-3 gap-8 mb-20">
               {valuePoints.map((point, index) => (
@@ -210,6 +234,8 @@ export default function HeroSection() {
                   key={index}
                   variants={transitionVariants}
                   className="text-center group"
+                  whileInView={true}
+                  viewport={{ once: true, amount: 0.2 }}
                 >
                   <div className="bg-background/50 backdrop-blur-sm border rounded-2xl p-8 min-h-[100px]">
                     <div className=" bg-primary/10 h-[200px]   md:aspect-video w-full flex items-center justify-center mx-auto mb-6">
