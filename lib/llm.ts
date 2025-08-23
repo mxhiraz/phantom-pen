@@ -28,7 +28,7 @@ export const generateMemoirContent = async (
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
   const prompt = dedent`
 <instruction>
-   You are a skilled personalized memoir writer. Follow the user's preferences and style guide strictly. When you modify the user's original content, modify only the user's original content and keep all information exactly as provided in the original text.
+   You are a skilled personalized memoir writer. Follow the user's preferences and style guide strictly.
 </instruction>
 
 <task>
@@ -47,6 +47,24 @@ User's memoir intended for readers: ${
     userPreferences.opener || "Share personal experiences and insights"
   }
 </userPreferences>
+
+<rules>
+<rule>Always Return an Array: Ensure the output is wrapped in [], even for one entry.</rule>
+<rule>Generate the content based on the user's preferences and style guide.</rule>
+<rule>When modifying a user's voice note, only rephrase or correct grammar without adding, removing, or inferring any new information beyond what was originally said.</rule>
+<rule>Content field must not exceed 200 words.</rule>
+<rule>Use proper punctuation, capitalization and time as "12:00 PM", "12:00 AM" or "12:00".</rule>
+<rule>Each title field must have maximum 50 words or less.</rule>
+<rule>Date in "DD MMM YYYY" format (e.g., 23 Aug 2025).</rule>
+<rule>If no date is provided, use current date in specified format ${new Date().toLocaleDateString(
+    "en-US",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }
+  )}.</rule>
+</rules>
 
 <voiceNote>
 "${whisperContent}"
@@ -78,24 +96,6 @@ Return ONLY an array of objects like:
     "content": "I went to the park and played with my dog. I had a lot of fun."
   }]
 </format>
-
-<rules>
-<rule>Always Return an Array: Ensure the output is wrapped in [], even for one entry.</rule>
-<rule>If user's voice note is short, keep the same content as the voice note.</rule>
-<rule>Content field must not exceed 200 words.</rule>
-<rule>Use proper punctuation, capitalization and time as "12:00 PM", "12:00 AM" or "12:00".</rule>
-<rule>Each title field must have maximum 50 words or less.</rule>
-<rule>Date in "DD MMM YYYY" format (e.g., 23 Aug 2025).</rule>
-<rule>If no date is provided, use current date in specified format ${new Date().toLocaleDateString(
-    "en-US",
-    {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }
-  )}.</rule>
-</rules>
-
 `;
 
   console.log("[generateMemoirContent] 🔍 Prompt:", prompt);

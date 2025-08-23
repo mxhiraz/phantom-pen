@@ -16,6 +16,7 @@ export const INDEXES = {
   BY_WHISPER: "by_whisper",
   BY_MEMOIR_PUBLIC: "by_memoir_public",
   BY_PUBLIC: "by_public",
+  BY_USER_DATE: "by_user_date",
 } as const;
 
 // Error messages

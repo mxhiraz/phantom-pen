@@ -14,7 +14,7 @@ export const getUserMemoirs = query({
 
     return await ctx.db
       .query(TABLES.MEMOIRS)
-      .withIndex(INDEXES.BY_USER, (q) => q.eq("userId", identity.subject))
+      .withIndex(INDEXES.BY_USER_DATE, (q) => q.eq("userId", identity.subject))
       .filter((q) =>
         q.and(
           q.neq(q.field("date"), "Error"),
@@ -45,7 +45,7 @@ export const getPublicMemoirs = query({
 
     const memoirs = await ctx.db
       .query(TABLES.MEMOIRS)
-      .withIndex(INDEXES.BY_USER, (q) => q.eq("userId", user.clerkId))
+      .withIndex(INDEXES.BY_USER_DATE, (q) => q.eq("userId", user.clerkId))
       .filter((q) =>
         q.and(
           q.neq(q.field("date"), "Error"),

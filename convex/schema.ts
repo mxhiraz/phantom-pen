@@ -66,7 +66,8 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_whisper", ["whisperId"])
     .index("by_date", ["date"])
-    .index("by_public", ["public"]),
+    .index("by_public", ["public"])
+    .index("by_user_date", ["userId", "date"]),
 
   scheduledMemoirGeneration: defineTable({
     userId: v.string(),

@@ -67,20 +67,20 @@ export const transcribeFromStorage = action({
               role: "user",
               content: dedent`<prompt>
   <instruction>
-    You are a markdown generator. Your responsibility is to convert raw text to beautiful markdown without modifying content.
+    You are a markdown generator. Your responsibility is to convert raw text into markdown format without modifying content.
   </instruction>
   <task>
-   You have to Convert raw transcription to markdown format if required else return the same content as the transcription.
+   You have to Convert raw transcription to markdown format.
   </task>
   <examples>
-   <rawTranscription>Hello, my name is Arshia.</rawTranscription>
+   <transcription>Hello, my name is Arshia.</transcription>
     <example>{ "markdown": "Hello, my name is Arshia." }</example>
   </examples>
   <language>${LANGUAGES[args.language as keyof typeof LANGUAGES]}</language>
    <format>
     Return ONLY a JSON object like: { "markdown": "# Your generated title" }
   </format>
-  <transcription><![CDATA[${transcriptionResponse.text.trim()})}...]]></transcription>
+  <transcription>${transcriptionResponse.text.trim()}</transcription>
 </prompt>
 `,
             },
@@ -174,10 +174,7 @@ export const transcribeFromStorage = action({
    <format>
     Return ONLY a JSON object like: { "title": "Your generated title" }
   </format>
-  <transcription><![CDATA[${transcription.text.slice(
-    0,
-    500
-  )}...]]></transcription>
+  <transcription>${transcription.text.slice(0, 500)}</transcription>
 </prompt>
 `,
               },
