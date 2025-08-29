@@ -1,7 +1,8 @@
 "use client";
 
-import "@blocknote/shadcn/style.css";
-import { BlockNoteView } from "@blocknote/shadcn";
+import "@blocknote/core/fonts/inter.css";
+import { BlockNoteView } from "@blocknote/mantine";
+import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteSchema, defaultBlockSpecs } from "@blocknote/core";
 import { useRef } from "react";
@@ -89,7 +90,6 @@ export default function BlocknoteEditor({
   if (!editor) return <LoadingSection />;
   return (
     <BlockNoteView
-      shadCNComponents={{}}
       className={cn("md:max-w-[800px] md:px-14", className)}
       editor={editor}
       theme="light"
