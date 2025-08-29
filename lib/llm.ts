@@ -2,7 +2,6 @@
 import { Groq } from "groq-sdk";
 import { z } from "zod";
 import dedent from "dedent";
-import { stripMarkdown } from "./utils";
 
 export const groq = new Groq();
 
@@ -23,7 +22,6 @@ const UserPreferencesSchema = z.object({
 
 export const generateMemoirContent = async (
   whisperContent: string,
-  whisperTitle: string,
   userPreferences: z.infer<typeof UserPreferencesSchema>
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
   const prompt = dedent`
@@ -78,8 +76,7 @@ ${(() => {
 </rules>
 
 <voiceNote>
-Title: "${whisperTitle}"
-Content: "${stripMarkdown(whisperContent)}"
+"${whisperContent}"
 </voiceNote>
 
 <example>
