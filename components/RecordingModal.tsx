@@ -20,15 +20,13 @@ import { cn } from "@/lib/utils";
 
 import { AudioWaveform } from "./AudioWaveform";
 import { useAudioRecording } from "./hooks/useAudioRecording";
+import { useAudioUpload } from "./hooks/useFileUpload";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { LANGUAGES } from "@/lib/constants";
 
-import {
-  useMutation as useConvexMutation,
-  useAction as useConvexAction,
-} from "convex/react";
+import { useAction as useConvexAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 interface RecordingModalProps {
@@ -62,7 +60,6 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
   } = useAudioRecording();
 
   const router = useRouter();
-  const generateUploadUrl = useConvexMutation(api.files.generateUploadUrl);
   const transcribeFromStorage = useConvexAction(
     api.transcribe.transcribeFromStorage
   );
@@ -72,6 +69,8 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
   >("idle");
   const [pendingSave, setPendingSave] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { uploadFile, isUploading, error } = useAudioUpload(50 * 1024 * 1024);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -94,27 +93,15 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
   };
 
   const handleFileUpload = async (file: File) => {
-    if (!file.type.startsWith("audio/")) {
-      toast.error("Please select an audio file");
-      return;
-    }
-
     setIsProcessing("uploading");
+
     try {
-      // Generate upload URL from Convex
-      const uploadUrl = await generateUploadUrl();
+      const storageId = await uploadFile(file);
 
-      // Upload to Convex storage
-      const response = await fetch(uploadUrl, {
-        method: "POST",
-        body: file,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
+      if (!storageId) {
+        setIsProcessing("idle");
+        return;
       }
-
-      const { storageId } = await response.json();
 
       setIsProcessing("transcribing");
 
@@ -150,25 +137,17 @@ export function RecordingModal({ onClose, whisperId }: RecordingModalProps) {
     }
     setIsProcessing("uploading");
     try {
-      // Generate upload URL from Convex
-      const uploadUrl = await generateUploadUrl();
-
       // Create file and upload to Convex storage
       const file = new File([audioBlob], `recording-${Date.now()}.webm`, {
         type: "audio/webm",
       });
 
-      // Upload to Convex storage
-      const response = await fetch(uploadUrl, {
-        method: "POST",
-        body: file,
-      });
+      const storageId = await uploadFile(file);
 
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
+      if (!storageId) {
+        setIsProcessing("idle");
+        return;
       }
-
-      const { storageId } = await response.json();
 
       setIsProcessing("transcribing");
 

@@ -7,9 +7,10 @@ import { BlockNoteSchema, defaultBlockSpecs } from "@blocknote/core";
 import { useRef } from "react";
 
 import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
+import { useMutation, useAction } from "convex/react";
 import { LoadingSection } from "./whisper-page/LoadingSection";
 import { cn } from "@/lib/utils";
+import { useFileUpload } from "./hooks/useFileUpload";
 
 export default function BlocknoteEditor({
   initialContent,
@@ -23,10 +24,33 @@ export default function BlocknoteEditor({
   className?: string;
 }) {
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
-
+  const { uploadFile: uploadFileFromHook } = useFileUpload({
+    allowedTypes: ["image/"],
+    maxSize: 10 * 1024 * 1024, // 10MB for images
+  });
   const updateTranscriptionMutation = useMutation(
     api.whispers.updateFullTranscription
   );
+  const getFileUrlAction = useAction(api.files.getFileUrlAction);
+
+  // Wrapper function to match BlockNote's expected uploadFile signature
+  const uploadFileForBlockNote = async (file: File) => {
+    const storageId = await uploadFileFromHook(file);
+    if (!storageId) {
+      throw new Error("Failed to upload image");
+    }
+
+    // Get the file URL from Convex storage using the action
+    try {
+      const fileUrl = await getFileUrlAction({ storageId: storageId as any });
+      if (!fileUrl) {
+        throw new Error("Failed to get image URL from storage");
+      }
+      return fileUrl;
+    } catch (error) {
+      throw new Error("Failed to get image URL from storage");
+    }
+  };
 
   const { audio, table, video, file, ...remainingBlockSpecs } =
     defaultBlockSpecs;
@@ -42,6 +66,7 @@ export default function BlocknoteEditor({
     ...(typeof initialContent !== "string" && initialContent.length > 0
       ? { initialContent: initialContent }
       : {}),
+    uploadFile: uploadFileForBlockNote,
   });
 
   editor.onChange(async (editor) => {
