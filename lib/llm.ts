@@ -2,6 +2,7 @@
 import { Groq } from "groq-sdk";
 import { z } from "zod";
 import dedent from "dedent";
+import { stripMarkdown } from "./utils";
 
 export const groq = new Groq();
 
@@ -76,7 +77,7 @@ ${(() => {
 </rules>
 
 <voiceNote>
-"${whisperContent}"
+"${stripMarkdown(whisperContent)}"
 </voiceNote>
 
 <example>
