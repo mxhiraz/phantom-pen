@@ -2,9 +2,10 @@
 import { Groq } from "groq-sdk";
 import { z } from "zod";
 import dedent from "dedent";
-import { stripMarkdown } from "./utils";
 
 export const groq = new Groq();
+
+import { analyzeImageWithVision } from "./tools/vision";
 
 const MemoirEntrySchema = z.object({
   date: z.string(),
@@ -28,10 +29,15 @@ export const generateMemoirContent = async (
   const prompt = dedent`
 <instruction>
    You are a skilled personalized memoir writer. Follow the user's preferences and style guide strictly.
+   
+   You have access to a vision tool:
+   - Use analyze_url(imageUrl) // Analyze any type of url to get a description
+  
 </instruction>
 
 <task>
-    You have to generate a memoir entry based on the user's preferences and style guide.
+    1. You have to generate a memoir entry based on the user's preferences and style guide.
+    2. If you find any type of link (URL) in the voice note, especially image links, you MUST use the analyze_url tool to analyze the image and include the description in your memoir content. This helps provide context and enriches the narrative.
 </task>
 
 <styleGuide>
@@ -77,7 +83,7 @@ ${(() => {
 </rules>
 
 <voiceNote>
-"${stripMarkdown(whisperContent)}"
+"${whisperContent}"
 </voiceNote>
 
 <example>
@@ -111,46 +117,131 @@ Return ONLY an array of objects like:
   console.log("[generateMemoirContent] 🔍 Prompt:", prompt);
 
   try {
-    const response = await groq.chat.completions.create({
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      model: "openai/gpt-oss-120b",
-      temperature: 0.2,
-      // this does't work for some reason
-      // response_format: {
-      //   type: "json_schema",
-      //   json_schema: {
-      //     name: "memoir_entries",
-      //     schema: z.toJSONSchema(MemoirResponseSchema),
-      //   },
-      // },
-    });
+    let messages: any[] = [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ];
 
-    const content = response.choices[0]?.message?.content;
+    let maxIterations = 5; // Prevent infinite loops
+    let currentIteration = 0;
 
-    console.log("[generateMemoirContent] 🔍 LLM response:", content);
+    while (currentIteration < maxIterations) {
+      currentIteration++;
+      console.log(`[generateMemoirContent] 🔍 Iteration ${currentIteration}`);
 
-    if (!content) {
-      throw new Error("No response from LLM");
-    }
+      const response = await groq.chat.completions.create({
+        messages,
+        model: "openai/gpt-oss-120b",
+        temperature: 0.1,
+        tool_choice: "auto",
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "analyze_url",
+              description:
+                "Analyze an image and provide a detailed description of what the image contains",
+              parameters: {
+                type: "object",
+                properties: {
+                  imageUrl: {
+                    type: "string",
+                    description: "URL of the image to analyze",
+                  },
+                },
+                required: ["imageUrl"],
+              },
+            },
+          },
+        ],
+      });
 
-    try {
-      const parsedContent = JSON.parse(content);
-      const validatedResponse = MemoirResponseSchema.parse(parsedContent);
+      const message = response.choices[0]?.message;
+      const content = message?.content;
+      const toolCalls = message?.tool_calls;
 
-      if (validatedResponse.length === 0) {
-        throw new Error("Response should be a non-empty array");
+      console.log("[generateMemoirContent] 🔍 LLM response:", content);
+      console.log("[generateMemoirContent] 🔍 Tool calls:", toolCalls);
+
+      if (content && (!toolCalls || toolCalls.length === 0)) {
+        try {
+          const parsedContent = JSON.parse(content);
+          const validatedResponse = MemoirResponseSchema.parse(parsedContent);
+
+          if (validatedResponse.length === 0) {
+            throw new Error("Response should be a non-empty array");
+          }
+
+          return validatedResponse;
+        } catch (parseError) {
+          console.error(
+            "Failed to parse or validate LLM response:",
+            parseError
+          );
+          throw new Error("Invalid LLM response format");
+        }
       }
 
-      return validatedResponse;
-    } catch (parseError) {
-      console.error("Failed to parse or validate LLM response:", parseError);
-      throw new Error("Invalid LLM response format");
+      if (toolCalls && toolCalls.length > 0) {
+        const toolResults: any[] = [];
+
+        for (const toolCall of toolCalls) {
+          if (toolCall.function.name === "analyze_url") {
+            try {
+              const args = JSON.parse(toolCall.function.arguments);
+              const imageUrl = args.imageUrl;
+              console.log(
+                "[generateMemoirContent] 🔍 Analyzing image:",
+                imageUrl
+              );
+
+              const imageAnalysis = await analyzeImageWithVision(imageUrl);
+              console.log(
+                "[generateMemoirContent] 🔍 Image analysis result:",
+                imageAnalysis
+              );
+
+              toolResults.push({
+                tool_call_id: toolCall.id,
+                role: "tool" as const,
+                content: imageAnalysis,
+              });
+            } catch (error) {
+              console.error(
+                "[generateMemoirContent] 🔍 Error analyzing image:",
+                error
+              );
+
+              toolResults.push({
+                tool_call_id: toolCall.id,
+                role: "tool" as const,
+                content: "Error analyzing image",
+              });
+            }
+          }
+        }
+
+        messages.push({
+          role: "assistant",
+          content: content || "",
+          tool_calls: toolCalls,
+        } as any);
+
+        messages.push(...toolResults);
+
+        continue;
+      }
+
+      if (!content && (!toolCalls || toolCalls.length === 0)) {
+        throw new Error("No response from LLM");
+      }
     }
+
+    throw new Error(
+      "Maximum iterations reached without getting a valid response"
+    );
   } catch (error) {
     console.error("Error generating memoir content:", error);
     throw error;
