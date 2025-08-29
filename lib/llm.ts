@@ -24,6 +24,7 @@ const UserPreferencesSchema = z.object({
 
 export const generateMemoirContent = async (
   whisperContent: string,
+  whisperTitle: string,
   userPreferences: z.infer<typeof UserPreferencesSchema>
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
   const prompt = dedent`
@@ -71,6 +72,7 @@ ${(() => {
 <rule>Content field must not exceed 200 words.</rule>
 <rule>Use proper punctuation, capitalization and time as "12:00 PM", "12:00 AM" or "12:00".</rule>
 <rule>Each title field must have maximum 50 words or less.</rule>
+<rule>The title should be based on your understanding of the user's voice note.</rule>
 <rule>Date in "DD MMM YYYY" format (e.g., 23 Aug 2025).</rule>
 <rule>If no date is provided, use current date in specified format ${new Date().toLocaleDateString(
     "en-US",
@@ -81,6 +83,10 @@ ${(() => {
     }
   )}.</rule>
 </rules>
+
+<voiceNoteTitle>
+"${whisperTitle}"
+</voiceNoteTitle>
 
 <voiceNote>
 "${whisperContent}"

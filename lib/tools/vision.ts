@@ -44,7 +44,7 @@ export const analyzeImageWithVision = async (
       ],
       model: "meta-llama/llama-4-maverick-17b-128e-instruct",
       temperature: 0,
-      max_tokens: 100,
+      max_tokens: 50,
     });
 
     const analysis = chatCompletion.choices[0]?.message?.content?.trim();

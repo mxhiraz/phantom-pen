@@ -114,6 +114,7 @@ export const generateMemoirContentAndUpdate = internalAction({
       // Generate new memoir content using LLM
       const memoirEntries = await generateMemoirContent(
         whisper.fullTranscription,
+        whisper.title,
         {
           question1: user.question1,
           question2: user.question2,
