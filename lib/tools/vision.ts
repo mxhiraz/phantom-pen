@@ -2,7 +2,7 @@ import { groq } from "../llm";
 
 export const analyzeImageAndGenerateName = async (
   fileUrl: string
-): Promise<string> => {
+): Promise<string | null> => {
   try {
     const response = await fetch(fileUrl);
 
@@ -62,7 +62,8 @@ export const analyzeImageAndGenerateName = async (
       .toLowerCase()
       .trim();
 
-    return cleanName || "analyzed-image";
+    console.log("cleanName", cleanName);
+    return cleanName ?? null;
   } catch (error) {
     console.error("Error analyzing image:", error);
     return "analyzed-image";
