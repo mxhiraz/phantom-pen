@@ -126,7 +126,7 @@ export function ActionMenu({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${whisper.title || "voice-note"}.txt`;
+      a.download = `${whisper.title || "voice-note"}.md`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
