@@ -23,6 +23,7 @@ const UserPreferencesSchema = z.object({
 
 export const generateMemoirContent = async (
   whisperContent: string,
+  whisperTitle: string,
   userPreferences: z.infer<typeof UserPreferencesSchema>
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
   const prompt = dedent`
@@ -77,7 +78,8 @@ ${(() => {
 </rules>
 
 <voiceNote>
-"${stripMarkdown(whisperContent)}"
+Title: "${whisperTitle}"
+Content: "${stripMarkdown(whisperContent)}"
 </voiceNote>
 
 <example>
