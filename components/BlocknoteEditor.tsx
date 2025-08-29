@@ -28,7 +28,7 @@ export default function BlocknoteEditor({
     api.whispers.updateFullTranscription
   );
 
-  const { audio, image, table, video, file, ...remainingBlockSpecs } =
+  const { audio, table, video, file, ...remainingBlockSpecs } =
     defaultBlockSpecs;
 
   const schema = BlockNoteSchema.create({

@@ -114,8 +114,14 @@ export function stripMarkdown(markdown: string): string {
       .replace(/`([^`]+)`/g, "$1")
       // Remove links but keep text
       .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-      // Remove images
-      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+      // Remove images completely
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "")
+      .replace(
+        /https?:\/\/[^\s)]+\.(?:jpg|jpeg|png|gif|webp|svg|mp4|webm|ogg)/gi,
+        ""
+      )
+      // Remove malformed image syntax like !identifier without URL
+      .replace(/![a-zA-Z0-9\-]+/g, "")
       // Remove blockquotes
       .replace(/^>\s+/gm, "")
       // Remove lists

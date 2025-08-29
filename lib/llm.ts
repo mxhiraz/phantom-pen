@@ -37,18 +37,25 @@ export const generateMemoirContent = async (
 ${buildStyleGuide(userPreferences)}
 </styleGuide>
 
-<userPreferences>
-User's background: ${
-    userPreferences.question1 || "User's name, birthplace, and birthdate"
+${(() => {
+  const validPreferences = [];
+  if (userPreferences.question1 && userPreferences.question1.length > 10) {
+    validPreferences.push(`User's background: ${userPreferences.question1}`);
   }
-User's personality: ${userPreferences.question2 || "User's self-description"}
-User's relationships: ${
-    userPreferences.question3 || "User's loved ones and relationships"
+  if (userPreferences.question2 && userPreferences.question2.length > 10) {
+    validPreferences.push(`User's personality: ${userPreferences.question2}`);
   }
-User's interests: ${
-    userPreferences.question4 || "User's personal and professional interests"
+  if (userPreferences.question3 && userPreferences.question3.length > 10) {
+    validPreferences.push(`User's relationships: ${userPreferences.question3}`);
   }
-</userPreferences>
+  if (userPreferences.question4 && userPreferences.question4.length > 10) {
+    validPreferences.push(`User's interests: ${userPreferences.question4}`);
+  }
+
+  return validPreferences.length > 0
+    ? `<userPreferences>\n${validPreferences.join("\n")}\n</userPreferences>`
+    : "";
+})()}
 
 <rules>
 <rule>Always Return an Array: Ensure the output is wrapped in [], even for one entry.</rule>
@@ -150,27 +157,28 @@ Return ONLY an array of objects like:
 };
 
 function buildStyleGuide(preferences: z.infer<typeof UserPreferencesSchema>) {
-  let styleGuide =
-    "Write in a personal, engaging memoir style that reflects the user's unique voice and experiences. ";
+  let styleGuide = "";
 
-  if (preferences.question1) {
+  if (preferences.question1 && preferences.question1.length > 10) {
     styleGuide += `Incorporate the user's background (${preferences.question1}) naturally into the narrative. `;
   }
 
-  if (preferences.question2) {
+  if (preferences.question2 && preferences.question2.length > 10) {
     styleGuide += `Match the user's personality and communication style as described: ${preferences.question2}. `;
   }
 
-  if (preferences.question3) {
+  if (preferences.question3 && preferences.question3.length > 10) {
     styleGuide += `When mentioning relationships, reflect the user's feelings about their loved ones: ${preferences.question3}. `;
   }
 
-  if (preferences.question4) {
+  if (preferences.question4 && preferences.question4.length > 10) {
     styleGuide += `Connect the content to the user's interests and career experiences: ${preferences.question4}. `;
   }
 
-  styleGuide +=
-    "Write in a warm, conversational tone that feels like the user is sharing their story with a close friend. Keep the content authentic and true to the user's voice while making it engaging for readers.";
+  if (styleGuide === "") {
+    styleGuide =
+      "Write in a personal, engaging memoir style that reflects the user's unique voice and experiences. Write in a warm, conversational tone that feels like the user is sharing their story with a close friend. Keep the content authentic and true to the user's voice while making it engaging for readers.";
+  }
 
   return styleGuide;
 }
