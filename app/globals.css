@@ -182,9 +182,24 @@
   font-family: var(--font-raleway), system-ui, sans-serif;
 }
 
+.bn-panel {
+  width: 300px !important;
+  margin-left: 200px !important;
+}
+.mantine-LoadingOverlay-overlay {
+  display: none !important;
+}
+
+.mantine-LoadingOverlay-loader {
+  display: none !important;
+}
 @media (max-width: 768px) {
   .bn-editor {
     padding-inline: calc(var(--spacing) * 3) !important;
+  }
+  .bn-panel {
+    width: 300px !important;
+    margin-left: 10px !important;
   }
 }
 
