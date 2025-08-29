@@ -90,7 +90,7 @@ export default function BlocknoteEditor({
   return (
     <BlockNoteView
       shadCNComponents={{}}
-      className={cn("md:max-w-[800px] md:px-12", className)}
+      className={cn("md:max-w-[800px] md:px-14", className)}
       editor={editor}
       theme="light"
       sideMenu={false}
