@@ -113,7 +113,7 @@ export function stripMarkdown(markdown: string): string {
       .replace(/```[\s\S]*?```/g, "")
       .replace(/`([^`]+)`/g, "$1")
       // Remove images but keep alt text
-      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "")
       .replace(
         /https?:\/\/[^\s)]+\.(?:jpg|jpeg|png|gif|webp|svg|mp4|webm|ogg)/gi,
         ""
