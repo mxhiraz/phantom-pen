@@ -33,19 +33,17 @@ export default function MemoirEditor({
         avatarUrl={avatarUrl}
         defaultTitle={
           !noteData
-            ? "Note not found"
+            ? "Voice note not found"
             : `Last updated ${formatNoteTimestamp(noteData.updatedAt!)}`
         }
       />
 
       {!noteData ? (
         <section className="mx-auto max-w-[727px] px-6 pb-1">
-          <div className="text-center py-16 flex flex-col items-center">
-            <h2 className="text-xl font-medium text-left text-black mb-2">
-              Note not found
-            </h2>
-            <p className="max-w-[264px] text-base text-center text-[#364152] mb-8">
-              The note you are looking for does not exist.
+          <div className="text-center py-8">
+            <h2 className="text-xl font-semibold mb-2">Voice note not found</h2>
+            <p className="text-gray-600">
+              The voice note you are looking for does not exist.
             </p>
           </div>
         </section>

@@ -164,7 +164,7 @@ export const createWhisper = mutation({
       ...autoUpdate({}),
       fullTranscription: args.fullTranscription,
       rawTranscription: args.rawTranscription,
-      public: false,
+      public: true,
     });
 
     try {
@@ -197,7 +197,7 @@ export const createBlankNote = mutation({
       createdAt: Date.now(),
       ...autoUpdate({}),
       fullTranscription: "Click to start writing...",
-      public: false,
+      public: true,
     });
 
     return { id: whisperId };

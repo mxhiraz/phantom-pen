@@ -14,12 +14,10 @@ const MemoirEntrySchema = z.object({
 const MemoirResponseSchema = z.array(MemoirEntrySchema);
 
 const UserPreferencesSchema = z.object({
-  voiceStyle: z.enum(["scene-focused", "reflection-focused"]).optional(),
-  writingStyle: z.enum(["clean-simple", "musical-descriptive"]).optional(),
-  candorLevel: z.enum(["fully-candid", "softened-details"]).optional(),
-  humorStyle: z.enum(["natural-humor", "background-humor"]).optional(),
-  feelingIntent: z.string().optional(),
-  opener: z.string().optional(),
+  question1: z.string().optional(), // Name, birthplace, birthdate
+  question2: z.string().optional(), // Tell me about yourself
+  question3: z.string().optional(), // Tell me about your loved ones
+  question4: z.string().optional(), // Personal and professional interests
 });
 
 export const generateMemoirContent = async (
@@ -40,11 +38,15 @@ ${buildStyleGuide(userPreferences)}
 </styleGuide>
 
 <userPreferences>
-User's want readers to feel or understand most: ${
-    userPreferences.feelingIntent || "Create an engaging, meaningful story"
+User's background: ${
+    userPreferences.question1 || "User's name, birthplace, and birthdate"
   }
-User's memoir intended for readers: ${
-    userPreferences.opener || "Share personal experiences and insights"
+User's personality: ${userPreferences.question2 || "User's self-description"}
+User's relationships: ${
+    userPreferences.question3 || "User's loved ones and relationships"
+  }
+User's interests: ${
+    userPreferences.question4 || "User's personal and professional interests"
   }
 </userPreferences>
 
@@ -148,31 +150,27 @@ Return ONLY an array of objects like:
 };
 
 function buildStyleGuide(preferences: z.infer<typeof UserPreferencesSchema>) {
-  let styleGuide = "Write in a ";
+  let styleGuide =
+    "Write in a personal, engaging memoir style that reflects the user's unique voice and experiences. ";
 
-  if (preferences.writingStyle === "musical-descriptive") {
-    styleGuide += "vivid, flowing style with rich descriptions";
-  } else {
-    styleGuide += "clear, direct style with simple language";
+  if (preferences.question1) {
+    styleGuide += `Incorporate the user's background (${preferences.question1}) naturally into the narrative. `;
   }
 
-  if (preferences.voiceStyle === "scene-focused") {
-    styleGuide += ". Drop the reader directly into the scene";
-  } else {
-    styleGuide += ". Include reflection on meaning and significance";
+  if (preferences.question2) {
+    styleGuide += `Match the user's personality and communication style as described: ${preferences.question2}. `;
   }
 
-  if (preferences.candorLevel === "fully-candid") {
-    styleGuide += ". Be completely honest and open";
-  } else {
-    styleGuide += ". Soften harsh details while maintaining truth";
+  if (preferences.question3) {
+    styleGuide += `When mentioning relationships, reflect the user's feelings about their loved ones: ${preferences.question3}. `;
   }
 
-  if (preferences.humorStyle === "natural-humor") {
-    styleGuide += ". Include natural humor where appropriate";
-  } else {
-    styleGuide += ". Keep humor subtle and in the background";
+  if (preferences.question4) {
+    styleGuide += `Connect the content to the user's interests and career experiences: ${preferences.question4}. `;
   }
+
+  styleGuide +=
+    "Write in a warm, conversational tone that feels like the user is sharing their story with a close friend. Keep the content authentic and true to the user's voice while making it engaging for readers.";
 
   return styleGuide;
 }

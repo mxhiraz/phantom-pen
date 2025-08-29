@@ -10,20 +10,11 @@ export default defineSchema({
     profilePicture: v.optional(v.string()),
     onboardingCompleted: v.boolean(),
     isMemoirPublic: v.boolean(),
-    opener: v.optional(v.string()),
-    feelingIntent: v.optional(v.string()),
-    voiceStyle: v.optional(
-      v.union(v.literal("scene-focused"), v.literal("reflection-focused"))
-    ),
-    writingStyle: v.optional(
-      v.union(v.literal("clean-simple"), v.literal("musical-descriptive"))
-    ),
-    candorLevel: v.optional(
-      v.union(v.literal("fully-candid"), v.literal("softened-details"))
-    ),
-    humorStyle: v.optional(
-      v.union(v.literal("natural-humor"), v.literal("background-humor"))
-    ),
+    // New simple onboarding fields
+    question1: v.optional(v.string()), // Name, birthplace, birthdate
+    question2: v.optional(v.string()), // Tell me about yourself
+    question3: v.optional(v.string()), // Tell me about your loved ones
+    question4: v.optional(v.string()), // Personal and professional interests
     createdAt: v.number(),
     updatedAt: v.number(),
   })

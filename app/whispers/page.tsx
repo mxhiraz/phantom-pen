@@ -31,7 +31,7 @@ function AuthenticatedContent() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">
-          Unable to load notes
+          Unable to load voice notes
         </h2>
         <p className="text-gray-600">
           Please try refreshing the page or contact support.

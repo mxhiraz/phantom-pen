@@ -11,6 +11,7 @@ import { RecordingModal } from "../../../components/RecordingModal";
 import { Editor } from "@/components/DynamicEditor";
 import { stripMarkdown } from "@/lib/utils";
 import { ActionMenu } from "@/components/ActionMenu";
+import Link from "next/link";
 
 export default function TranscriptionPageClient({ id }: { id: string }) {
   const router = useRouter();
@@ -50,13 +51,13 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Note not found</h1>
-          <p className="text-gray-600 mb-4 max-w-md mx-auto">
-            The note you're looking for doesn't exist or has been deleted.
+          <h1 className="text-2xl font-bold mb-2">Voice note not found</h1>
+          <p className="text-gray-600 mb-4">
+            The voice note you're looking for doesn't exist or has been deleted.
           </p>
-          <Button size="sm" onClick={() => router.push("/whispers")}>
-            Back to Notes
-          </Button>
+          <Link href="/whispers" className="text-blue-600 hover:underline">
+            Back to Voice Notes
+          </Link>
         </div>
       </div>
     );
@@ -94,7 +95,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
                   );
                 }, 300);
               }}
-              placeholder="Untitled Note"
+              placeholder="Untitled Voice Note"
             />
             {whisper?.updatedAt && (
               <p className="text-xs text-gray-500">

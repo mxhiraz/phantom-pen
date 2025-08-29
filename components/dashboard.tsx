@@ -75,12 +75,14 @@ export function Dashboard({ transcriptions }: DashboardProps) {
     try {
       setIsCreatingNote(true);
       // Create a new note through Convex
-      const result = await createBlankNoteMutation({ title: "Untitled Note" });
+      const result = await createBlankNoteMutation({
+        title: "Untitled Voice Note",
+      });
 
       // Navigate to the new note page
       router.push(`/whispers/${result.id}`);
     } catch (error) {
-      console.error("Failed to create note:", error);
+      console.error("Failed to create voice note:", error);
     } finally {
       setIsCreatingNote(false);
     }
@@ -123,12 +125,12 @@ export function Dashboard({ transcriptions }: DashboardProps) {
           <div className="mx-auto max-w-[729px] w-full md:rounded-xl px-6 py-5 pb-2 flex flex-col gap-3 md:my-4 ">
             <div className="flex justify-between items-start">
               <h1 className="text-xl font-semibold text-left text-[#101828]">
-                Your {!showMemoir ? "Notes" : "Memoir"}
+                Your {!showMemoir ? "Voice Notes" : "Memoir"}
               </h1>
               <div className="flex gap-2">
                 <PrivacyTogglePopover />
                 <Button onClick={toggleMode} variant="outline" size="sm">
-                  {showMemoir ? "View Notes" : "View Memoir"}
+                  {showMemoir ? "View Voice Notes" : "View Memoir"}
                 </Button>
               </div>
             </div>
@@ -136,7 +138,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search notes by title or content..."
+                placeholder="Search voice notes by title or content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -154,12 +156,12 @@ export function Dashboard({ transcriptions }: DashboardProps) {
               {filteredTranscriptions.length === 0 && searchQuery === "" ? (
                 <div className="text-center py-16 flex flex-col items-center">
                   <h2 className="text-xl font-medium text-left text-black mb-2">
-                    Welcome, Phantom Pen!
+                    Welcome to Phantom Pen!
                   </h2>
                   <p className="max-w-[264px] text-base text-center text-[#364152] mb-8">
-                    Start by creating a new Note or
+                    Start by recording a voice note or
                     <br />
-                    creating a voice note for
+                    creating a text note for
                     <br />
                     transcription
                   </p>
@@ -257,7 +259,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                         {debouncedSearchQuery ? (
                           <>
                             <p className="text-lg font-medium mb-2">
-                              No notes found
+                              No voice notes found
                             </p>
                             <p className="text-sm">
                               Try adjusting your search terms
@@ -266,10 +268,10 @@ export function Dashboard({ transcriptions }: DashboardProps) {
                         ) : (
                           <>
                             <p className="text-lg font-medium mb-2">
-                              No notes yet
+                              No voice notes yet
                             </p>
                             <p className="text-sm">
-                              Create your first note to get started
+                              Record your first voice note to get started
                             </p>
                           </>
                         )}
@@ -294,7 +296,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
               disabled={isCreatingNote}
             >
               <Mic className="size-4" />
-              Voice Note
+              Record Voice Note
             </Button>
             <Button
               size="lg"
@@ -303,7 +305,7 @@ export function Dashboard({ transcriptions }: DashboardProps) {
               className="flex-1"
               disabled={isCreatingNote}
             >
-              {isCreatingNote ? "Creating..." : "Create Note"}
+              {isCreatingNote ? "Creating..." : "Text Note"}
             </Button>
           </div>
         </div>

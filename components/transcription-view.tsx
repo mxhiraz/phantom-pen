@@ -68,7 +68,7 @@ export function TranscriptionView({
               onClick={() => router.push("/")}
             >
               <Mic className="w-6 h-6" />
-              <span className="text-xl font-semibold">Note</span>
+              <span className="text-xl font-semibold">Voice Note</span>
             </div>
           </div>
           <div className="flex items-center gap-2">

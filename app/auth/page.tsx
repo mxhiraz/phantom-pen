@@ -479,7 +479,7 @@ export default function LoginPage() {
       <div className="flex-1 hidden lg:block bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 relative overflow-hidden m-2 sm:m-4 rounded-xl bg-[url('/Background.jpeg')] bg-cover bg-center order-1 lg:order-2 min-h-[200px] sm:min-h-[300px] lg:min-h-0">
         <div className="absolute inset-0 flex flex-col gap-4 items-start justify-end p-8">
           <div className=" text-pretty  text-white text-2xl max-w-md font-bold">
-            Write your memories, share them with the world.
+            Record your memories, share them with the world.
           </div>
         </div>
       </div>

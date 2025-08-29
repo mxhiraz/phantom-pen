@@ -42,7 +42,9 @@ export function Header() {
             loading="eager"
             className="min-w-[14px] min-h-[14px] size-[14px]"
           />
-          <span className="text-base font-medium text-[#4A5565]">My Notes</span>
+          <span className="text-base font-medium text-[#4A5565]">
+            My Voice Notes
+          </span>
         </Link>
       ) : (
         <Logo />

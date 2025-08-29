@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ChevronDown, Mic, MicOff, Volume2, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -16,17 +16,19 @@ const transitionVariants = {
   item: {
     hidden: {
       opacity: 0,
-      filter: "blur(12px)",
-      y: 12,
+      filter: "blur(20px)",
+      y: 30,
+      scale: 0.8,
     },
     visible: {
       opacity: 1,
       filter: "blur(0px)",
       y: 0,
+      scale: 1,
       transition: {
         type: "spring" as const,
-        bounce: 0.3,
-        duration: 1.5,
+        bounce: 0.2,
+        duration: 1.2,
       },
     },
   },
@@ -36,18 +38,20 @@ const delayedTransitionVariants = {
   item: {
     hidden: {
       opacity: 0,
-      filter: "blur(12px)",
-      y: 12,
+      filter: "blur(20px)",
+      y: 30,
+      scale: 0.8,
     },
     visible: {
       opacity: 1,
       filter: "blur(0px)",
       y: 0,
+      scale: 1,
       transition: {
         type: "spring" as const,
-        bounce: 0.3,
-        duration: 1.5,
-        delay: 1,
+        bounce: 0.2,
+        duration: 1.2,
+        delay: 0.8,
       },
     },
   },
@@ -55,21 +59,22 @@ const delayedTransitionVariants = {
 
 const valuePoints = [
   {
-    image: "/2.png",
-    title: "Write",
+    image: "/record.png",
+    title: "Speak",
     description:
-      "Write notes, and our ai will automatically make memoir for you",
-  },
-  {
-    image: "/1.png",
-    title: "Publish",
-    description:
-      "Transform your raw content into beautifully structured memoirs",
+      "Record your thoughts by voice and let AI transcribe them into memoirs.",
   },
   {
     image: "/3.png",
+    title: "Transform",
+    description:
+      "Our AI converts your voice into structured memoirs automatically.",
+  },
+  {
+    image: "/1.png",
     title: "Share",
-    description: "Share your memories with loved ones or keep them private",
+    description:
+      "Share your voice memories with loved ones or keep them private",
   },
 ];
 
@@ -126,7 +131,7 @@ export default function HeroSection() {
                   className="mt-8 text-balance text-5xl md:text-7xl lg:mt-16 xl:text-[5.25rem] font-bold italic
                                     "
                 >
-                  Phantom Pen AI-Powered Memoir
+                  Phantom Pen Voice-First Memoir
                 </TextEffect>
                 <TextEffect
                   per="line"
@@ -136,9 +141,9 @@ export default function HeroSection() {
                   as="p"
                   className="mx-auto mt-8 max-w-3xl text-balance text-lg"
                 >
-                  Turn your journal entries, voice recordings, and ideas into
-                  beautifully structured memoirs that you'll never lose track
-                  of.
+                  Speak your memories into existence. Our AI automatically
+                  transcribes your voice recordings and transforms them into
+                  beautifully structured memoirs.
                 </TextEffect>
 
                 <AnimatedGroup
@@ -146,7 +151,7 @@ export default function HeroSection() {
                     container: {
                       visible: {
                         transition: {
-                          staggerChildren: 0.05,
+                          staggerChildren: 0.08,
                           delayChildren: 0.75,
                         },
                       },
@@ -154,17 +159,21 @@ export default function HeroSection() {
                     item: {
                       hidden: {
                         opacity: 0,
-                        filter: "blur(12px)",
-                        y: 12,
+                        filter: "blur(20px)",
+                        y: 30,
+                        scale: 0.8,
+                        rotateX: -15,
                       },
                       visible: {
                         opacity: 1,
                         filter: "blur(0px)",
                         y: 0,
+                        scale: 1,
+                        rotateX: 0,
                         transition: {
                           type: "spring" as const,
-                          bounce: 0.3,
-                          duration: 1.5,
+                          bounce: 0.2,
+                          duration: 1.2,
                         },
                       },
                     },
@@ -183,7 +192,8 @@ export default function HeroSection() {
                       <Link
                         href={isSignedIn ? "/whispers" : "/auth?mode=signup"}
                       >
-                        <span className="text-nowrap">Make Memories</span>
+                        <Mic className="h-5 w-5 mr-2" />
+                        <span className="text-nowrap">Start Recording</span>
                       </Link>
                     </Button>
                   </div>
@@ -218,11 +228,11 @@ export default function HeroSection() {
               className="text-center mb-16"
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Write • Publish • Share Your Memories
+                Speak • Transform • Share Your Voice Memories
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                A complete workflow to transform your thoughts into lasting
-                memories
+                A complete voice-first workflow to transform your spoken
+                thoughts into lasting memories
               </p>
             </AnimatedGroup>
 
@@ -267,47 +277,48 @@ export default function HeroSection() {
                 Who is Phantom Pen For?
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Anyone who wants to store memories and let AI automatically
-                convert them into a beautiful memoir timeline
+                Anyone who prefers speaking over typing and wants AI to
+                automatically convert their voice into beautiful memoir
+                timelines
               </p>
             </AnimatedGroup>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
               {[
                 {
                   icon: "🎙️",
-                  title: "Voice Note Lovers",
+                  title: "Podcast Hosts",
                   description:
-                    "Record your thoughts by voice and let AI automatically transcribe and structure them into memoirs.",
+                    "Turn your podcast episodes into personal memoirs. AI automatically transcribes and structures your stories.",
                 },
                 {
-                  icon: "📝",
-                  title: "Note Takers",
+                  icon: "🚗",
+                  title: "Road Trip Storytellers",
                   description:
-                    "Write quick notes throughout your day and watch AI transform them into organized memoir entries.",
+                    "Record your travel adventures while driving. AI captures every moment and organizes them into travel memoirs.",
                 },
                 {
                   icon: "👴👵",
-                  title: "Memory Collectors",
+                  title: "Family Historians",
                   description:
-                    "Store precious moments and family stories that AI will weave into a chronological memoir timeline.",
+                    "Preserve family stories and traditions through voice. AI weaves your oral history into beautiful family memoirs.",
                 },
                 {
                   icon: "🎓",
-                  title: "Students & Researchers",
+                  title: "Life Coaches & Mentors",
                   description:
-                    "Capture insights and research notes that AI will organize into structured, shareable memoirs.",
+                    "Record your wisdom and life lessons. AI transforms your spoken insights into inspirational memoir content.",
                 },
                 {
                   icon: "💭",
-                  title: "Creative Minds",
+                  title: "Creative Professionals",
                   description:
-                    "Store scattered ideas and inspirations that AI will craft into coherent creative memoirs.",
+                    "Capture your creative process and ideas through voice. AI organizes your artistic journey into compelling memoirs.",
                 },
                 {
-                  icon: "📱",
-                  title: "On-the-Go Users",
+                  icon: "🏥",
+                  title: "Healthcare Professionals",
                   description:
-                    "Capture memories anywhere, anytime, and let AI build your memoir timeline automatically.",
+                    "Record patient stories and medical insights that AI will organize into structured case memoirs.",
                 },
               ].map((persona, index) => (
                 <AnimatedGroup
@@ -353,42 +364,43 @@ export default function HeroSection() {
                 Frequently Asked Questions
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Everything you need to know about Phantom Pen
+                Everything you need to know about Phantom Pen's voice features
               </p>
             </AnimatedGroup>
 
             <div className="space-y-4">
               {[
                 {
-                  question: "How does Phantom Pen work?",
+                  question: "How does Phantom Pen's voice recording work?",
                   answer:
-                    "Store your memories by writing notes or recording voice messages. Our AI automatically converts them into beautifully structured memoirs and organizes them into a chronological timeline. You can then view, edit, and share your memoir timeline.",
+                    "Simply tap the record button and start speaking. Our AI automatically transcribes your voice recordings with high accuracy and converts them into beautifully structured memoirs. You can also listen to your original recordings anytime.",
                 },
                 {
-                  question: "Is my content private and secure?",
+                  question: "Is my voice content private and secure?",
                   answer:
-                    "Yes! Your content is encrypted and stored securely. You have full control over who can see your memoirs, with options to keep them private.",
+                    "Yes! Your voice recordings and transcriptions are encrypted and stored securely. You have full control over who can access your memoirs, with options to keep them completely private.",
                 },
                 {
-                  question: "Can I import existing content?",
+                  question: "Can I import existing audio files?",
                   answer:
-                    "Absolutely! You can import text files, copy-paste content, or even transcribe voice recordings. Our AI will automatically convert them into memoir entries and add them to your timeline.",
+                    "Absolutely! You can import existing audio files, voice memos, or even phone recordings. Our AI will automatically transcribe them and convert them into memoir entries for your timeline.",
                 },
                 {
                   question:
-                    "What makes Phantom Pen different from other note-taking apps?",
+                    "What makes Phantom Pen different from other voice recording apps?",
                   answer:
-                    "Unlike traditional note-taking apps, Phantom Pen is a memory storage app that uses AI to automatically convert your notes and voice recordings into coherent memoirs and organize them into a beautiful chronological timeline. It's like having a personal editor who builds your life story automatically.",
+                    "Unlike traditional voice recording apps, Phantom Pen is a voice-first memory storage app that uses AI to automatically transcribe your recordings and convert them into coherent memoirs organized into a beautiful chronological timeline. It's like having a personal voice-to-memoir assistant.",
                 },
                 {
-                  question: "Do I need to be tech-savvy to use it?",
+                  question:
+                    "Do I need to be tech-savvy to use the voice features?",
                   answer:
-                    "Not at all! Phantom Pen is designed to be intuitive and user-friendly. If you can type or speak, you can store memories that our AI will automatically convert into beautiful memoirs and organize into a timeline.",
+                    "Not at all! Phantom Pen's voice features are designed to be intuitive. If you can speak, you can record memories that our AI will automatically transcribe and organize into beautiful memoirs.",
                 },
                 {
-                  question: "Can I export my memoirs?",
+                  question: "Can I export my voice memoirs?",
                   answer:
-                    "Yes! You can export your memoirs in plain text format. In the future, we'll add support for PDF, Word documents, and other popular formats.",
+                    "Yes! You can export your memoirs in text format, and we're working on audio export features. In the future, we'll add support for audio files, transcripts, and other popular formats.",
                 },
               ].map((faq, index) => (
                 <AnimatedGroup
@@ -446,10 +458,10 @@ export default function HeroSection() {
               className="max-w-sm md:max-w-2xl mx-auto"
             >
               <h3 className="text-3xl md:text-4xl font-bold mb-4">
-                Ready to Start Writing Your Note?
+                Ready to Start Recording Your Memories?
               </h3>
               <p className="text-muted-foreground max-w-lg text-lg mx-auto mb-4">
-                Join thousands of users who are already preserving their
+                Join thousands of users who are already preserving their voice
                 memories with AI
               </p>
               <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
@@ -463,7 +475,8 @@ export default function HeroSection() {
                     className="rounded-xl px-5 text-base"
                   >
                     <Link href={isSignedIn ? "/whispers" : "/auth?mode=signup"}>
-                      <span className="text-nowrap">Start Writing</span>
+                      <Mic className="h-5 w-5 mr-2" />
+                      <span className="text-nowrap">Start Recording</span>
                     </Link>
                   </Button>
                 </div>

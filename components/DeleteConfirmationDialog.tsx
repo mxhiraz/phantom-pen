@@ -24,7 +24,7 @@ export function DeleteConfirmationDialog({
   onClose,
   onConfirm,
   title,
-  description = "This action cannot be undone. This will permanently delete the note and all its associated data.",
+  description = "This action cannot be undone. This will permanently delete the voice note and all its associated data.",
   isLoading = false,
 }: DeleteConfirmationDialogProps) {
   return (
@@ -55,7 +55,7 @@ export function DeleteConfirmationDialog({
             ) : (
               <>
                 <Trash2 className="w-4 h-4 mr-2" />
-                Delete Note
+                Delete Voice Note
               </>
             )}
           </Button>

@@ -72,7 +72,7 @@ export function ActionMenu({
   const whisper = useQuery(api.whispers.getWhisper, { id: itemId as any });
 
   const isPublic = whisper?.public ?? false;
-  const itemTitle = whisper?.title ?? "Note";
+  const itemTitle = whisper?.title ?? "Voice Note";
 
   const handleCopyShareUrl = async () => {
     const shareUrl = `${window.location.origin}/memoir/${user.user?.id.replace(
@@ -100,8 +100,8 @@ export function ActionMenu({
     if (isPublic) {
       handleCopyShareUrl();
     } else {
-      toast.info("Make this note public first to enable sharing", {
-        description: "Private notes cannot be shared with others",
+      toast.info("Make this voice note public first to enable sharing", {
+        description: "Private voice notes cannot be shared with others",
       });
     }
   };
@@ -126,7 +126,7 @@ export function ActionMenu({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${whisper.title || "note"}.txt`;
+      a.download = `${whisper.title || "voice-note"}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -144,7 +144,7 @@ export function ActionMenu({
 
       router.push("/whispers");
     } catch (error) {
-      toast.error("Failed to delete note");
+      toast.error("Failed to delete voice note");
     }
     setShowDeleteConfirm(false);
   };

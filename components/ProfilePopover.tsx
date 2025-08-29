@@ -20,13 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { VoiceTextarea } from "@/components/VoiceTextarea";
 import { LogOut, Settings, User, Edit3 } from "lucide-react";
 import { toast } from "sonner";
@@ -151,12 +145,10 @@ function SettingsDialog({
   useEffect(() => {
     if (userData) {
       setQuestionsData({
-        opener: userData.opener || "",
-        feelingIntent: userData.feelingIntent || "",
-        voiceStyle: userData.voiceStyle || "scene-focused",
-        writingStyle: userData.writingStyle || "clean-simple",
-        candorLevel: userData.candorLevel || "fully-candid",
-        humorStyle: userData.humorStyle || "natural-humor",
+        question1: userData.question1 || "",
+        question2: userData.question2 || "",
+        question3: userData.question3 || "",
+        question4: userData.question4 || "",
       });
     }
   }, [userData]);
@@ -221,8 +213,8 @@ function SettingsDialog({
   };
 
   const handleSaveQuestions = async () => {
-    if (!questionsData.opener?.trim()) {
-      toast.error("Opening question is required");
+    if (!questionsData.question1?.trim()) {
+      toast.error("First question is required");
       return;
     }
 
@@ -247,12 +239,10 @@ function SettingsDialog({
   const handleCancelQuestions = () => {
     if (userData) {
       setQuestionsData({
-        opener: userData.opener || "",
-        feelingIntent: userData.feelingIntent || "",
-        voiceStyle: userData.voiceStyle || "scene-focused",
-        writingStyle: userData.writingStyle || "clean-simple",
-        candorLevel: userData.candorLevel || "fully-candid",
-        humorStyle: userData.humorStyle || "natural-humor",
+        question1: userData.question1 || "",
+        question2: userData.question2 || "",
+        question3: userData.question3 || "",
+        question4: userData.question4 || "",
       });
     }
     setIsEditingQuestions(false);
@@ -444,144 +434,70 @@ function SettingsDialog({
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700">
-                      What's your story about?
+                      Your name, birthplace, and birthdate
                     </Label>
                     <VoiceTextarea
-                      value={questionsData.opener || ""}
+                      value={questionsData.question1 || ""}
                       onChange={(e) =>
                         setQuestionsData((prev) => ({
                           ...prev,
-                          opener: e.target.value,
+                          question1: e.target.value,
                         }))
                       }
-                      placeholder="Tell us about your story..."
+                      placeholder="Tell us about your name, birthplace, and birthdate..."
                       rows={4}
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700">
-                      What feeling do you want readers to take away?
+                      Tell me about yourself
                     </Label>
                     <VoiceTextarea
-                      value={questionsData.feelingIntent || ""}
+                      value={questionsData.question2 || ""}
                       onChange={(e) =>
                         setQuestionsData((prev) => ({
                           ...prev,
-                          feelingIntent: e.target.value,
+                          question2: e.target.value,
                         }))
                       }
-                      placeholder="What impact do you want to have?"
+                      placeholder="Share a little bit more about yourself..."
                       rows={4}
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700">
-                      Voice Style
+                      Tell me about your loved ones
                     </Label>
-                    <Select
-                      value={questionsData.voiceStyle}
-                      onValueChange={(value) =>
+                    <VoiceTextarea
+                      value={questionsData.question3 || ""}
+                      onChange={(e) =>
                         setQuestionsData((prev) => ({
                           ...prev,
-                          voiceStyle: value as any,
+                          question3: e.target.value,
                         }))
                       }
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select voice style" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="scene-focused">
-                          Scene-focused
-                        </SelectItem>
-                        <SelectItem value="reflection-focused">
-                          Reflection-focused
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                      placeholder="Who are they? What are they like? What do they mean to you?"
+                      rows={4}
+                    />
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700">
-                      Writing Style
+                      Your personal and professional interests
                     </Label>
-                    <Select
-                      value={questionsData.writingStyle}
-                      onValueChange={(value) =>
+                    <VoiceTextarea
+                      value={questionsData.question4 || ""}
+                      onChange={(e) =>
                         setQuestionsData((prev) => ({
                           ...prev,
-                          writingStyle: value as any,
+                          question4: e.target.value,
                         }))
                       }
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select writing style" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="clean-simple">
-                          Clean & Simple
-                        </SelectItem>
-                        <SelectItem value="musical-descriptive">
-                          Musical & Descriptive
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700">
-                      Candor Level
-                    </Label>
-                    <Select
-                      value={questionsData.candorLevel}
-                      onValueChange={(value) =>
-                        setQuestionsData((prev) => ({
-                          ...prev,
-                          candorLevel: value as any,
-                        }))
-                      }
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select candor level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="fully-candid">
-                          Fully Candid
-                        </SelectItem>
-                        <SelectItem value="softened-details">
-                          Softened Details
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700">
-                      Humor Style
-                    </Label>
-                    <Select
-                      value={questionsData.humorStyle}
-                      onValueChange={(value) =>
-                        setQuestionsData((prev) => ({
-                          ...prev,
-                          humorStyle: value as any,
-                        }))
-                      }
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select humor style" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="natural-humor">
-                          Natural Humor
-                        </SelectItem>
-                        <SelectItem value="background-humor">
-                          Background Humor
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                      placeholder="Any career moments that come to mind? Your interests?"
+                      rows={4}
+                    />
                   </div>
                 </div>
 
@@ -614,55 +530,27 @@ function SettingsDialog({
             ) : (
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Story Focus:</span>
+                  <span className="text-gray-600">Name & Birth:</span>
                   <span className="text-gray-900 max-w-[200px] truncate font-medium">
-                    {userData?.opener || "Not set"}
+                    {userData?.question1 || "Not set"}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Reader Impact:</span>
+                  <span className="text-gray-600">About You:</span>
                   <span className="text-gray-900 max-w-[200px] truncate font-medium">
-                    {userData?.feelingIntent || "Not set"}
+                    {userData?.question2 || "Not set"}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Voice Style:</span>
+                  <span className="text-gray-600">Loved Ones:</span>
                   <span className="text-gray-900 max-w-[200px] truncate font-medium">
-                    {userData?.voiceStyle
-                      ? userData.voiceStyle
-                          .replace("-", " ")
-                          .replace(/\b\w/g, (l) => l.toUpperCase())
-                      : "Not set"}
+                    {userData?.question3 || "Not set"}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Writing Style:</span>
+                  <span className="text-gray-600">Interests & Career:</span>
                   <span className="text-gray-900 max-w-[200px] truncate font-medium">
-                    {userData?.writingStyle
-                      ? userData.writingStyle
-                          .replace("-", " ")
-                          .replace(/\b\w/g, (l) => l.toUpperCase())
-                      : "Not set"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Candor Level:</span>
-                  <span className="text-gray-900 max-w-[200px] truncate font-medium">
-                    {userData?.candorLevel
-                      ? userData.candorLevel
-                          .replace("-", " ")
-                          .replace(/\b\w/g, (l) => l.toUpperCase())
-                      : "Not set"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Humor Style:</span>
-                  <span className="text-gray-900 max-w-[200px] truncate font-medium">
-                    {userData?.humorStyle
-                      ? userData.humorStyle
-                          .replace("-", " ")
-                          .replace(/\b\w/g, (l) => l.toUpperCase())
-                      : "Not set"}
+                    {userData?.question4 || "Not set"}
                   </span>
                 </div>
               </div>

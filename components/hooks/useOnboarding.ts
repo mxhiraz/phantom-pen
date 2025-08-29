@@ -4,12 +4,10 @@ import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
 
 export interface OnboardingData {
-  opener: string;
-  feelingIntent: string;
-  voiceStyle: "scene-focused" | "reflection-focused";
-  writingStyle: "clean-simple" | "musical-descriptive";
-  candorLevel: "fully-candid" | "softened-details";
-  humorStyle: "natural-humor" | "background-humor";
+  question1: string;
+  question2: string;
+  question3: string;
+  question4: string;
 }
 
 export function useOnboarding() {

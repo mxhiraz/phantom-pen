@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,13 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { VoiceTextarea } from "@/components/VoiceTextarea";
 import {
@@ -23,6 +16,7 @@ import {
   OnboardingData,
 } from "@/components/hooks/useOnboarding";
 import { toast } from "sonner";
+import { Volume2, Play } from "lucide-react";
 
 interface OnboardingFlowProps {
   open: boolean;
@@ -33,39 +27,52 @@ export function OnboardingFlow({ open, onOpenChange }: OnboardingFlowProps) {
   const { submitOnboarding, finishOnboarding } = useOnboarding();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<OnboardingData>>({});
+  const [isFirstRun, setIsFirstRun] = useState(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const steps = [
     {
       title: "Welcome to Phantom Pen!",
-      description: "Let's get to know you and your story better.",
-      component: "opener",
+      description:
+        "Hi, I'm Phantom the Ghostwriter - I'm looking forward to working with you on writing your memoirs! First, can you tell me your name, where you were born, and when that was?",
+      field: "question1",
+      audioFile:
+        "/audio/ElevenLabs_2025-08-29T14_21_33_Mark - Natural Conversations_pvc_sp94_s37_sb75_se0_b_m2.mp3",
     },
     {
-      title: "Your Story's Impact",
-      description: "What do you want readers to take away?",
-      component: "feelingIntent",
+      title: "Tell me about yourself",
+      description:
+        "Great, thanks so much! Now, please tell me a little bit more about yourself. I want to get a feel for your voice, so feel free to speak as little or as much as you'd like -- whatever feels natural.",
+      field: "question2",
+      audioFile:
+        "/audio/ElevenLabs_2025-08-29T14_21_51_Mark - Natural Conversations_pvc_sp94_s37_sb75_se0_b_m2.mp3",
     },
     {
-      title: "Your Voice Style",
-      description: "How do you naturally tell stories?",
-      component: "voiceStyle",
+      title: "Your loved ones",
+      description:
+        "Awesome! I think I'm getting a good grasp of who you are and where you come from. Can you tell me about your loved ones? Who are they? What are they like? What do they mean to you?",
+      field: "question3",
+      audioFile:
+        "/audio/ElevenLabs_2025-08-29T14_22_04_Mark - Natural Conversations_pvc_sp94_s37_sb75_se0_b_m2.mp3",
     },
     {
-      title: "Writing Preferences",
-      description: "What's your preferred writing style?",
-      component: "writingStyle",
-    },
-    {
-      title: "Candor Level",
-      description: "How open would you like to be?",
-      component: "candorLevel",
-    },
-    {
-      title: "Humor in Your Stories",
-      description: "How does humor fit into your narrative?",
-      component: "humorStyle",
+      title: "Your interests and career",
+      description:
+        "Lastly, can you tell me about your personal and professional interests? Any career moments that come to mind right away? Don't worry, you don't need recall every important story right now -- this is just so I can get a better understanding of you and your life.",
+      field: "question4",
+      audioFile:
+        "/audio/ElevenLabs_2025-08-29T14_22_17_Mark - Natural Conversations_pvc_sp94_s37_sb75_se0_b_m2.mp3",
     },
   ];
+
+  const playAudio = (audioFile: string) => {
+    if (audioRef.current) {
+      audioRef.current.src = audioFile;
+      audioRef.current.play().catch((error) => {
+        console.error("Error playing audio:", error);
+      });
+    }
+  };
 
   const handleInputChange = (field: keyof OnboardingData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -90,223 +97,94 @@ export function OnboardingFlow({ open, onOpenChange }: OnboardingFlowProps) {
     setCurrentStep((prev) => Math.max(0, prev - 1));
   };
 
+  // Auto-play audio when step changes
+  useEffect(() => {
+    if (open && steps[currentStep]?.audioFile) {
+      playAudio(steps[currentStep].audioFile);
+    }
+  }, [currentStep, open]);
+
   const renderStep = () => {
     const step = steps[currentStep];
+    const currentValue = formData[step.field as keyof OnboardingData] || "";
 
-    switch (step.component) {
-      case "opener":
-        return (
-          <div className="space-y-4">
-            <Label htmlFor="opener" className="text-lg font-medium">
-              Thanks for trusting me with your story. What brings you to this
-              memoir, and who do you hope will read it?
-            </Label>
-            <VoiceTextarea
-              id="opener"
-              placeholder="Share your motivation and intended audience..."
-              value={formData.opener || ""}
-              onChange={(e) => handleInputChange("opener", e.target.value)}
-              rows={10}
-            />
-          </div>
-        );
-
-      case "feelingIntent":
-        return (
-          <div className="space-y-4">
-            <Label htmlFor="feelingIntent" className="text-lg font-medium">
-              When someone finishes your story, what do you want them to feel or
-              understand most?
-            </Label>
-            <VoiceTextarea
-              id="feelingIntent"
-              placeholder="Describe the emotional impact you hope to create..."
-              value={formData.feelingIntent || ""}
-              onChange={(e) =>
-                handleInputChange("feelingIntent", e.target.value)
-              }
-              rows={6}
-            />
-          </div>
-        );
-
-      case "voiceStyle":
-        return (
-          <div className="space-y-4">
-            <Label className="text-lg font-medium">
-              When you tell stories, do you like to drop me right into the
-              scene, or reflect on what it meant and why?
-            </Label>
-            <Select
-              value={formData.voiceStyle || ""}
-              onValueChange={(value) => handleInputChange("voiceStyle", value)}
+    return (
+      <div className="space-y-4">
+        <div className="space-y-3">
+          <Label htmlFor={step.field} className="text-base font-medium block">
+            {step.description}
+          </Label>
+          <div className="flex justify-start">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => playAudio(step.audioFile)}
+              className="flex items-center gap-2"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select your preference" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="scene-focused">
-                  Drop me right into the scene
-                </SelectItem>
-                <SelectItem value="reflection-focused">
-                  Reflect on meaning and why
-                </SelectItem>
-              </SelectContent>
-            </Select>
+              <Volume2 className="h-4 w-4" />
+              <span className=" sm:inline">Listen again?</span>
+            </Button>
           </div>
-        );
-
-      case "writingStyle":
-        return (
-          <div className="space-y-4">
-            <Label className="text-lg font-medium">
-              Do you prefer clean, simple lines, or something a bit more musical
-              and descriptive?
-            </Label>
-            <Select
-              value={formData.writingStyle || ""}
-              onValueChange={(value) =>
-                handleInputChange("writingStyle", value)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select your preference" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="clean-simple">
-                  Clean, simple lines
-                </SelectItem>
-                <SelectItem value="musical-descriptive">
-                  Musical and descriptive
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        );
-
-      case "candorLevel":
-        return (
-          <div className="space-y-4">
-            <Label className="text-lg font-medium">
-              Are you comfortable being fully candid, or would you rather soften
-              some details or change names?
-            </Label>
-            <Select
-              value={formData.candorLevel || ""}
-              onValueChange={(value) => handleInputChange("candorLevel", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select your preference" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="fully-candid">Fully candid</SelectItem>
-                <SelectItem value="softened-details">
-                  Soften some details
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        );
-
-      case "humorStyle":
-        return (
-          <div className="space-y-4">
-            <Label className="text-lg font-medium">
-              And when it comes to humor, is it part of how you naturally tell
-              stories? Should it appear lightly and in the right moments, or
-              should it stay in the background unless it really fits?
-            </Label>
-            <Select
-              value={formData.humorStyle || ""}
-              onValueChange={(value) => handleInputChange("humorStyle", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select your preference" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="natural-humor">
-                  Natural humor in the right moments
-                </SelectItem>
-                <SelectItem value="background-humor">
-                  Stay in the background unless it fits
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        );
-
-      default:
-        return null;
-    }
+        </div>
+        <VoiceTextarea
+          id={step.field}
+          placeholder="Share your thoughts..."
+          value={currentValue}
+          onChange={(e) =>
+            handleInputChange(
+              step.field as keyof OnboardingData,
+              e.target.value
+            )
+          }
+          rows={8}
+        />
+      </div>
+    );
   };
 
-  const canProceed = () => {
-    const step = steps[currentStep];
-
-    switch (step.component) {
-      case "opener":
-        return formData.opener && formData.opener.trim().length > 0;
-      case "feelingIntent":
-        return (
-          formData.feelingIntent && formData.feelingIntent.trim().length > 0
-        );
-      case "voiceStyle":
-        return formData.voiceStyle;
-      case "writingStyle":
-        return formData.writingStyle;
-      case "candorLevel":
-        return formData.candorLevel;
-      case "humorStyle":
-        return formData.humorStyle;
-      default:
-        return false;
-    }
-  };
+  const currentStepData = steps[currentStep];
+  const canProceed =
+    formData[currentStepData.field as keyof OnboardingData]?.trim();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className=" overflow-y-auto"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-      >
+      <DialogContent className=" max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-900">
-            {steps[currentStep].title}
+          <DialogTitle className="text-xl font-bold text-start">
+            {currentStepData.title}
           </DialogTitle>
-          <DialogDescription className="text-lg text-gray-600">
-            {steps[currentStep].description}
+          <DialogDescription className="text-start text-sm">
+            Step {currentStep + 1} of {steps.length}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          {renderStep()}
+        <div className="py-6 pt-0">{renderStep()}</div>
 
-          <div className="flex justify-between pt-6 border-t">
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              disabled={currentStep === 0}
-            >
-              Back
-            </Button>
+        <div className="flex justify-between items-center">
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={currentStep === 0}
+          >
+            Back
+          </Button>
 
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-500">
-                {currentStep + 1} of {steps.length}
-              </span>
-              <Button
-                onClick={handleNext}
-                disabled={!canProceed()}
-                className="min-w-[100px]"
-              >
-                {currentStep === steps.length - 1 ? "Complete" : "Next"}
+          <div className="flex gap-2">
+            {currentStep < steps.length - 1 ? (
+              <Button onClick={handleNext} disabled={!canProceed}>
+                Next
               </Button>
-            </div>
+            ) : (
+              <Button onClick={handleNext} disabled={!canProceed}>
+                Continue
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>
+
+      {/* Hidden audio element */}
+      <audio ref={audioRef} preload="auto" />
     </Dialog>
   );
 }

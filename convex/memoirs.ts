@@ -115,12 +115,10 @@ export const generateMemoirContentAndUpdate = internalAction({
       const memoirEntries = await generateMemoirContent(
         whisper.fullTranscription,
         {
-          voiceStyle: user.voiceStyle,
-          writingStyle: user.writingStyle,
-          candorLevel: user.candorLevel,
-          humorStyle: user.humorStyle,
-          feelingIntent: user.feelingIntent,
-          opener: user.opener,
+          question1: user.question1,
+          question2: user.question2,
+          question3: user.question3,
+          question4: user.question4,
         }
       );
 
@@ -217,6 +215,7 @@ export const createMemoir = internalMutation({
       date: args.date,
       title: args.title,
       content: args.content,
+      public: true,
       llmGeneratedAt: Date.now(),
       createdAt: Date.now(),
       updatedAt: Date.now(),

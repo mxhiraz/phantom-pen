@@ -111,20 +111,10 @@ export const createUser = mutation({
 export const updateOnboarding = mutation({
   args: {
     clerkId: v.string(),
-    opener: v.optional(v.string()),
-    feelingIntent: v.optional(v.string()),
-    voiceStyle: v.optional(
-      v.union(v.literal("scene-focused"), v.literal("reflection-focused"))
-    ),
-    writingStyle: v.optional(
-      v.union(v.literal("clean-simple"), v.literal("musical-descriptive"))
-    ),
-    candorLevel: v.optional(
-      v.union(v.literal("fully-candid"), v.literal("softened-details"))
-    ),
-    humorStyle: v.optional(
-      v.union(v.literal("natural-humor"), v.literal("background-humor"))
-    ),
+    question1: v.optional(v.string()),
+    question2: v.optional(v.string()),
+    question3: v.optional(v.string()),
+    question4: v.optional(v.string()),
     isMemoirPublic: v.optional(v.boolean()),
     onboardingCompleted: v.boolean(),
   },
