@@ -10,7 +10,6 @@ export default defineSchema({
     profilePicture: v.optional(v.string()),
     onboardingCompleted: v.boolean(),
     isMemoirPublic: v.boolean(),
-    // New simple onboarding fields
     question1: v.optional(v.string()), // Name, birthplace, birthdate
     question2: v.optional(v.string()), // Tell me about yourself
     question3: v.optional(v.string()), // Tell me about your loved ones
