@@ -74,7 +74,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
   }
 
   return (
-    <div className="min-h-[calc(100vh-60px)]">
+    <div className="min-h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] overflow-y-hidden">
       <header className="bg-slate-50 border-b border-slate-200 px-3 py-4">
         <div className="mx-auto max-w-[688px] w-full flex items-start justify-between">
           <div className="w-full">
@@ -109,7 +109,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
         </div>
       </header>
 
-      <main className="py-4 pb-10 mx-auto w-full">
+      <main className="py-4 md:max-h-[calc(100vh-230px)] max-h-[calc(100vh-250px)] overflow-y-auto mx-auto w-full">
         <div className="mb-11 md:max-w-[800px] mx-auto">
           <Editor
             key={`${id}-${editorRefreshKey}`}
