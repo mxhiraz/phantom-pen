@@ -27,7 +27,6 @@ export function OnboardingFlow({ open, onOpenChange }: OnboardingFlowProps) {
   const { submitOnboarding, finishOnboarding } = useOnboarding();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<OnboardingData>>({});
-  const [isFirstRun, setIsFirstRun] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const steps = [
@@ -148,7 +147,10 @@ export function OnboardingFlow({ open, onOpenChange }: OnboardingFlowProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className=" max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        showCloseButton={false}
+        className=" max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-start">
             {currentStepData.title}
