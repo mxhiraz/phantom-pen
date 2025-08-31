@@ -138,7 +138,6 @@ export const getPublicWhisper = query({
       return null;
     }
 
-    // Only return if the whisper is public
     if (!whisper.public) {
       return null;
     }

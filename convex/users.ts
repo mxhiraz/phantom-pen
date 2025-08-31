@@ -22,6 +22,9 @@ export const getUserByClerkId = query({
       .withIndex(INDEXES.BY_CLERK_ID, (q) => q.eq("clerkId", args.clerkId))
       .first();
 
+    if (!user) {
+      return null;
+    }
     return {
       username: user?.firstName + " " + user?.lastName || "",
       profilePicture: user?.profilePicture || "",

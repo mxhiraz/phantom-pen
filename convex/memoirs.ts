@@ -32,12 +32,12 @@ export const getUserMemoirs = query({
 
 export const getPublicMemoirs = query({
   args: { limit: v.optional(v.number()), clerkId: v.string() },
-  handler: async (ctx, args): Promise<Doc<"memoirs">[] | string> => {
+  handler: async (ctx, args): Promise<Doc<"memoirs">[] | string | null> => {
     const user = await ctx.runQuery(api.users.getUser, {
       clerkId: args.clerkId,
     });
 
-    if (!user) throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
+    if (!user) return null;
 
     if (!user.isMemoirPublic) {
       return ERROR_MESSAGES.MEMOIRS_NOT_PUBLIC;

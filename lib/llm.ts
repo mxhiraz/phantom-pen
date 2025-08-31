@@ -66,6 +66,7 @@ ${(() => {
 })()}
 
 <rules>
+<rule>If voice note content is invalid or nonsensical, Return an Empty Array [].</rule>
 <rule>Always Return an Array: Ensure the output is wrapped in [], even for one entry.</rule>
 <rule>Generate the content based on the user's preferences and style guide.</rule>
 <rule>When modifying a user's voice note, only rephrase or correct grammar without adding, removing, or inferring any new information beyond what was originally said.</rule>
