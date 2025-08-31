@@ -15,6 +15,8 @@ export function useVoiceInput({
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const transcriptRef = useRef<string>("");
+  const hasProcessedRef = useRef<boolean>(false);
 
   const startRecording = useCallback(() => {
     if (
@@ -31,21 +33,25 @@ export function useVoiceInput({
       const recognition = new SpeechRecognition();
 
       recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.lang = language;
       recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
         setIsRecording(true);
         setIsProcessing(false);
+        transcriptRef.current = "";
+        hasProcessedRef.current = false;
       };
 
       recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setIsProcessing(true);
-        onTranscriptionComplete(transcript);
-        setIsRecording(false);
-        setIsProcessing(false);
+        let currentTranscript = "";
+
+        for (let i = 0; i < event.results.length; i++) {
+          currentTranscript += event.results[i][0].transcript;
+        }
+
+        transcriptRef.current = currentTranscript;
       };
 
       recognition.onerror = (event) => {
@@ -75,6 +81,13 @@ export function useVoiceInput({
 
       recognition.onend = () => {
         setIsRecording(false);
+
+        if (!hasProcessedRef.current && transcriptRef.current.trim()) {
+          setIsProcessing(true);
+          onTranscriptionComplete(transcriptRef.current.trim());
+          setIsProcessing(false);
+        }
+
         if (isProcessing) {
           setIsProcessing(false);
         }
@@ -93,8 +106,18 @@ export function useVoiceInput({
   const stopRecording = useCallback(() => {
     if (recognitionRef.current) {
       recognitionRef.current.stop();
+
+      // Process whatever was recorded when manually stopping
+      if (transcriptRef.current.trim()) {
+        hasProcessedRef.current = true; // Mark as processed to avoid double processing
+        setIsProcessing(true);
+        onTranscriptionComplete(transcriptRef.current.trim());
+        setIsProcessing(false);
+      } else {
+        toast.info("No speech was recorded");
+      }
     }
-  }, []);
+  }, [onTranscriptionComplete]);
 
   const toggleRecording = useCallback(() => {
     if (isRecording) {

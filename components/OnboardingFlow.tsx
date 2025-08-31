@@ -58,10 +58,10 @@ export function OnboardingFlow({ open, onOpenChange }: OnboardingFlowProps) {
     {
       title: "Your interests and career",
       description:
-        "Lastly, can you tell me about your personal and professional interests? Any career moments that come to mind right away? Don't worry, you don't need recall every important story right now -- this is just so I can get a better understanding of you and your life.",
+        "Lastly, could you share some of your personal and professional interests? Are there any career moments that stand out to you right away? Don’t worry about recalling every important story right now—this is just to help me get a better understanding of you and your life.",
       field: "question4",
       audioFile:
-        "/audio/ElevenLabs_2025-08-29T14_22_17_Mark - Natural Conversations_pvc_sp94_s37_sb75_se0_b_m2.mp3",
+        "/audio/ElevenLabs_2025-08-31T16_56_44_Mark - Natural Conversations_pvc_sp94_s37_sb75_se0_b_m2.mp3",
     },
   ];
 
