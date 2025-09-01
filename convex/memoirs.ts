@@ -12,7 +12,7 @@ export const getUserMemoirs = query({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error(ERROR_MESSAGES.NOT_AUTHENTICATED);
 
-    return await ctx.db
+    const memoirs = await ctx.db
       .query(TABLES.MEMOIRS)
       .withIndex(INDEXES.BY_USER_DATE, (q) => q.eq("userId", identity.subject))
       .filter((q) =>
@@ -27,6 +27,12 @@ export const getUserMemoirs = query({
       )
       .order("desc")
       .take(args?.limit ?? 100);
+
+    return memoirs.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB.getTime() - dateA.getTime();
+    });
   },
 });
 
@@ -60,7 +66,11 @@ export const getPublicMemoirs = query({
       .order("desc")
       .take(args?.limit ?? 100);
 
-    return memoirs;
+    return memoirs.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB.getTime() - dateA.getTime();
+    });
   },
 });
 
