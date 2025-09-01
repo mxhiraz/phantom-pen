@@ -26,6 +26,9 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
   const [editorRefreshKey, setEditorRefreshKey] = useState(0);
   const titleDebounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const updateTitleMutation = useMutation(api.whispers.updateTitle);
+  const updateFullTranscriptionMutation = useMutation(
+    api.whispers.updateFullTranscription
+  );
 
   const formatLastUpdated = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -145,10 +148,21 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
           <Button
             size="sm"
             variant="outline"
-            onClick={() => router.push("/whispers")}
+            onClick={async () => {
+              try {
+                await updateFullTranscriptionMutation({
+                  id: id as any,
+                  fullTranscription: whisper?.fullTranscription || "",
+                  rawTranscription: whisper?.rawTranscription,
+                });
+                router.push("/whispers");
+              } catch (error) {
+                console.error("Failed to save whisper:", error);
+              }
+            }}
             className="w-full"
           >
-            <span>New</span>
+            <span>Save</span>
           </Button>
         </div>
       </footer>
