@@ -5,7 +5,7 @@ import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteSchema, defaultBlockSpecs } from "@blocknote/core";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { api } from "@/convex/_generated/api";
 import { useMutation, useAction } from "convex/react";
@@ -18,11 +18,13 @@ export default function BlocknoteEditor({
   id,
   editable = true,
   className,
+  editorRef,
 }: {
   initialContent: any;
   id: string;
   editable?: boolean;
   className?: string;
+  editorRef?: any;
 }) {
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const { uploadFile: uploadFileFromHook } = useFileUpload({
@@ -87,13 +89,18 @@ export default function BlocknoteEditor({
     }, 300);
   });
 
+  useEffect(() => {
+    if (editor) {
+      editorRef.current = editor;
+    }
+  }, [editor]);
+
   if (!editor) return <LoadingSection />;
   return (
     <BlockNoteView
       className={cn("md:max-w-[800px] md:px-14", className)}
       editor={editor}
       theme="light"
-      sideMenu={false}
       editable={editable}
     />
   );

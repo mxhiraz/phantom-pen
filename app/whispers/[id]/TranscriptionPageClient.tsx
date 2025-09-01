@@ -12,6 +12,7 @@ import { Editor } from "@/components/DynamicEditor";
 import { stripMarkdown } from "@/lib/utils";
 import { ActionMenu } from "@/components/ActionMenu";
 import Link from "next/link";
+import { BlockNoteEditor } from "@blocknote/core";
 
 export default function TranscriptionPageClient({ id }: { id: string }) {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
   const isNotFound = whisper === null;
 
   const [showRecordingModal, setShowRecordingModal] = useState(false);
-
+  const editorRef = useRef<BlockNoteEditor>(null);
   const [editorRefreshKey, setEditorRefreshKey] = useState(0);
   const titleDebounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const updateTitleMutation = useMutation(api.whispers.updateTitle);
@@ -115,6 +116,7 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
       <main className="py-4 md:max-h-[calc(100vh-230px)] max-h-[calc(100vh-250px)] overflow-y-auto mx-auto w-full">
         <div className="mb-11 md:max-w-[800px] mx-auto">
           <Editor
+            editorRef={editorRef}
             key={`${id}-${editorRefreshKey}`}
             initialContent={whisper?.rawTranscription || ""}
             id={id}
@@ -123,11 +125,11 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
       </main>
 
       <footer className="fixed bottom-0 left-0 w-full md:left-1/2 md:-translate-x-1/2 border-t md:border-none md:rounded-md border-slate-50 backdrop-blur-2xl px-4 bg-white py-3 z-50 max-w-[730px] md:mb-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 w-full max-w-md md:max-w-none mx-auto">
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-2 w-full max-w-md md:max-w-none mx-auto">
           <Button
             size="sm"
             onClick={() => setShowRecordingModal(true)}
-            className="w-full  col-span-2 md:col-span-1"
+            className="w-full col-span-3 md:col-span-1"
           >
             <img src="/microphone.svg" className="size-5 min-w-5 min-h-5" />
             <span>Speak</span>
@@ -143,6 +145,29 @@ export default function TranscriptionPageClient({ id }: { id: string }) {
             className="w-full"
           >
             <span>Copy</span>
+          </Button>
+
+          <Button
+            onClick={() => {
+              if (editorRef.current) {
+                editorRef.current.insertBlocks(
+                  [
+                    {
+                      type: "image",
+                      props: {
+                        url: "",
+                      },
+                    },
+                  ],
+                  editorRef.current.getTextCursorPosition().block,
+                  "after"
+                );
+              }
+            }}
+            size="sm"
+            className="w-full"
+          >
+            <span>Add image</span>
           </Button>
 
           <Button
