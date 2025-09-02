@@ -17,6 +17,7 @@ function useElementWidth(ref: React.RefObject<HTMLDivElement | null>) {
 }
 
 import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -25,9 +26,14 @@ export function clamp(value: number, min: number, max: number): number {
 interface AudioWaveformProps {
   analyserNode: AnalyserNode | null;
   isPaused: boolean;
+  className?: string;
 }
 
-export function AudioWaveform({ analyserNode, isPaused }: AudioWaveformProps) {
+export function AudioWaveform({
+  analyserNode,
+  isPaused,
+  className,
+}: AudioWaveformProps) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const barsContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -76,7 +82,10 @@ export function AudioWaveform({ analyserNode, isPaused }: AudioWaveformProps) {
 
   return (
     <div
-      className="mt-4 flex h-8 items-center gap-[1px] md:mt-5 max-w-[200px] w-full"
+      className={cn(
+        "mt-4 flex h-8 items-center gap-[1px] md:mt-5 max-w-[200px] w-full",
+        className
+      )}
       ref={barsContainerRef}
     >
       {bars.map((amplitude, index) => (

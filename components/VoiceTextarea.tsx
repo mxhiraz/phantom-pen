@@ -1,7 +1,9 @@
 "use client";
 
+import React, { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import { VoiceInputButton } from "@/components/VoiceInputButton";
+import { VoiceInputButtonWithWave } from "@/components/VoiceInputButtonWithWave";
+import { AudioWaveform } from "@/components/AudioWaveform";
 import { cn } from "@/lib/utils";
 
 interface VoiceTextareaProps {
@@ -21,16 +23,25 @@ export function VoiceTextarea({
   className,
   rows = 4,
 }: VoiceTextareaProps) {
+  const [isRecording, setIsRecording] = useState(false);
+  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
+
   const handleVoiceTranscription = (transcript: string) => {
-    // Append to existing text or replace if empty
     const newValue = value.trim() ? `${value} ${transcript}` : transcript;
 
-    // Create a synthetic event to maintain compatibility with existing onChange handlers
     const syntheticEvent = {
       target: { value: newValue },
     } as React.ChangeEvent<HTMLTextAreaElement>;
 
     onChange(syntheticEvent);
+  };
+
+  const handleRecordingStateChange = (
+    recording: boolean,
+    analyser: AnalyserNode | null
+  ) => {
+    setIsRecording(recording);
+    setAnalyserNode(analyser);
   };
 
   return (
@@ -43,9 +54,19 @@ export function VoiceTextarea({
         className={cn("pr-12 min-h-32 resize-none", className)}
         rows={rows}
       />
-      <div className="absolute bottom-2 right-2">
-        <VoiceInputButton
+
+      <div className="absolute bottom-2 right-2 flex gap-2">
+        {isRecording && analyserNode && (
+          <AudioWaveform
+            className=" mt-0 h-0"
+            analyserNode={analyserNode}
+            isPaused={false}
+          />
+        )}
+
+        <VoiceInputButtonWithWave
           onTranscription={handleVoiceTranscription}
+          onRecordingStateChange={handleRecordingStateChange}
           size="sm"
           variant="ghost"
           className="h-8 w-8 p-0"

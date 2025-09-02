@@ -1,24 +1,65 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 
-interface UseVoiceInputProps {
+interface UseVoiceInputWithWaveProps {
   onTranscriptionComplete: (text: string) => void;
   language?: string;
 }
 
-export function useVoiceInput({
+export function useVoiceInputWithWave({
   onTranscriptionComplete,
   language = "en-US",
-}: UseVoiceInputProps) {
+}: UseVoiceInputWithWaveProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
+  const [duration, setDuration] = useState(0);
+
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const transcriptRef = useRef<string>("");
   const hasProcessedRef = useRef<boolean>(false);
 
-  const startRecording = useCallback(() => {
+  // Audio recording refs
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clean up all resources
+  const cleanup = useCallback(() => {
+    if (mediaRecorderRef.current) {
+      if (mediaRecorderRef.current.state !== "inactive") {
+        mediaRecorderRef.current.stop();
+      }
+      mediaRecorderRef.current = null;
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+    if (analyserRef.current) {
+      analyserRef.current.disconnect();
+      analyserRef.current = null;
+    }
+    setAnalyserNode(null);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+  }, []);
+
+  const startRecording = useCallback(async () => {
     if (
       !("webkitSpeechRecognition" in window) &&
       !("SpeechRecognition" in window)
@@ -27,7 +68,35 @@ export function useVoiceInput({
       return;
     }
 
+    cleanup();
+    setDuration(0);
+    transcriptRef.current = "";
+    hasProcessedRef.current = false;
+
     try {
+      // Start audio recording for waveform
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: "audio/webm",
+      });
+      mediaRecorderRef.current = mediaRecorder;
+
+      const audioContext = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
+      audioContextRef.current = audioContext;
+      const source = audioContext.createMediaStreamSource(stream);
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.8;
+      source.connect(analyser);
+      analyserRef.current = analyser;
+      setAnalyserNode(analyser);
+
+      mediaRecorder.start();
+
+      // Start speech recognition
       const SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
@@ -40,8 +109,9 @@ export function useVoiceInput({
       recognition.onstart = () => {
         setIsRecording(true);
         setIsProcessing(false);
-        transcriptRef.current = "";
-        hasProcessedRef.current = false;
+        timerRef.current = setInterval(() => {
+          setDuration((d) => d + 1);
+        }, 1000);
       };
 
       recognition.onresult = (event) => {
@@ -77,10 +147,12 @@ export function useVoiceInput({
           default:
             toast.error("Speech recognition failed. Please try again.");
         }
+        cleanup();
       };
 
       recognition.onend = () => {
         setIsRecording(false);
+        cleanup();
 
         if (!hasProcessedRef.current && transcriptRef.current.trim()) {
           setIsProcessing(true);
@@ -96,28 +168,45 @@ export function useVoiceInput({
       recognitionRef.current = recognition;
       recognition.start();
     } catch (error) {
-      console.error("Error starting speech recognition:", error);
-      toast.error("Failed to start voice recording");
-      setIsRecording(false);
-      setIsProcessing(false);
+      console.error("Error starting recording:", error);
+      if (error instanceof Error && error.name === "NotAllowedError") {
+        toast.error(
+          "Microphone permission denied. Please enable it in your browser settings."
+        );
+      } else {
+        toast.error("Failed to start recording. Please try again.");
+      }
+      cleanup();
     }
-  }, [onTranscriptionComplete, language]);
+  }, [onTranscriptionComplete, language, cleanup]);
 
   const stopRecording = useCallback(() => {
     if (recognitionRef.current) {
       recognitionRef.current.stop();
-
-      // Process whatever was recorded when manually stopping
-      if (transcriptRef.current.trim()) {
-        hasProcessedRef.current = true; // Mark as processed to avoid double processing
-        setIsProcessing(true);
-        onTranscriptionComplete(transcriptRef.current.trim());
-        setIsProcessing(false);
-      } else {
-        toast.info("No speech was recorded");
-      }
     }
-  }, [onTranscriptionComplete]);
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecording(false);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    // Process whatever was recorded when manually stopping
+    if (transcriptRef.current.trim()) {
+      hasProcessedRef.current = true; // Mark as processed to avoid double processing
+      setIsProcessing(true);
+      onTranscriptionComplete(transcriptRef.current.trim());
+      setIsProcessing(false);
+    } else {
+      toast.info("No speech was recorded");
+    }
+    cleanup();
+  }, [onTranscriptionComplete, cleanup]);
 
   const toggleRecording = useCallback(() => {
     if (isRecording) {
@@ -127,9 +216,18 @@ export function useVoiceInput({
     }
   }, [isRecording, startRecording, stopRecording]);
 
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      cleanup();
+    };
+  }, [cleanup]);
+
   return {
     isRecording,
     isProcessing,
+    analyserNode,
+    duration,
     startRecording,
     stopRecording,
     toggleRecording,
