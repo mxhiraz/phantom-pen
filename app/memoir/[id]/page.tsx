@@ -21,7 +21,11 @@ export default async function MemoirPage({
 
   return (
     <div className="w-full md:space-y-3 max-w-[727px] mx-auto">
-      <ProfileHeader username={user.username} avatarUrl={user.profilePicture} />
+      <ProfileHeader
+        username={user.username}
+        clerkId={id}
+        avatarUrl={user.profilePicture}
+      />
       <Memoir isPublic={true} clerkId={`user_${id}`} />
     </div>
   );

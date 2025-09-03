@@ -23,6 +23,7 @@ export default async function MemoirPage({
     <div className="w-full md:space-y-3 max-w-[727px] mx-auto">
       <MemoirEditor
         noteId={note}
+        clerkId={id}
         username={user.username}
         avatarUrl={user.profilePicture}
       />

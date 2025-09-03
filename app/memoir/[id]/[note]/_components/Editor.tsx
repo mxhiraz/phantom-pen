@@ -11,12 +11,14 @@ interface EditorProps {
   noteId: string;
   username: string;
   avatarUrl: string;
+  clerkId: string;
 }
 
 export default function MemoirEditor({
   noteId,
   username,
   avatarUrl,
+  clerkId,
 }: EditorProps) {
   const noteData = useQuery(api.whispers.getPublicWhisper, {
     id: noteId as any,
@@ -31,6 +33,7 @@ export default function MemoirEditor({
       <ProfileHeader
         username={username}
         avatarUrl={avatarUrl}
+        clerkId={clerkId}
         defaultTitle={
           !noteData
             ? "Voice note not found"

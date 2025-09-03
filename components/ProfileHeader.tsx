@@ -3,17 +3,20 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
+import Link from "next/link";
 
 interface ProfileHeaderProps {
   username?: string;
   avatarUrl?: string;
   defaultTitle?: string;
+  clerkId: string;
 }
 
 export default function ProfileHeader({
   username = "Mahira",
   avatarUrl = "https://github.com/mxhiraz.png",
   defaultTitle = "Memoir",
+  clerkId,
 }: ProfileHeaderProps) {
   const handleShare = () => {
     try {
@@ -37,18 +40,19 @@ export default function ProfileHeader({
             animate-[blob_8s_infinite_ease-in-out] 
             rounded-[50%_40%_60%_50%_/_50%_60%_40%_50%]"
       ></div>
-      <div className="flex items-center gap-2">
+      <Link href={`/memoir/${clerkId}`} className="flex items-center gap-2">
         <Avatar className="size-12">
           <AvatarImage src={avatarUrl} alt={username} />
           <AvatarFallback>{username.charAt(0).toUpperCase()}</AvatarFallback>
         </Avatar>
+
         <div>
           <h2 className="font-semibold text-lg">{username}</h2>
           <p className="text-xs text-muted-foreground max-w-[200px] truncate">
             {defaultTitle}
           </p>
         </div>
-      </div>
+      </Link>
       <Button
         size="sm"
         variant="outline"
