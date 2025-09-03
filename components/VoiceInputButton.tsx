@@ -2,7 +2,7 @@
 
 import { Mic, MicOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useVoiceInput } from "@/components/hooks/useVoiceInput";
+import { useVoiceInputWithWave } from "@/components/hooks/useVoiceInputWithWave";
 import { cn } from "@/lib/utils";
 
 interface VoiceInputButtonProps {
@@ -18,7 +18,7 @@ export function VoiceInputButton({
   size = "sm",
   variant = "outline",
 }: VoiceInputButtonProps) {
-  const { isRecording, isProcessing, toggleRecording } = useVoiceInput({
+  const { isRecording, isProcessing, toggleRecording } = useVoiceInputWithWave({
     onTranscriptionComplete: onTranscription,
   });
 
