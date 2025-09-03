@@ -90,10 +90,10 @@ export default function BlocknoteEditor({
   });
 
   useEffect(() => {
-    if (editor) {
+    if (editor && editorRef) {
       editorRef.current = editor;
     }
-  }, [editor]);
+  }, [editor, editorRef]);
 
   if (!editor) return <LoadingSection />;
   return (

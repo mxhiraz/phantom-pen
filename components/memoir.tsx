@@ -7,6 +7,8 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ERROR_MESSAGES } from "@/lib/constants";
 import { LoadingSection, Spinner } from "./whisper-page/LoadingSection";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 export default function Memoir({
   isPublic = false,
@@ -91,9 +93,22 @@ export default function Memoir({
             memoirs.map((memoir) => (
               <div key={memoir._id} className="relative mb-10 pl-8">
                 <div className="bg-foreground absolute left-0 top-3.5 flex size-4 items-center justify-center rounded-full" />
-                <h4 className="rounded-xl py-2 text-xl font-bold tracking-tight xl:mb-4 xl:px-3">
-                  {memoir.title}
-                </h4>
+                <div className=" flex items-start gap-2 justify-between">
+                  <h4 className="rounded-xl py-2 text-xl font-bold tracking-tight xl:mb-4 xl:px-3">
+                    {memoir.title}
+                  </h4>
+                  {isPublic && clerkId && (
+                    <Button variant={"link"} size={"sm"}>
+                      <Link
+                        href={`/memoir/${clerkId.replace("user_", "")}/${
+                          memoir.whisperId
+                        }`}
+                      >
+                        Read in detail
+                      </Link>
+                    </Button>
+                  )}
+                </div>
 
                 <h5 className="text-md -left-28 text-muted-foreground top-3 rounded-xl tracking-tight md:absolute">
                   {memoir.date}
