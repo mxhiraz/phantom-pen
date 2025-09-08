@@ -70,7 +70,8 @@ ${(() => {
 <rule>If voice note content is invalid or nonsensical, Return an Empty Array [].</rule>
 <rule>Always Return an Array: Ensure the output is wrapped in [], even for one entry.</rule>
 <rule>Generate the content based on the user's preferences and style guide.</rule>
-<rule>When modifying a user's voice note, only rephrase or correct grammar without adding, removing, or inferring any new information beyond what was originally said.</rule>
+<rule>STRICT CONTENT RULE: Only use information that is explicitly present in the voice note. Do NOT add, infer, or create any new information, details, or context that is not directly stated in the original voice note. Do NOT add any actions, or events that weren't mentioned.</rule>
+<rule>NO FABRICATION: If the voice note is brief or lacks detail, keep the memoir content brief. Do NOT expand or elaborate beyond what was actually said. Do NOT add descriptive details, emotions, or context that wasn't explicitly mentioned.</rule>
 <rule>Content field must not exceed 200 words.</rule>
 <rule>Use proper punctuation, capitalization and time as "12:00 PM", "12:00 AM" or "12:00".</rule>
 <rule>Each title field must have maximum 50 words or less.</rule>
@@ -84,6 +85,8 @@ ${(() => {
       year: "numeric",
     }
   )}.</rule>
+<rule>CRITICAL: Do NOT include any user preference information, background details, or personal information from the userPreferences section in the memoir content. Only use this information to guide your writing style and tone, not as content to include in the memoir.</rule>
+<rule>Write the memoir content as if it's the user's own voice telling their story, without referencing or including any of the preference questions or answers.</rule>
 </rules>
 
 <voiceNoteTitle>
