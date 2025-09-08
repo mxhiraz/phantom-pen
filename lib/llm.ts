@@ -2,9 +2,10 @@
 import { Groq } from "groq-sdk";
 import { z } from "zod";
 import dedent from "dedent";
+import OpenAI from "openai";
 
+export const openai = new OpenAI();
 export const groq = new Groq();
-
 import { analyzeImageWithVision } from "./tools/vision";
 
 const MemoirEntrySchema = z.object({
@@ -138,9 +139,9 @@ Return ONLY an array of objects like:
       currentIteration++;
       console.log(`[generateMemoirContent] 🔍 Iteration ${currentIteration}`);
 
-      const response = await groq.chat.completions.create({
+      const response = await openai.chat.completions.create({
         messages,
-        model: "openai/gpt-oss-120b",
+        model: "gpt-4.1",
         temperature: 0.1,
         tool_choice: "auto",
         tools: [
@@ -195,7 +196,10 @@ Return ONLY an array of objects like:
         const toolResults: any[] = [];
 
         for (const toolCall of toolCalls) {
-          if (toolCall.function.name === "analyze_url") {
+          if (
+            toolCall.type === "function" &&
+            toolCall.function.name === "analyze_url"
+          ) {
             try {
               const args = JSON.parse(toolCall.function.arguments);
               const imageUrl = args.imageUrl;

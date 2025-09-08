@@ -16,7 +16,7 @@ import {
   OnboardingData,
 } from "@/components/hooks/useOnboarding";
 import { toast } from "sonner";
-import { Volume2, Play } from "lucide-react";
+import { Volume2 } from "lucide-react";
 
 interface OnboardingFlowProps {
   open: boolean;
@@ -28,6 +28,18 @@ export function OnboardingFlow({ open, onOpenChange }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<OnboardingData>>({});
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const stopAudio = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      try {
+        audio.pause();
+      } catch {}
+      audio.currentTime = 0;
+      // Clearing src helps some browsers release the stream immediately
+      // but keep it set so we can replay without reassigning unless needed.
+    }
+  };
 
   const steps = [
     {
@@ -103,6 +115,16 @@ export function OnboardingFlow({ open, onOpenChange }: OnboardingFlowProps) {
     }
   }, [currentStep, open]);
 
+  // Stop audio when dialog closes and on unmount
+  useEffect(() => {
+    if (!open) {
+      stopAudio();
+    }
+    return () => {
+      stopAudio();
+    };
+  }, [open]);
+
   const renderStep = () => {
     const step = steps[currentStep];
     const currentValue = formData[step.field as keyof OnboardingData] || "";
@@ -145,8 +167,15 @@ export function OnboardingFlow({ open, onOpenChange }: OnboardingFlowProps) {
   const canProceed =
     formData[currentStepData.field as keyof OnboardingData]?.trim();
 
+  const handleDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      stopAudio();
+    }
+    onOpenChange(nextOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent
         showCloseButton={false}
         className=" max-h-[90vh] overflow-y-auto"
