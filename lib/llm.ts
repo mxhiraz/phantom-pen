@@ -269,11 +269,7 @@ export const generateMemoirFullContent = async (
 ): Promise<string> => {
   const prompt = dedent`
 <instruction>
-   You are a skilled personalized memoir writer. Follow the user's preferences and style guide strictly.
-   
-   You have access to a vision tool:
-   - Use analyze_url(imageUrl) // Analyze any type of url to get a description
-  
+   You are a skilled personalized writer. Follow the user's preferences and style guide strictly.
 </instruction>
 
 <task>
@@ -308,7 +304,7 @@ ${(() => {
 })()}
 
 <rules>
-<rule>If voice note content is invalid or nonsensical, Return same string.</rule>
+<rule>If voice note content is invalid or nonsensical, Return empty string.</rule>
 <rule>PERSONAL VOICE: Rewrite the content in the user's personal voice and writing style. Adapt the tone, vocabulary, sentence structure, and narrative approach based on their background and personality. Make it sound like the user wrote it themselves.</rule>
 <rule>CONTENT ADAPTATION: Use the information from the voice note but rewrite it in the user's style. You can rephrase, restructure sentences, and adjust the tone while keeping the same core information.</rule>
 <rule>STYLE GUIDANCE: Use the user's preferences to guide how you write - their background, personality, relationships, and interests should influence your writing style, word choice, and approach.</rule>
@@ -347,100 +343,58 @@ ${(() => {
         messages,
         model: "gpt-4.1",
         temperature: 0.1,
-        tool_choice: "auto",
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "analyze_url",
-              description:
-                "Analyze an image and provide a detailed description of what the image contains",
-              parameters: {
-                type: "object",
-                properties: {
-                  imageUrl: {
-                    type: "string",
-                    description: "URL of the image to analyze",
-                  },
-                },
-                required: ["imageUrl"],
-              },
-            },
-          },
-        ],
+        // tool_choice: "auto",
+        // tools: [
+        //   {
+        //     type: "function",
+        //     function: {
+        //       name: "analyze_url",
+        //       description:
+        //         "Analyze an image and provide a detailed description of what the image contains",
+        //       parameters: {
+        //         type: "object",
+        //         properties: {
+        //           imageUrl: {
+        //             type: "string",
+        //             description: "URL of the image to analyze",
+        //           },
+        //         },
+        //         required: ["imageUrl"],
+        //       },
+        //     },
+        //   },
+        // ],
       });
 
       const message = response.choices[0]?.message;
       const content = message?.content;
-      const toolCalls = message?.tool_calls;
+      // const toolCalls = message?.tool_calls;
 
       console.log("[generateMemoirFullContent] 🔍 LLM response:", content);
-      console.log("[generateMemoirFullContent] 🔍 Tool calls:", toolCalls);
+      // console.log("[generateMemoirFullContent] 🔍 Tool calls:", toolCalls);
 
-      if (content && (!toolCalls || toolCalls.length === 0)) {
-        const trimmedContent = content
-          .replace(/^```markdown\n?/, "")
-          .replace(/\n?```$/, "")
-          .trim();
-        return trimmedContent;
+      // if (content && (!toolCalls || toolCalls.length === 0)) {
+      //   if (content.length == 0) {
+      //     throw new Error("Response should be a non-empty string");
+      //   }
+      //   const trimmedContent = content
+      //     .replace(/^```markdown\n?/, "")
+      //     .replace(/\n?```$/, "")
+      //     .trim();
+      //   return trimmedContent;
+      // }
+      if (!content || content?.length == 0) {
+        throw new Error("Response should be a non-empty string");
       }
+      const trimmedContent = content
+        .replace(/^```markdown\n?/, "")
+        .replace(/\n?```$/, "")
+        .trim();
+      return trimmedContent;
 
-      if (toolCalls && toolCalls.length > 0) {
-        const toolResults: any[] = [];
-
-        for (const toolCall of toolCalls) {
-          if (
-            toolCall.type === "function" &&
-            toolCall.function.name === "analyze_url"
-          ) {
-            try {
-              const args = JSON.parse(toolCall.function.arguments);
-              const imageUrl = args.imageUrl;
-              console.log(
-                "[generateMemoirFullContent] 🔍 Analyzing image:",
-                imageUrl
-              );
-
-              const imageAnalysis = await analyzeImageWithVision(imageUrl);
-              console.log(
-                "[generateMemoirFullContent] 🔍 Image analysis result:",
-                imageAnalysis
-              );
-
-              toolResults.push({
-                tool_call_id: toolCall.id,
-                role: "tool" as const,
-                content: imageAnalysis,
-              });
-            } catch (error) {
-              console.error(
-                "[generateMemoirFullContent] 🔍 Error analyzing image:",
-                error
-              );
-
-              toolResults.push({
-                tool_call_id: toolCall.id,
-                role: "tool" as const,
-                content: "Error analyzing image",
-              });
-            }
-          }
-        }
-
-        messages.push({
-          role: "assistant",
-          content: content || "",
-          tool_calls: toolCalls,
-        } as any);
-
-        messages.push(...toolResults);
-
-        continue;
-      }
-
-      if (!content && (!toolCalls || toolCalls.length === 0)) {
-        throw new Error("No response from LLM");
-      }
+      // if (!content && (!toolCalls || toolCalls.length === 0)) {
+      //   throw new Error("No response from LLM");
+      // }
     }
 
     throw new Error(
