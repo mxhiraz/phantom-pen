@@ -26,6 +26,7 @@ const UserPreferencesSchema = z.object({
 export const generateMemoirContent = async (
   whisperContent: string,
   whisperTitle: string,
+  whisperDate: number,
   userPreferences: z.infer<typeof UserPreferencesSchema>
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
   const prompt = dedent`
@@ -78,14 +79,7 @@ ${(() => {
 <rule>The title should be based on your understanding of the user's voice note.</rule>
 <rule>Date in "DD MMM YYYY" format (e.g., 23 Aug 2025).</rule>
 <rule>Do NOT use em dashes (—) or other special punctuation marks.<rule>
-<rule>If no date is provided, use current date in specified format ${new Date().toLocaleDateString(
-    "en-US",
-    {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }
-  )}.</rule>
+<rule>If no date is provided, use current date in specified format ${whisperDate}.</rule>
 <rule>CRITICAL: Do NOT include any user preference information, background details, or personal information from the userPreferences section in the memoir content. Only use this information to guide your writing style and tone, not as content to include in the memoir.</rule>
 <rule>Write the memoir content as if it's the user's own voice telling their story, without referencing or including any of the preference questions or answers.</rule>
 </rules>
@@ -269,14 +263,13 @@ export const generateMemoirFullContent = async (
 ): Promise<string> => {
   const prompt = dedent`
 <instruction>
-   You are a skilled personalized writer. Follow the user's preferences and style guide strictly.
+   You are a skilled personalized Writer. Follow the user's preferences and style guide strictly.
 </instruction>
 
 <task>
     1. Rewrite the voice note content in the user's personal writing style and voice, adapting the tone, vocabulary, and narrative approach based on their background and personality.
-    2. If you find any type of link (URL) in the voice note, especially image links, you MUST use the analyze_url tool to analyze the image and include the description in your memoir content. This helps provide context and enriches the narrative.
-    3. Transform the content to sound like the user wrote it themselves, using their unique voice and writing style.
-    4. Format as markdown, preserving any images in markdown format with proper descriptions.
+    2. Transform the content to sound like the user wrote it themselves, using their unique voice and writing style.
+    3. Format as markdown, preserving any images in markdown format with proper descriptions.
 </task>
 
 <styleGuide>
@@ -305,11 +298,11 @@ ${(() => {
 
 <rules>
 <rule>If voice note content is invalid or nonsensical, Return empty string.</rule>
-<rule>PERSONAL VOICE: Rewrite the content in the user's personal voice and writing style. Adapt the tone, vocabulary, sentence structure, and narrative approach based on their background and personality. Make it sound like the user wrote it themselves.</rule>
-<rule>CONTENT ADAPTATION: Use the information from the voice note but rewrite it in the user's style. You can rephrase, restructure sentences, and adjust the tone while keeping the same core information.</rule>
-<rule>STYLE GUIDANCE: Use the user's preferences to guide how you write - their background, personality, relationships, and interests should influence your writing style, word choice, and approach.</rule>
-<rule>MARKDOWN FORMATTING: Preserve the existing markdown structure and formatting. Only make minimal changes to adapt the voice and tone while keeping the same markdown style, paragraph breaks, and emphasis patterns.</rule>
-<rule>IMAGE PRESERVATION: If images are found in the voice note, preserve them in markdown format using ![description](imageUrl) syntax. Include the full image description from the vision analysis in the alt text.</rule>
+<rule>Rewrite the content in the user's personal voice and writing style. Adapt the tone, vocabulary, sentence structure, and narrative approach based on their background and personality. Make it sound like the user wrote it themselves.</rule>
+<rule>Use the information from the voice note but rewrite it in the user's style. You can rephrase, restructure sentences, and adjust the tone while keeping the same core information.</rule>
+<rule> Use the user's preferences to guide how you write - their background, personality, relationships, and interests should influence your writing style, word choice, and approach.</rule>
+<rule> Preserve the existing markdown structure and formatting.</rule>
+<rule> If images are found in the voice note, preserve them in markdown format using ![description](imageUrl) syntax. Include the full image description from the vision analysis in the alt text.</rule>
 <rule>Use proper punctuation, capitalization and time as "12:00 PM", "12:00 AM" or "12:00". Do NOT use em dashes (—) or other special punctuation marks.</rule>
 <rule>CRITICAL: Do NOT include any user preference information, background details, or personal information from the userPreferences section in the memoir content. Only use this information to guide your writing style and tone, not as content to include in the memoir.</rule>
 <rule>Write the memoir content as if it's the user's own voice telling their story, without referencing or including any of the preference questions or answers.</rule>
@@ -318,6 +311,15 @@ ${(() => {
 <voiceNote>
 "${whisperContent}"
 </voiceNote>
+
+<example>
+<voiceNote>
+"I went to the park and played with my dog. I had a lot of fun."
+</voiceNote>
+<response>
+"Had a blast playing with my dog at the park today."
+</response>
+</example>
 `;
 
   console.log("[generateMemoirFullContent] 🔍 Prompt:", prompt);
@@ -388,8 +390,11 @@ ${(() => {
     }
     const trimmedContent = content
       .replace(/^```markdown\n?/, "")
-      .replace(/\n?```$/, "")
+      .replace(/\n?```$/, " ")
       .trim();
+
+    console.log("[generateMemoirFullContent]", trimmedContent);
+
     return trimmedContent;
 
     // if (!content && (!toolCalls || toolCalls.length === 0)) {

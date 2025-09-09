@@ -122,12 +122,17 @@ export const generateMemoirContentAndUpdate = internalAction({
 
       // Generate new memoir content using LLM
       const [memoirEntries, memoirEntriesFull] = await Promise.all([
-        generateMemoirContent(whisper.fullTranscription, whisper.title, {
-          question1: user.question1,
-          question2: user.question2,
-          question3: user.question3,
-          question4: user.question4,
-        }),
+        generateMemoirContent(
+          whisper.fullTranscription,
+          whisper.title,
+          whisper._creationTime,
+          {
+            question1: user.question1,
+            question2: user.question2,
+            question3: user.question3,
+            question4: user.question4,
+          }
+        ),
         generateMemoirFullContent(whisper.fullTranscription, {
           question1: user.question1,
           question2: user.question2,
