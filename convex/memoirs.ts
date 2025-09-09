@@ -136,11 +136,6 @@ export const generateMemoirContentAndUpdate = internalAction({
         }),
       ]);
 
-      await ctx.runMutation(internal.whispers.updateAiTranscription, {
-        id: args.whisperId,
-        aiTranscription: memoirEntriesFull,
-      });
-
       console.log(
         `[generateMemoirContentAndUpdate] 💾 Creating ${memoirEntries.length} new memoir records...`
       );
@@ -172,6 +167,11 @@ export const generateMemoirContentAndUpdate = internalAction({
           content: entry.content,
         });
       }
+
+      await ctx.runMutation(internal.whispers.updateAiTranscription, {
+        id: args.whisperId,
+        aiTranscription: memoirEntriesFull,
+      });
 
       console.log(
         `[generateMemoirContentAndUpdate] ✅ Successfully completed memoir generation for whisper: ${args.whisperId}`

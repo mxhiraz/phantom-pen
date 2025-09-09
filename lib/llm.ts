@@ -330,76 +330,76 @@ ${(() => {
       },
     ];
 
-    let maxIterations = 5; // Prevent infinite loops
-    let currentIteration = 0;
+    // let maxIterations = 5; // Prevent infinite loops
+    // let currentIteration = 0;
 
-    while (currentIteration < maxIterations) {
-      currentIteration++;
-      console.log(
-        `[generateMemoirFullContent] 🔍 Iteration ${currentIteration}`
-      );
+    // while (currentIteration < maxIterations) {
+    //   currentIteration++;
+    //   console.log(
+    //     `[generateMemoirFullContent] 🔍 Iteration ${currentIteration}`
+    //   );
 
-      const response = await openai.chat.completions.create({
-        messages,
-        model: "gpt-4.1",
-        temperature: 0.1,
-        // tool_choice: "auto",
-        // tools: [
-        //   {
-        //     type: "function",
-        //     function: {
-        //       name: "analyze_url",
-        //       description:
-        //         "Analyze an image and provide a detailed description of what the image contains",
-        //       parameters: {
-        //         type: "object",
-        //         properties: {
-        //           imageUrl: {
-        //             type: "string",
-        //             description: "URL of the image to analyze",
-        //           },
-        //         },
-        //         required: ["imageUrl"],
-        //       },
-        //     },
-        //   },
-        // ],
-      });
+    const response = await openai.chat.completions.create({
+      messages,
+      model: "gpt-4.1",
+      temperature: 0.1,
+      // tool_choice: "auto",
+      // tools: [
+      //   {
+      //     type: "function",
+      //     function: {
+      //       name: "analyze_url",
+      //       description:
+      //         "Analyze an image and provide a detailed description of what the image contains",
+      //       parameters: {
+      //         type: "object",
+      //         properties: {
+      //           imageUrl: {
+      //             type: "string",
+      //             description: "URL of the image to analyze",
+      //           },
+      //         },
+      //         required: ["imageUrl"],
+      //       },
+      //     },
+      //   },
+      // ],
+    });
 
-      const message = response.choices[0]?.message;
-      const content = message?.content;
-      // const toolCalls = message?.tool_calls;
+    const message = response.choices[0]?.message;
+    const content = message?.content;
+    // const toolCalls = message?.tool_calls;
 
-      console.log("[generateMemoirFullContent] 🔍 LLM response:", content);
-      // console.log("[generateMemoirFullContent] 🔍 Tool calls:", toolCalls);
+    console.log("[generateMemoirFullContent] 🔍 LLM response:", content);
+    // console.log("[generateMemoirFullContent] 🔍 Tool calls:", toolCalls);
 
-      // if (content && (!toolCalls || toolCalls.length === 0)) {
-      //   if (content.length == 0) {
-      //     throw new Error("Response should be a non-empty string");
-      //   }
-      //   const trimmedContent = content
-      //     .replace(/^```markdown\n?/, "")
-      //     .replace(/\n?```$/, "")
-      //     .trim();
-      //   return trimmedContent;
-      // }
-      if (!content || content?.length == 0) {
-        throw new Error("Response should be a non-empty string");
-      }
-      const trimmedContent = content
-        .replace(/^```markdown\n?/, "")
-        .replace(/\n?```$/, "")
-        .trim();
-      return trimmedContent;
-
-      // if (!content && (!toolCalls || toolCalls.length === 0)) {
-      //   throw new Error("No response from LLM");
-      // }
+    // if (content && (!toolCalls || toolCalls.length === 0)) {
+    //   if (content.length == 0) {
+    //     throw new Error("Response should be a non-empty string");
+    //   }
+    //   const trimmedContent = content
+    //     .replace(/^```markdown\n?/, "")
+    //     .replace(/\n?```$/, "")
+    //     .trim();
+    //   return trimmedContent;
+    // }
+    if (!content || content?.length == 0) {
+      throw new Error("Response should be a non-empty string");
     }
+    const trimmedContent = content
+      .replace(/^```markdown\n?/, "")
+      .replace(/\n?```$/, "")
+      .trim();
+    return trimmedContent;
 
-    throw new Error(
-      "Maximum iterations reached without getting a valid response"
-    );
+    // if (!content && (!toolCalls || toolCalls.length === 0)) {
+    //   throw new Error("No response from LLM");
+    // }
+    // }
+
+    // throw new Error(
+    //   "Maximum iterations reached without getting a valid response"
+    // );
   } catch (error) {
     console.error("Error generating memoir full content:", error);
     throw error;

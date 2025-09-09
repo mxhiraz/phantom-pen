@@ -17,14 +17,14 @@ export default function BlocknoteEditor({
   initialContent,
   id,
   editable = true,
-  markdown = false,
+  isMarkdown = false,
   className,
   editorRef,
 }: {
   initialContent: any;
   id: string;
   editable?: boolean;
-  markdown?: boolean;
+  isMarkdown?: boolean;
   className?: string;
   editorRef?: any;
 }) {
@@ -75,6 +75,7 @@ export default function BlocknoteEditor({
   });
 
   editor.onChange(async (editor) => {
+    if (isMarkdown) return;
     const markdown = await editor.blocksToMarkdownLossy(editor.document);
 
     if (debounceTimeout.current) {
@@ -98,12 +99,12 @@ export default function BlocknoteEditor({
   }, [editor, editorRef]);
 
   useEffect(() => {
-    if (markdown && initialContent && typeof initialContent === "string") {
+    if (isMarkdown && initialContent && typeof initialContent === "string") {
       editor.tryParseMarkdownToBlocks(initialContent).then((blocks) => {
         editor.replaceBlocks(editor.document, blocks);
       });
     }
-  }, [markdown, initialContent, editor]);
+  }, [isMarkdown, initialContent, editor]);
 
   if (!editor) return <LoadingSection />;
   return (

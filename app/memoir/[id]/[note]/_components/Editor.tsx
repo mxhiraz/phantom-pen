@@ -58,7 +58,7 @@ export default function MemoirEditor({
 
           <Editor
             id={noteId}
-            markdown={true}
+            isMarkdown={true}
             initialContent={noteData.aiTranscription || ""}
             editable={false}
             className="md:px-6 px-4"
