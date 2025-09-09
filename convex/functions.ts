@@ -7,7 +7,6 @@ import { Triggers } from "convex-helpers/server/triggers";
 import {
   customCtx,
   customMutation,
-  customAction,
 } from "convex-helpers/server/customFunctions";
 
 const triggers = new Triggers<DataModel>();
