@@ -29,6 +29,8 @@ export const generateMemoirContent = async (
   whisperDate: number,
   userPreferences: z.infer<typeof UserPreferencesSchema>
 ): Promise<z.infer<typeof MemoirResponseSchema>> => {
+  console.log(whisperDate);
+
   const prompt = dedent`
 <instruction>
    You are a skilled personalized memoir writer. Follow the user's preferences and style guide strictly.
@@ -79,7 +81,9 @@ ${(() => {
 <rule>The title should be based on your understanding of the user's voice note.</rule>
 <rule>Date in "DD MMM YYYY" format (e.g., 23 Aug 2025).</rule>
 <rule>Do NOT use em dashes (—) or other special punctuation marks.<rule>
-<rule>If no date is provided, use current date in specified format ${whisperDate}.</rule>
+<rule>If no date is provided, use current date in specified format ${new Date(
+    whisperDate
+  )}.</rule>
 <rule>CRITICAL: Do NOT include any user preference information, background details, or personal information from the userPreferences section in the memoir content. Only use this information to guide your writing style and tone, not as content to include in the memoir.</rule>
 <rule>Write the memoir content as if it's the user's own voice telling their story, without referencing or including any of the preference questions or answers.</rule>
 </rules>
