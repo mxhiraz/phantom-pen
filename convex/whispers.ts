@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, internalMutation } from "./functions";
+import { mutation } from "./functions";
 import { internal } from "./_generated/api";
 import { stripMarkdown } from "../lib/utils";
 import { Id } from "./_generated/dataModel";
@@ -10,7 +10,7 @@ import {
   ERROR_MESSAGES,
   STATUS,
 } from "../lib/constants";
-import { query } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 const autoUpdate = (data: any) => ({
   ...data,
   updatedAt: Date.now(),

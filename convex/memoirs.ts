@@ -143,10 +143,6 @@ export const generateMemoirContentAndUpdate = internalAction({
       });
 
       console.log(
-        "[generateMemoirContentAndUpdate] 🔍 memoirEntriesFull",
-        memoirEntriesFull
-      );
-      console.log(
         `[generateMemoirContentAndUpdate] 💾 Creating ${memoirEntries.length} new memoir records...`
       );
 
