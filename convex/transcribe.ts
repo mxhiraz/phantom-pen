@@ -71,6 +71,7 @@ export const transcribeFromStorage = action({
   </instruction>
   <task>
    You have to Convert raw transcription to markdown format.
+   Do NOT use em dashes (—) or other special punctuation marks.
   </task>
   <examples>
    <transcription>Hello, my name is Arshia.</transcription>

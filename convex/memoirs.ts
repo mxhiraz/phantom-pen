@@ -3,7 +3,7 @@ import { internalMutation } from "./functions";
 import { query, internalAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import { TABLES, INDEXES, ERROR_MESSAGES, STATUS } from "../lib/constants";
-import { generateMemoirContent } from "../lib/llm";
+import { generateMemoirContent, generateMemoirFullContent } from "../lib/llm";
 import { Doc } from "./_generated/dataModel";
 
 export const getUserMemoirs = query({
@@ -122,17 +122,30 @@ export const generateMemoirContentAndUpdate = internalAction({
       }
 
       // Generate new memoir content using LLM
-      const memoirEntries = await generateMemoirContent(
-        whisper.fullTranscription,
-        whisper.title,
-        {
+      const [memoirEntries, memoirEntriesFull] = await Promise.all([
+        generateMemoirContent(whisper.fullTranscription, whisper.title, {
           question1: user.question1,
           question2: user.question2,
           question3: user.question3,
           question4: user.question4,
-        }
-      );
+        }),
+        generateMemoirFullContent(whisper.fullTranscription, {
+          question1: user.question1,
+          question2: user.question2,
+          question3: user.question3,
+          question4: user.question4,
+        }),
+      ]);
 
+      await ctx.runMutation(internal.whispers.updateAiTranscription, {
+        id: args.whisperId,
+        aiTranscription: memoirEntriesFull,
+      });
+
+      console.log(
+        "[generateMemoirContentAndUpdate] 🔍 memoirEntriesFull",
+        memoirEntriesFull
+      );
       console.log(
         `[generateMemoirContentAndUpdate] 💾 Creating ${memoirEntries.length} new memoir records...`
       );

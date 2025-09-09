@@ -28,6 +28,7 @@ export default defineSchema({
     updatedAt: v.optional(v.float64()),
     fullTranscription: v.string(),
     rawTranscription: v.optional(v.any()),
+    aiTranscription: v.optional(v.string()),
     public: v.optional(v.boolean()),
   })
     .index("by_user", ["userId"])

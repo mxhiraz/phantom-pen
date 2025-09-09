@@ -352,3 +352,15 @@ export const togglePrivacy = mutation({
     return { id: args.id, public: newPublic };
   },
 });
+
+export const updateAiTranscription = internalMutation({
+  args: {
+    id: v.id("whispers"),
+    aiTranscription: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, {
+      aiTranscription: args.aiTranscription,
+    });
+  },
+});
